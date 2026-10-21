@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Photo Capture System - Haramaya University</title>
+    
+    <!-- Favicon (Replace with your own) -->
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    <!-- Google Fonts (Optional - Harmonize with Haramaya's look if possible) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom Styles -->
+    <style>
+        /* Define Variables (Adjust to match Haramaya's branding colors) */
+        :root {
+            --primary-color: #0056b3; /* Example Blue - Adjust based on Haramaya site */
+            --secondary-color: #007bff; /* Example Lighter Blue */
+            --accent-color: #ffc107;    /* Example Yellow */
+            --text-dark: #333;
+            --text-light: #666;
+            --bg-light: #f8f9fa;
+            --card-bg: #ffffff;
+            --border-color: #e9ecef;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif; /* Use a suitable font */
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* --- Header Styles (Inspired by Haramaya) --- */
+        .site-header {
+            background-color: #fff; /* Or a color from Haramaya's site */
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            padding: 10px 0;
+        }
+
+        .site-header .navbar-brand {
+            font-weight: 700;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+        }
+        
+        .site-header .navbar-brand img {
+            height: 40px; /* Adjust logo size */
+            margin-right: 10px;
+        }
+
+        .site-header .nav-link {
+            color: var(--text-dark);
+            font-weight: 500;
+            margin-right: 15px;
+            transition: color 0.3s ease;
+        }
+
+        .site-header .nav-link:hover {
+            color: var(--primary-color);
+        }
+        
+        /* --- Main Content Area --- */
+        .main-content {
+            padding: 40px 0;
+            min-height: calc(100vh - 200px); /* Adjust based on header/footer height */
+        }
+
+        /* --- Card Styles --- */
+        .employee-card {
+            transition: all 0.3s ease;
+            border: none; /* Remove default border */
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--card-bg);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Softer shadow */
+            display: flex; /* Use flex for better layout */
+            flex-direction: column;
+            height: 100%; /* Ensure cards in a row have equal height */
+        }
+
+        .employee-card:hover {
+            transform: translateY(-5px); /* Slightly less dramatic lift */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+        
+        .employee-card .card-body {
+             flex-grow: 1; /* Allow body to take available space */
+             padding: 1.5rem;
+             display: flex;
+             flex-direction: column;
+             align-items: center;
+             text-align: center;
+        }
+
+        .employee-avatar {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid var(--primary-color); /* Border color from theme */
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            margin-bottom: 1rem; /* Add space below avatar */
+        }
+
+        .employee-card:hover .employee-avatar {
+            transform: scale(1.08); /* Slight zoom */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .status-badge {
+            position: absolute;
+            top: 15px; /* Adjust position */
+            right: 15px; /* Adjust position */
+            width: 30px; /* Slightly larger */
+            height: 30px; /* Slightly larger */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        .has-photos {
+            background-color: var(--success-green, #28a745); /* Use Bootstrap default if variable not set */
+        }
+
+        .needs-photos {
+            background-color: var(--warning-yellow, #ffc107);
+            color: var(--dark-text, #212529); /* Ensure text is readable */
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .card-text {
+            font-size: 0.95rem;
+            color: var(--text-light);
+            margin-bottom: 0.75rem;
+        }
+
+        .department-badge {
+            font-size: 0.75rem;
+            padding: 0.3em 0.6em;
+            border-radius: 20px; /* More rounded */
+            background-color: rgba(var(--primary-color-rgb, 0, 86, 179), 0.1); /* Use RGB for opacity */
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        /* --- Search and Filter Styles --- */
+        .search-box {
+            position: relative;
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            pointer-events: none; /* Prevent icon from interfering with input */
+        }
+        
+        .search-input {
+            padding-left: 40px; /* Adjust padding */
+            border-radius: 25px; /* More rounded */
+            border: 1px solid var(--border-color);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .search-input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(var(--primary-color-rgb, 0, 86, 179), 0.25);
+            outline: none;
+        }
+        
+        .filter-btn {
+            border-radius: 25px;
+            padding: 0.375rem 1rem;
+            font-size: 0.9rem;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .filter-btn.active,
+        .filter-btn:hover {
+             background-color: var(--primary-color);
+             border-color: var(--primary-color);
+             color: white !important;
+        }
+
+        .dropdown-menu .dropdown-item {
+            font-size: 0.9rem;
+        }
+
+        .dropdown-menu .dropdown-header {
+             font-size: 0.8rem;
+             font-weight: 600;
+             color: var(--text-light);
+        }
+
+        /* --- Stats Section --- */
+        .quick-stats {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 20px; /* More padding */
+            margin-bottom: 30px; /* More margin */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 10px 0;
+        }
+        
+        .stat-item:not(:last-child) {
+            border-right: 1px solid var(--border-color); /* Separator */
+        }
+
+        .stat-value {
+            font-size: 1.8rem; /* Larger font */
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            text-transform: uppercase; /* Uppercase label */
+            letter-spacing: 0.5px;
+        }
+        
+        .text-success { color: var(--success-green, #28a745) !important; }
+        .text-warning { color: var(--warning-yellow, #ffc107) !important; }
+
+
+        /* --- Pagination Styles --- */
+        .pagination .page-item .page-link {
+            color: var(--primary-color);
+            border-color: var(--border-color);
+            transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        .pagination .page-item .page-link:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+        
+        .pagination .page-item.disabled .page-link {
+            color: var(--text-light);
+            border-color: var(--border-color);
+        }
+
+        /* --- Empty State --- */
+        .empty-state {
+            padding: 4rem;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            color: var(--text-light);
+        }
+        
+        .empty-state-icon {
+            font-size: 5rem; /* Larger icon */
+            color: #ced4da; /* Lighter gray */
+            margin-bottom: 1.5rem;
+        }
+        
+        .empty-state h4 {
+            color: var(--text-dark);
+            margin-bottom: 0.75rem;
+        }
+        
+        .empty-state p {
+            margin-bottom: 2rem;
+        }
+
+        /* --- Loading Spinner --- */
+        .loading-spinner {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6); /* Darker overlay */
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease; /* Fade in animation */
+        }
+        
+        .spinner-border {
+            color: white !important; /* Ensure spinner is visible */
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* --- Footer Styles (Inspired by Haramaya) --- */
+        .site-footer {
+            background-color: var(--primary-color); /* Or a dark color from Haramaya's site */
+            color: white;
+            padding: 30px 0;
+            font-size: 0.9rem;
+        }
+        
+        .site-footer h5 {
+            color: white;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .site-footer .list-unstyled li a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .site-footer .list-unstyled li a:hover {
+            color: white;
+        }
+        
+        .site-footer .social-icons a {
+            color: white;
+            font-size: 1.2rem;
+            margin-right: 15px;
+            transition: color 0.3s ease;
+        }
+        
+        .site-footer .social-icons a:hover {
+            color: var(--accent-color);
+        }
+        
+        .site-footer .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 20px;
+            margin-top: 20px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+
+        /* --- Responsive Adjustments --- */
+        @media (max-width: 768px) {
+            .employee-avatar {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .card-body {
+                padding: 1rem;
+            }
+            
+            .card-title {
+                font-size: 1.1rem;
+            }
+            
+            .card-text {
+                font-size: 0.9rem;
+            }
+
+            .stat-item {
+                border-right: none !important;
+                border-bottom: 1px solid var(--border-color);
+                margin-bottom: 10px;
+                padding-bottom: 10px;
+            }
+             .stat-item:last-child {
+                 border-bottom: none !important;
+                 margin-bottom: 0;
+                 padding-bottom: 0;
+             }
+
+            .quick-stats {
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+            
+            .stat-value {
+                font-size: 1.5rem;
+            }
+            
+            .stat-label {
+                font-size: 0.8rem;
+            }
+            
+            .empty-state {
+                padding: 2rem;
+            }
+            
+            .empty-state-icon {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Spinner -->
+    <div class="loading-spinner" id="loadingSpinner">
+        <div class="spinner-border" style="width: 3rem; height: 3rem;" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+
+    <!-- Header (Inspired by Haramaya) -->
+    <header class="site-header">
+        <nav class="navbar navbar-expand-lg navbar-light container">
+            <a class="navbar-brand" href="/">
+                <!-- Replace with your logo -->
+                <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Haramaya University Logo">
+                Haramaya University
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <!-- Add your navigation links here -->
+                    <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Services</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Contact</a></li>
+                    <!-- Add a link for photo capture if needed elsewhere -->
+                    
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <div class="container">
+            <div class="card shadow-sm border-0">
+                 <div class="card-header bg-primary text-white py-3 animate__animated animate__fadeInDown">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">
+                            <i class="fas fa-camera me-2"></i>Select Employee for Photo Capture
+                        </h4>
+                        <span class="badge bg-light text-primary employee-count-badge" id="employeeCount">{{ employee_count }} Employees</span>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <!-- Quick Stats -->
+                    <div class="row quick-stats animate__animated animate__fadeInUp">
+                        <div class="col-md-4 stat-item">
+                            <div class="stat-value" id="totalEmployees">{{ employee_count }}</div>
+                            <div class="stat-label">Total Employees</div>
+                        </div>
+                        <div class="col-md-4 stat-item">
+                            <div class="stat-value text-success" id="withPhotos">{{ employees|selectattr('has_photos')|list|length }}</div>
+                            <div class="stat-label">With Photos</div>
+                        </div>
+                        <div class="col-md-4 stat-item">
+                            <div class="stat-value text-warning" id="withoutPhotos">{{ employees|rejectattr('has_photos')|list|length }}</div>
+                            <div class="stat-label">Without Photos</div>
+                        </div>
+                    </div>
+
+                    <!-- Search and Filter -->
+                    <div class="row mb-4 animate__animated animate__fadeIn">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" class="form-control search-input" id="searchInput"
+                                    placeholder="Search by name, department..." autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-md-end">
+                                <div class="btn-group me-2">
+                                    <button class="btn btn-outline-secondary dropdown-toggle filter-btn" type="button"
+                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-filter me-1"></i> Filter
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><a class="dropdown-item filter-btn active" href="#" data-filter="all">All Employees</a></li>
+                                        <li><a class="dropdown-item filter-btn" href="#" data-filter="has-photos">With Photos</a></li>
+                                        <li><a class="dropdown-item filter-btn" href="#" data-filter="needs-photos">Without Photos</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><h6 class="dropdown-header">By Department</h6></li>
+                                        {% for dept in departments %}
+                                        <li><a class="dropdown-item filter-btn" href="#" data-filter="dept-{{ dept|lower }}">{{ dept }}</a></li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                <button class="btn btn-outline-secondary" id="resetFilters">
+                                    <i class="fas fa-sync-alt me-1"></i> Reset
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Employee Cards Grid -->
+                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 g-4" id="employeeContainer">
+                        {% for employee in employees %}
+                        <div class="col employee-card-col"
+                            data-name="{{ employee.username|lower }}"
+                            data-dept="{{ employee.department|lower }}"
+                            data-status="{{ 'has-photos' if employee.has_photos else 'needs-photos' }}">
+                            <div class="employee-card">
+                                <div class="card-body position-relative">
+                                    <div class="status-badge {{ 'has-photos' if employee.has_photos else 'needs-photos' }}"
+                                        data-bs-toggle="tooltip"
+                                        data-bs-placement="top"
+                                        title="{{ 'Has photos' if employee.has_photos else 'Needs photos' }}">
+                                        <i class="fas {{ 'fa-check' if employee.has_photos else 'fa-exclamation' }}"></i>
+                                    </div>
+                                    <img src="{{ url_for('static', filename=employee.photo_url) if employee.has_photos else url_for('static', filename='images/default-avatar.png') }}"
+                                        class="employee-avatar"
+                                        alt="{{ employee.username }}"
+                                        onerror="this.src='{{ url_for('static', filename='images/default-avatar.png') }}'">
+                                    <h5 class="card-title">{{ employee.username }}</h5>
+                                    <p class="card-text">{{ employee.position or 'Employee' }}</p>
+                                    <span class="department-badge">{{ employee.department }}</span>
+                                    <div class="mt-auto d-grid"> <!-- Use mt-auto to push button to bottom -->
+                                        <a href="{{ url_for('add_photos', user_id=employee.id) }}"
+                                            class="btn btn-primary btn-sm animate__animated animate__fadeInUp animate__delay-0-2s">
+                                            <i class="fas fa-camera me-1"></i> Capture Photos
+                                         </a>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-light border-top text-muted text-center py-2">
+                                     <small>
+                                         <i class="far fa-clock me-1"></i>
+                                         {{ employee.last_updated|format_last_updated }}
+                                     </small>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Empty State -->
+                    <div class="empty-state text-center py-5 {% if employees %}d-none{% endif %}" id="emptyState">
+                        <div class="empty-state-icon animate__animated animate__bounceIn">
+                            <i class="fas fa-users-slash"></i>
+                        </div>
+                        <h4 class="animate__animated animate__fadeInUp animate__delay-0-5s">No employees found</h4>
+                        <p class="text-muted mb-4 animate__animated animate__fadeInUp animate__delay-0-6s">No employees match your search criteria.</p>
+                        <button class="btn btn-primary animate__animated animate__zoomIn animate__delay-0-8s" id="resetFiltersEmpty">
+                            <i class="fas fa-sync-alt me-1"></i> Reset Filters
+                        </button>
+                    </div>
+
+                    <!-- Pagination -->
+                    {% if pagination and pagination.pages > 1 %}
+                    <nav aria-label="Employee pagination" class="mt-4 animate__animated animate__fadeInUp">
+                        <ul class="pagination justify-content-center">
+                            {% if pagination.has_prev %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ pagination.prev_num }}" aria-label="Previous">
+                                    <span aria-hidden="true">«</span>
+                                </a>
+                            </li>
+                            {% endif %}
+
+                            {% for page in pagination.iter_pages() %}
+                                {% if page %}
+                                    <li class="page-item {% if page == pagination.page %}active{% endif %}">
+                                        <a class="page-link" href="?page={{ page }}">{{ page }}</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if pagination.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ pagination.next_num }}" aria-label="Next">
+                                    <span aria-hidden="true">»</span>
+                                </a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer (Inspired by Haramaya) -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <h5>About Haramaya University</h5>
+                    <p>Brief description of the university's mission or history.</p>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#">Admissions</a></li>
+                        <li><a href="#">Academics</a></li>
+                        <li><a href="#">Research</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <h5>Connect With Us</h5>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                    <p class="mt-3">Phone: +251 XXX XXX XXXX</p>
+                    <p>Email: info@haramaya.edu.et</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; {{ current_year }} Haramaya University. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const searchInput = document.getElementById('searchInput');
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const employeeCardCols = document.querySelectorAll('.employee-card-col'); // Select the parent column
+            const emptyState = document.getElementById('emptyState');
+            const resetFiltersBtn = document.getElementById('resetFilters');
+            const resetFiltersEmptyBtn = document.getElementById('resetFiltersEmpty'); // Button in empty state
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const totalEmployeesStat = document.getElementById('totalEmployees');
+            const withPhotosStat = document.getElementById('withPhotos');
+            const withoutPhotosStat = document.getElementById('withoutPhotos');
+            const employeeCountBadge = document.getElementById('employeeCount');
+
+            // Initialize tooltips
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+
+            // Show loading spinner when navigating to photo capture
+            document.querySelectorAll('a[href*="add_photos"]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    // Only show spinner for same-origin links
+                    if (this.hostname === window.location.hostname) {
+                        loadingSpinner.style.display = 'flex';
+                    }
+                });
+            });
+
+            // Search functionality with debounce
+            let searchTimeout;
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    const searchTerm = this.value.toLowerCase().trim();
+                    filterEmployees(searchTerm, getActiveFilter());
+                }, 300);
+            });
+
+            // Filter functionality
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    filterEmployees(searchInput.value.toLowerCase().trim(), this.dataset.filter);
+                });
+            });
+
+            // Reset filters (main button)
+            resetFiltersBtn.addEventListener('click', function() {
+                resetAllFilters();
+            });
+
+             // Reset filters (empty state button)
+            resetFiltersEmptyBtn.addEventListener('click', function() {
+                resetAllFilters();
+            });
+
+            function resetAllFilters() {
+                searchInput.value = '';
+                filterButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                    if(btn.dataset.filter === 'all') btn.classList.add('active');
+                });
+                filterEmployees('', 'all');
+                searchInput.focus();
+            }
+
+
+            // Filter function with enhanced logic and animation
+            function filterEmployees(searchTerm, filter) {
+                let visibleCount = 0;
+                let withPhotosCount = 0;
+                let withoutPhotosCount = 0;
+
+                employeeCardCols.forEach(col => {
+                    const name = col.dataset.name;
+                    const dept = col.dataset.dept;
+                    const status = col.dataset.status;
+
+                    // Check search term matches name or department
+                    const matchesSearch = searchTerm === '' ||
+                                         name.includes(searchTerm) ||
+                                         dept.includes(searchTerm);
+
+                    // Check filter matches
+                    let matchesFilter = true;
+                    if (filter === 'has-photos') {
+                        matchesFilter = status === 'has-photos';
+                    } else if (filter === 'needs-photos') {
+                        matchesFilter = status === 'needs-photos';
+                    } else if (filter.startsWith('dept-')) {
+                        const deptFilter = filter.replace('dept-', '');
+                        matchesFilter = dept === deptFilter;
+                    }
+
+                    if(matchesSearch && matchesFilter) {
+                        col.style.display = '';
+                        visibleCount++;
+
+                        // Count photos status for filtered results
+                        if (status === 'has-photos') {
+                            withPhotosCount++;
+                        } else {
+                            withoutPhotosCount++;
+                        }
+
+                        // Add animation (remove previous one first)
+                        col.classList.remove('animate__animated', 'animate__fadeIn'); // Remove previous animation
+                        void col.offsetWidth; // Trigger reflow
+                        col.classList.add('animate__animated', 'animate__fadeIn'); // Add animation
+                    } else {
+                        col.style.display = 'none';
+                        col.classList.remove('animate__animated', 'animate__fadeIn'); // Remove animation when hidden
+                    }
+                });
+
+                // Update counts
+                employeeCountBadge.textContent = `${visibleCount} Employees`;
+                // Note: Total stats should likely reflect the *initial* total, not filtered total.
+                // If you want filtered stats, you'd update these based on `visibleCount`, `withPhotosCount`, etc.
+                // For now, they show the initial total from the template.
+                // totalEmployeesStat.textContent = visibleCount; // Uncomment if you want filtered count
+                // withPhotosStat.textContent = withPhotosCount; // Uncomment if you want filtered count
+                // withoutPhotosStat.textContent = withoutPhotosCount; // Uncomment if you want filtered count
+
+
+                // Show empty state if no cards visible
+                if(visibleCount === 0) {
+                    emptyState.classList.remove('d-none');
+                } else {
+                    emptyState.classList.add('d-none');
+                }
+            }
+
+            // Get active filter
+            function getActiveFilter() {
+                const activeFilter = document.querySelector('.filter-btn.active');
+                return activeFilter ? activeFilter.dataset.filter : 'all';
+            }
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                // Focus search on Ctrl/Cmd + K
+                if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                    e.preventDefault();
+                    searchInput.focus();
+                }
+
+                // Reset filters on Escape
+                if (e.key === 'Escape' && (searchInput.value || getActiveFilter() !== 'all')) {
+                    resetAllFilters();
+                }
+            });
+
+            // Show search shortcut hint
+            searchInput.addEventListener('focus', function() {
+                this.setAttribute('placeholder', 'Search... (Ctrl+K)');
+            });
+
+            searchInput.addEventListener('blur', function() {
+                 // Only revert placeholder if input is empty
+                if (this.value === '') {
+                    this.setAttribute('placeholder', 'Search by name, department...');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

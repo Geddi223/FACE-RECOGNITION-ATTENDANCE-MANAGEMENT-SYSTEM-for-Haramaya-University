@@ -1,0 +1,234 @@
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="d-flex align-items-center">
+                <img src="{{ url_for('static', filename='img/profile/' + employee.employee_id + '.jpg') }}" 
+                     onerror="this.src='{{ url_for('static', filename='img/profile/default.jpg') }}'" 
+                     class="employee-avatar" style="width: 80px; height: 80px;">
+                <div class="ms-3">
+                    <h3>{{ employee.username }}</h3>
+                    <div class="d-flex flex-wrap">
+                        <div class="me-4">
+                            <small class="text-muted">Employee ID</small>
+                            <div class="fw-bold">{{ employee.employee_id }}</div>
+                        </div>
+                        <div class="me-4">
+                            <small class="text-muted">Department</small>
+                            <div class="fw-bold">{{ employee.department.name if employee.department else 'N/A' }}</div>
+                        </div>
+                        <div class="me-4">
+                            <small class="text-muted">Designation</small>
+                            <div class="fw-bold">{{ employee.designation }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h6 class="card-title">Salary Structure</h6>
+                    <div class="mb-2">
+                        <small class="text-muted">Structure Name</small>
+                        <div class="fw-bold">{{ employee.salary_structure_name }}</div>
+                    </div>
+                    <div class="mb-2">
+                        <small class="text-muted">Structure Code</small>
+                        <div class="fw-bold">{{ employee.salary_structure }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold">Bank Details</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <small class="text-muted">Bank Name</small>
+                            <div class="fw-bold">{{ employee.bank_account_details }}</div>
+                        </div>
+                        <div class="col-md-6">
+                            <small class="text-muted">Account Number</small>
+                            <div class="fw-bold">{{ employee.account_number }}</div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <small class="text-muted">Tax ID</small>
+                            <div class="fw-bold">{{ employee.tax_id }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold">Payroll Summary - {{ month }}</h6>
+                </div>
+                <div class="card-body">
+                    {% if payroll_record %}
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <tbody>
+                                <tr>
+                                    <th>Basic Salary</th>
+                                    <td class="text-end">${{ "%.2f"|format(payroll_record.basic_salary) }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Allowances</th>
+                                    <td class="text-end">${{ "%.2f"|format(payroll_record.allowances) }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Bonuses</th>
+                                    <td class="text-end">${{ "%.2f"|format(payroll_record.bonuses) }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Deductions</th>
+                                    <td class="text-end text-danger">-${{ "%.2f"|format(payroll_record.deductions) }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Overtime Pay</th>
+                                    <td class="text-end">${{ "%.2f"|format(payroll_record.overtime_pay) }}</td>
+                                </tr>
+                                <tr class="table-active">
+                                    <th>Net Salary</th>
+                                    <th class="text-end">${{ "%.2f"|format(payroll_record.net_salary) }}</th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-warning">
+                        No payroll record found for this period
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold">Attendance Summary - {{ month }}</h6>
+                </div>
+                <div class="card-body">
+                    <div class="attendance-chart mb-4">
+                        <canvas id="attendanceChart"></canvas>
+                        <input type="hidden" id="chartData" value="{{ {
+                            'labels': [rec.date.strftime('%d') for rec in attendance_records],
+                            'hours': [rec.hours or 0 for rec in attendance_records],
+                            'overtime': [rec.overtime_hours or 0 for rec in attendance_records]
+                        }|tojson }}">
+                    </div>
+                    
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <div class="card bg-light">
+                                <div class="card-body py-2">
+                                    <h6 class="mb-0">{{ attendance_summary.total_worked_hours|round(1) }}</h6>
+                                    <small class="text-muted">Total Hours</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-light">
+                                <div class="card-body py-2">
+                                    <h6 class="mb-0">{{ attendance_summary.total_overtime|round(1) }}</h6>
+                                    <small class="text-muted">Overtime</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-light">
+                                <div class="card-body py-2">
+                                    <h6 class="mb-0">{{ attendance_summary.late_days }}</h6>
+                                    <small class="text-muted">Late Days</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="card bg-light">
+                                <div class="card-body py-2">
+                                    <h6 class="mb-0">{{ attendance_summary.absences }}</h6>
+                                    <small class="text-muted">Absences</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h6 class="m-0 font-weight-bold">Daily Attendance Records</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-sm table-hover">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Day</th>
+                            <th>Status</th>
+                            <th>Check In</th>
+                            <th>Check Out</th>
+                            <th>Hours</th>
+                            <th>Overtime</th>
+                            <th>Late</th>
+                            <th>Location</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in attendance_records %}
+                        <tr>
+                            <td>{{ record.date.strftime('%Y-%m-%d') }}</td>
+                            <td>{{ record.date.strftime('%a') }}</td>
+                            <td>
+                                {% if record.present %}
+                                <span class="badge badge-present">Present</span>
+                                {% else %}
+                                <span class="badge badge-absent">Absent</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ record.time_in.strftime('%H:%M') if record.time_in else 'N/A' }}</td>
+                            <td>{{ record.time_out.strftime('%H:%M') if record.time_out else 'N/A' }}</td>
+                            <td>{{ record.hours|round(2) if record.hours else 0 }}</td>
+                            <td>{{ record.overtime_hours|round(2) if record.overtime_hours else 0 }}</td>
+                            <td>
+                                {% if record.late_check %}
+                                <span class="badge badge-late">Late</span>
+                                {% else %}
+                                <span class="badge badge-secondary">On time</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if record.location_lat %}
+                                <a href="https://maps.google.com/?q={{ record.location_lat }},{{ record.location_lng }}" target="_blank">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </a>
+                                {% else %}
+                                N/A
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="9" class="text-center py-4">
+                                No attendance records found for this period
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Haramaya University</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #4CAF50;
+            --accent-color: #a777e3;
+            --light-color: #ecf0f1;
+            --dark-color: #333;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color), #1a2a3a);
+            color: var(--light-color);
+            text-align: center;
+            padding: 3em 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://www.haramaya.edu.et/wp-content/uploads/2022/05/HU-Logo-1.png') no-repeat;
+            background-position: center;
+            background-size: contain;
+            opacity: 0.1;
+            z-index: 0;
+        }
+        
+        header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: fadeInDown 1s ease-out;
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+            animation: fadeIn 1.5s ease-out;
+        }
+        
+        nav {
+            background: var(--dark-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+        }
+        
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            margin: 0;
+        }
+        
+        nav ul li {
+            margin: 0 1em;
+            position: relative;
+        }
+        
+        nav ul li a {
+            text-decoration: none;
+            color: #fff;
+            padding: 1em 0.5em;
+            display: block;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        nav ul li a:hover {
+            color: var(--secondary-color);
+        }
+        
+        nav ul li a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: var(--secondary-color);
+            transition: width 0.3s ease;
+        }
+        
+        nav ul li a:hover::after {
+            width: 100%;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2em auto;
+            padding: 0 1em;
+        }
+        
+        .contact-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2em;
+            margin-bottom: 3em;
+        }
+        
+        @media (max-width: 768px) {
+            .contact-section {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .contact-form-container {
+            background: #fff;
+            border-radius: 10px;
+            padding: 2em;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .contact-form-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .contact-form-container h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5em;
+            position: relative;
+            padding-bottom: 0.5em;
+        }
+        
+        .contact-form-container h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: var(--secondary-color);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5em;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5em;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.8em;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+            outline: none;
+        }
+        
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .btn-submit {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 0.8em 2em;
+            border-radius: 50px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-submit:hover {
+            background: #3e8e41;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+        
+        .btn-submit i {
+            margin-left: 0.5em;
+        }
+        
+        .accordion {
+            margin-top: 2em;
+        }
+        
+        .accordion .card {
+            margin-bottom: 1em;
+            border: none;
+            border-radius: 8px !important;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        
+        .accordion .card-header {
+            background: var(--primary-color);
+            color: #fff;
+            cursor: pointer;
+            padding: 1em;
+            border: none;
+            transition: background 0.3s ease;
+        }
+        
+        .accordion .card-header:hover {
+            background: #1a2a3a;
+        }
+        
+        .accordion .card-header h5 {
+            margin: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .accordion .card-header h5::after {
+            content: '\f078';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            transition: transform 0.3s ease;
+        }
+        
+        .accordion .card-header.collapsed h5::after {
+            transform: rotate(0deg);
+        }
+        
+        .accordion .card-header:not(.collapsed) h5::after {
+            transform: rotate(180deg);
+        }
+        
+        .accordion .card-body {
+            background: #fff;
+            padding: 1.5em;
+        }
+        
+        .accordion .card-body p {
+            margin-bottom: 0.5em;
+        }
+        
+        .accordion .card-body a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .accordion .card-body a:hover {
+            color: #3e8e41;
+            text-decoration: underline;
+        }
+        
+        .contact-info-container {
+            background: #fff;
+            border-radius: 10px;
+            padding: 2em;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .contact-info-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .contact-info-container h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5em;
+            position: relative;
+            padding-bottom: 0.5em;
+        }
+        
+        .contact-info-container h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: var(--secondary-color);
+        }
+        
+        .contact-info-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1.5em;
+        }
+        
+        .contact-info-icon {
+            background: var(--secondary-color);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1em;
+            flex-shrink: 0;
+        }
+        
+        .contact-info-text h4 {
+            margin: 0 0 0.3em 0;
+            color: var(--primary-color);
+        }
+        
+        .contact-info-text p, .contact-info-text a {
+            margin: 0;
+            color: #555;
+        }
+        
+        .contact-info-text a {
+            display: block;
+            color: var(--secondary-color);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .contact-info-text a:hover {
+            color: #3e8e41;
+            text-decoration: underline;
+        }
+        
+        .social-media-container {
+            margin-top: 2em;
+        }
+        
+        .social-media-container h3 {
+            color: var(--primary-color);
+            margin-bottom: 1em;
+        }
+        
+        .social-media-links {
+            display: flex;
+            gap: 1em;
+        }
+        
+        .social-media-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            color: white;
+            text-decoration: none;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .social-media-link:hover {
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .social-media-link.facebook {
+            background: #3b5998;
+        }
+        
+        .social-media-link.twitter {
+            background: #1da1f2;
+        }
+        
+        .social-media-link.youtube {
+            background: #e02a20;
+        }
+        
+        .social-media-link.linkedin {
+            background: #0077b5;
+        }
+        
+        .map-container {
+            margin-top: 3em;
+            text-align: center;
+            background: #fff;
+            border-radius: 10px;
+            padding: 2em;
+            box-shadow: var(--shadow);
+        }
+        
+        .map-container h2 {
+            color: var(--primary-color);
+            margin-bottom: 1em;
+            position: relative;
+            padding-bottom: 0.5em;
+        }
+        
+        .map-container h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: var(--secondary-color);
+        }
+        
+        .map-container iframe {
+            width: 100%;
+            height: 450px;
+            border: none;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+        
+        .departments-section {
+            margin-top: 3em;
+        }
+        
+        .departments-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5em;
+            margin-top: 2em;
+        }
+        
+        .department-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 1.5em;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .department-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .department-card h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 0.5em;
+        }
+        
+        .department-card p {
+            margin-bottom: 1em;
+            color: #555;
+        }
+        
+        .department-card a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .department-card a:hover {
+            color: #3e8e41;
+            text-decoration: underline;
+        }
+        
+        .floating-message {
+            position: fixed;
+            bottom: 2em;
+            right: 2em;
+            background: var(--secondary-color);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            z-index: 999;
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+        
+        .floating-message:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            animation: none;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
+            }
+            70% {
+                box-shadow: 0 0 0 15px rgba(76, 175, 80, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+            }
+        }
+        
+        .response-message {
+            padding: 1em;
+            margin-top: 1em;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .response-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        .response-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        footer {
+            background: linear-gradient(135deg, var(--primary-color), #1a2a3a);
+            color: white;
+            padding: 3em 0 1em;
+            margin-top: 3em;
+        }
+        
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2em;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1em;
+        }
+        
+        .footer-column h5 {
+            font-size: 1.2em;
+            margin-bottom: 1.5em;
+            position: relative;
+            padding-bottom: 0.5em;
+        }
+        
+        .footer-column h5::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: var(--secondary-color);
+        }
+        
+        .footer-column p, .footer-column a {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 0.8em;
+            display: block;
+        }
+        
+        .footer-column a {
+            text-decoration: none;
+            transition: color 0.3s ease, padding-left 0.3s ease;
+        }
+        
+        .footer-column a:hover {
+            color: var(--secondary-color);
+            padding-left: 5px;
+        }
+        
+        .footer-column .social-links {
+            display: flex;
+            gap: 1em;
+            margin-top: 1em;
+        }
+        
+        .footer-column .social-links a {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-column .social-links a:hover {
+            background: var(--secondary-color);
+            transform: translateY(-3px);
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 3em;
+            padding-top: 1em;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9em;
+        }
+        
+        /* Loading animation */
+        .loader {
+            display: none;
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Floating form */
+        .floating-form-container {
+            position: fixed;
+            bottom: -100%;
+            right: 2em;
+            width: 350px;
+            background: white;
+            border-radius: 10px 10px 0 0;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            transition: bottom 0.4s ease;
+        }
+        
+        .floating-form-container.active {
+            bottom: 0;
+        }
+        
+        .floating-form-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 1em;
+            border-radius: 10px 10px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .floating-form-header h3 {
+            margin: 0;
+            font-size: 1.1em;
+        }
+        
+        .floating-form-header .close-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+        
+        .floating-form-body {
+            padding: 1.5em;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.2rem;
+            }
+            
+            header p {
+                font-size: 1rem;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            nav ul li {
+                margin: 0.5em 0;
+            }
+            
+            .floating-form-container {
+                width: 100%;
+                right: 0;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="animate__animated animate__fadeIn">
+        <h1>Contact Haramaya University</h1>
+        <p>We're here to help and answer any questions you might have</p>
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="{{url_for('aboutUs')}}"><i class="fas fa-info-circle"></i> About</a></li>
+            <li><a href="{{url_for('services')}}"><i class="fas fa-cogs"></i> Services</a></li>
+            <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+        </ul>
+    </nav>
+    
+    <div class="container">
+        <section id="contact" class="contact-section">
+            <div class="contact-form-container animate__animated animate__fadeInLeft">
+                <h2>Send Us a Message</h2>
+                <form id="contactForm" method="post">
+                    <div class="form-group">
+                        <label for="name">Your Name</label>
+                        <input type="text" id="name" name="name" class="form-control" required placeholder="Enter your full name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" class="form-control" required placeholder="Enter your email address">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="subject">Subject</label>
+                        <input type="text" id="subject" name="subject" class="form-control" required placeholder="What's this about?">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message">Your Message</label>
+                        <textarea id="message" name="message" class="form-control" required placeholder="Type your message here..."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn-submit">
+                        <span class="loader" id="formLoader"></span>
+                        Send Message <i class="fas fa-paper-plane"></i>
+                    </button>
+                    
+                    <div id="responseMessage" class="response-message"></div>
+                </form>
+            </div>
+            
+            <div class="contact-info-container animate__animated animate__fadeInRight">
+                <h2>Contact Information</h2>
+                
+                <div class="contact-info-item">
+                    <div class="contact-info-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="contact-info-text">
+                        <h4>Main Campus</h4>
+                        <p>Haramaya University, P.O. Box 138, Dire Dawa, Ethiopia</p>
+                    </div>
+                </div>
+                
+                <div class="contact-info-item">
+                    <div class="contact-info-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="contact-info-text">
+                        <h4>Email</h4>
+                        <a href="mailto:haramaya@haramaya.edu.et">haramaya@haramaya.edu.et</a>
+                        <a href="mailto:info@haramaya.edu.et">info@haramaya.edu.et</a>
+                    </div>
+                </div>
+                
+                <div class="contact-info-item">
+                    <div class="contact-info-icon">
+                        <i class="fas fa-phone-alt"></i>
+                    </div>
+                    <div class="contact-info-text">
+                        <h4>Phone</h4>
+                        <p>+251 25 530 319</p>
+                        <p>+251 25 530 320</p>
+                    </div>
+                </div>
+                
+                <div class="contact-info-item">
+                    <div class="contact-info-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="contact-info-text">
+                        <h4>Working Hours</h4>
+                        <p>Monday - Friday: 8:30 AM - 5:30 PM</p>
+                        <p>Saturday: 9:00 AM - 1:00 PM</p>
+                    </div>
+                </div>
+                
+                <div class="social-media-container">
+                    <h3>Connect With Us</h3>
+                    <div class="social-media-links">
+                        <a href="https://www.facebook.com/pg/HRMUNIV/" class="social-media-link facebook" target="_blank">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://twitter.com/haramayauniver4" class="social-media-link twitter" target="_blank">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="https://youtube.com/channel/UCd6Bb1Xc6FyycH0_DFmkxNQ" class="social-media-link youtube" target="_blank">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                        <a href="https://www.linkedin.com/school/haramaya-university/" class="social-media-link linkedin" target="_blank">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="departments-section">
+            <h2 class="text-center mb-5">University Offices & Departments</h2>
+            
+            <div class="accordion" id="contactAccordion">
+                <div class="card">
+                    <div class="card-header" id="headingOne" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link text-white">
+                                President Office
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#contactAccordion">
+                        <div class="card-body">
+                            <p><strong>Email:</strong> <a href="mailto:president@haramaya.edu.et">president@haramaya.edu.et</a></p>
+                            <p><strong>Phone:</strong> +251 25 530 319</p>
+                            <p><strong>Location:</strong> Main Administration Building, 2nd Floor</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header collapsed" id="headingTwo" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link text-white">
+                                Vice President for Academic Affairs
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#contactAccordion">
+                        <div class="card-body">
+                            <p><strong>Email:</strong> <a href="mailto:vpaa@haramaya.edu.et">vpaa@haramaya.edu.et</a></p>
+                            <p><strong>Phone:</strong> +251 25 530 320</p>
+                            <p><strong>Location:</strong> Main Administration Building, 1st Floor</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header collapsed" id="headingThree" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link text-white">
+                                Vice President for Administrative and Development
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#contactAccordion">
+                        <div class="card-body">
+                            <p><strong>Email:</strong> <a href="mailto:vpad@haramaya.edu.et">vpad@haramaya.edu.et</a></p>
+                            <p><strong>Phone:</strong> +251 25 530 321</p>
+                            <p><strong>Location:</strong> Main Administration Building, 1st Floor</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header collapsed" id="headingFour" data-toggle="collapse" data-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link text-white">
+                                Vice President for Research and Community Engagement
+                            </button>
+                        </h5>
+                    </div>
+                    <div id="collapseFour" class="collapse" aria-labelledby="headingFour" data-parent="#contactAccordion">
+                        <div class="card-body">
+                            <p><strong>Email:</strong> <a href="mailto:vprce@haramaya.edu.et">vprce@haramaya.edu.et</a></p>
+                            <p><strong>Phone:</strong> +251 25 530 322</p>
+                            <p><strong>Location:</strong> Research and Community Engagement Building</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="departments-container">
+                <div class="department-card animate__animated animate__fadeInUp" style="animation-delay: 0.1s;">
+                    <h3><i class="fas fa-graduation-cap"></i> Registrar Office</h3>
+                    <p>Handles student admissions, registration, records, and graduation processes.</p>
+                    <a href="mailto:registrar@haramaya.edu.et">registrar@haramaya.edu.et</a>
+                    <p>+251 25 530 323</p>
+                </div>
+                
+                <div class="department-card animate__animated animate__fadeInUp" style="animation-delay: 0.2s;">
+                    <h3><i class="fas fa-book"></i> Library Services</h3>
+                    <p>Access to academic resources, research materials, and digital libraries.</p>
+                    <a href="mailto:library@haramaya.edu.et">library@haramaya.edu.et</a>
+                    <p>+251 25 530 324</p>
+                </div>
+                
+                <div class="department-card animate__animated animate__fadeInUp" style="animation-delay: 0.3s;">
+                    <h3><i class="fas fa-home"></i> Student Services</h3>
+                    <p>Housing, counseling, and support services for students.</p>
+                    <a href="mailto:studentservices@haramaya.edu.et">studentservices@haramaya.edu.et</a>
+                    <p>+251 25 530 325</p>
+                </div>
+                
+                <div class="department-card animate__animated animate__fadeInUp" style="animation-delay: 0.4s;">
+                    <h3><i class="fas fa-globe"></i> International Relations</h3>
+                    <p>Study abroad programs, international student services, and partnerships.</p>
+                    <a href="mailto:international@haramaya.edu.et">international@haramaya.edu.et</a>
+                    <p>+251 25 530 326</p>
+                </div>
+            </div>
+        </section>
+        
+        <section class="map-container animate__animated animate__fadeIn">
+            <h2>Our Location</h2>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3941.9999999999995!2d41.839999999999996!3d9.410000000000002!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0:0x0!2zM9KwMjQnMzYuMCJOIDQxwrA1MCc0OC4wIkU!5e0!3m2!1sen!2set!4v1616580000000!5m2!1sen!2set" allowfullscreen="" loading="lazy"></iframe>
+        </section>
+    </div>
+    
+    <div class="floating-message" id="floatingMessageBtn">
+        <i class="fas fa-comment-alt"></i>
+    </div>
+    
+    <div class="floating-form-container" id="floatingFormContainer">
+        <div class="floating-form-header">
+            <h3>Quick Message</h3>
+            <button class="close-btn" id="closeFloatingForm">&times;</button>
+        </div>
+        <div class="floating-form-body">
+            <form id="quickContactForm">
+                <div class="form-group">
+                    <input type="text" id="quickName" name="name" class="form-control" required placeholder="Your Name">
+                </div>
+                
+                <div class="form-group">
+                    <input type="email" id="quickEmail" name="email" class="form-control" required placeholder="Your Email">
+                </div>
+                
+                <div class="form-group">
+                    <textarea id="quickMessage" name="message" class="form-control" required placeholder="Your Message" rows="4"></textarea>
+                </div>
+                
+                <button type="submit" class="btn-submit" style="width: 100%;">
+                    <span class="loader" id="quickFormLoader"></span>
+                    Send <i class="fas fa-paper-plane"></i>
+                </button>
+                
+                <div id="quickResponseMessage" class="response-message"></div>
+            </form>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="footer-container">
+            <!-- About Column -->
+            <div class="footer-column">
+                <h5>About Haramaya</h5>
+                <p>Haramaya University is one of the oldest higher education institutions in Ethiopia, committed to excellence in teaching, research, and community service.</p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/pg/HRMUNIV/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://twitter.com/haramayauniver4" target="_blank"><i class="fab fa-twitter"></i></a>
+                    <a href="https://youtube.com/channel/UCd6Bb1Xc6FyycH0_DFmkxNQ" target="_blank"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+    
+            <!-- Quick Links Column -->
+            <div class="footer-column">
+                <h5>Quick Links</h5>
+                <ul>
+                    <li><a href="https://www.haramaya.edu.et" target="_blank">University Website</a></li>
+                    <li><a href="https://www.haramaya.edu.et/admission/" target="_blank">Admissions</a></li>
+                    <li><a href="https://www.haramaya.edu.et/academics/" target="_blank">Academics</a></li>
+                    <li><a href="https://www.haramaya.edu.et/research/" target="_blank">Research</a></li>
+                    <li><a href="https://www.haramaya.edu.et/contact/" target="_blank">Contact</a></li>
+                </ul>
+            </div>
+    
+            <!-- Contact Info Column -->
+            <div class="footer-column">
+                <h5>Contact Us</h5>
+                <p>Haramaya University<br>
+                P.O. Box 138, Dire Dawa, Ethiopia</p>
+                <p><i class="fas fa-phone-alt"></i> +251 25 553 0089</p>
+                <p><i class="fas fa-envelope"></i> info@haramaya.edu.et</p>
+            </div>
+        </div>
+    
+        <!-- Bottom Footer -->
+        <div class="footer-bottom">
+            <p>&copy; 2025 Haramaya University. All rights reserved.</p>
+        </div>
+    </footer>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation/1.19.3/jquery.validate.min.js"></script>
+
+    <script src="scripts/contact.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Floating message button click event
+            $('#floatingMessageBtn').click(function() {
+                $('#floatingFormContainer').toggleClass('active');
+            });
+            
+            // Close button click event
+            $('#closeFloatingForm').click(function() {
+                $('#floatingFormContainer').removeClass('active');
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            // Form submission for contact form
+            $('#contactForm').on('submit', function(e) {
+                e.preventDefault();
+                $('#formLoader').show();
+                $('#responseMessage').hide();
+                
+                $.ajax({
+                    type: 'POST',
+                    url: '/send_message',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        $('#formLoader').hide();
+                        $('#responseMessage').addClass('success').text(response.message).fadeIn();
+                        $('#contactForm')[0].reset();
+                    },
+                    error: function(xhr, status, error) {
+                        $('#formLoader').hide();
+                        $('#responseMessage').addClass('error').text('An error occurred. Please try again.').fadeIn();
+                    }
+                });
+            });
+            
+            // Form submission for quick contact form
+            $('#quickContactForm').on('submit', function(e) {
+                e.preventDefault();
+                $('#quickFormLoader').show();
+                $('#quickResponseMessage').hide();
+                
+                $.ajax({
+                    type: 'POST',
+                    url: '/send_quick_message',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        $('#quickFormLoader').hide();
+                        $('#quickResponseMessage').addClass('success').text(response.message).fadeIn();
+                        $('#quickContactForm')[0].reset();
+                    },
+                    error: function(xhr, status, error) {
+                        $('#quickFormLoader').hide();
+                        $('#quickResponseMessage').addClass('error').text('An error occurred. Please try again.').fadeIn();
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
+        // Smooth scrolling for anchor links
+        $('a[href^="#"]').on('click', function(event) {
+            var target = $(this.getAttribute('href'));
+            if (target.length) {
+                event.preventDefault();
+                $('html, body').stop().animate({
+                    scrollTop: target.offset().top
+                }, 1000);
+            }
+        });
+    </script>
+    <script>
+        // Show loader on form submission
+        $('#contactForm').on('submit', function() {
+            $('#formLoader').show();
+        });
+        
+        // Hide loader after form submission
+        $('#contactForm').on('ajaxComplete', function() {
+            $('#formLoader').hide();
+        });
+        // Show loader on quick contact form submission
+        $('#quickContactForm').on('submit', function() {
+            $('#quickFormLoader').show();
+        });
+
+        // Hide loader after quick contact form submission
+        $('#quickContactForm').on('ajaxComplete', function() {
+            $('#quickFormLoader').hide();
+        });
+    </script>
+    <!-- Additional JavaScript for form validation and enhancements-->
+    <script>
+        $(document).ready(function() {
+            // Validate contact form
+            $('#contactForm').validate({
+                rules: {
+                    name: "required",
+                    email: {
+                        required: true,
+                        email: true
+                    },
+                    subject: "required",
+                    message: "required"
+                },
+                messages: {
+                    name: "Please enter your name",
+                    email: {
+                        required: "Please enter your email",
+                        email: "Please enter a valid email address"
+                    },
+                    subject: "Please enter a subject",
+                    message: "Please enter your message"
+                }
+            });
+            
+            // Validate quick contact form
+            $('#quickContactForm').validate({
+                rules: {
+                    name: "required",
+                    email: {
+                        required: true,
+                        email: true
+                    },
+                    message: "required"
+                },
+                messages: {
+                    name: "Please enter your name",
+                    email: {
+                        required: "Please enter your email",
+                        email: "Please enter a valid email address"
+                    },
+                    message: "Please enter your message"
+                }
+            });
+        });
+    </script>
+    <script>
+        // Show response message for a few seconds and then hide it
+        function showResponseMessage(message, type) {
+            var responseMessage = $('#responseMessage');
+            responseMessage.removeClass('success error').addClass(type).text(message).fadeIn().delay(3000).fadeOut();
+        }
+        function showQuickResponseMessage(message, type) {
+            var quickResponseMessage = $('#quickResponseMessage');
+            quickResponseMessage.removeClass('success error').addClass(type).text(message).fadeIn().delay(3000).fadeOut();
+        }
+    </script>
+    <script>
+        // Show/hide the floating form on button click
+        $('#floatingMessageBtn').on('click', function() {
+            $('#floatingFormContainer').toggleClass('active');
+        });
+        
+        // Close the floating form when clicking outside of it
+        $(document).on('click', function(event) {
+            if (!$(event.target).closest('#floatingFormContainer, #floatingMessageBtn').length) {
+                $('#floatingFormContainer').removeClass('active');
+            }
+        });
+    </script>
+    <script>
+        // Show/hide the loader on form submission
+        $('#contactForm').on('submit', function() {
+            $('#formLoader').show();
+        });
+        
+        // Hide loader after form submission
+        $('#contactForm').on('ajaxComplete', function() {
+            $('#formLoader').hide();
+        });
+        // Show/hide the loader on quick contact form submission
+        $('#quickContactForm').on('submit', function() {
+            $('#quickFormLoader').show();
+        });
+        // Hide loader after quick contact form submission
+        $('#quickContactForm').on('ajaxComplete', function() {
+            $('#quickFormLoader').hide();
+        });
+    </script>
+    <!-- Additional JavaScript for enhancements and functionality can be added here -->
+</body>
+</html>
+
+
+    
+               

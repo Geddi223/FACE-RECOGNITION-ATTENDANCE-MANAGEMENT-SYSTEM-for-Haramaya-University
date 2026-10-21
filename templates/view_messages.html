@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Haramaya University - Notifications Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Noto+Sans+Ethiopic:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --hu-blue: #003366;
+            --hu-green: #006633;
+            --hu-gold: #CC9900;
+            --hu-light: #f8f9fa;
+            --hu-dark: #212529;
+        }
+        
+        body {
+            font-family: 'Roboto', 'Noto Sans Ethiopic', sans-serif;
+            background-color: #f5f5f5;
+        }
+        
+        .notification-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        }
+        
+        .notification-header {
+            color: var(--hu-blue);
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--hu-blue);
+            margin-bottom: 20px;
+        }
+        
+        .notification-tabs .nav-link {
+            color: var(--hu-blue);
+            font-weight: 500;
+            border: none;
+            padding: 10px 20px;
+            margin-right: 5px;
+            border-radius: 5px 5px 0 0;
+        }
+        
+        .notification-tabs .nav-link.active {
+            background-color: var(--hu-blue);
+            color: white;
+        }
+        
+        .notification-card {
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+        }
+        
+        .notification-item {
+            padding: 15px;
+            border-left: 4px solid transparent;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .notification-item.unread {
+            background-color: rgba(0, 102, 204, 0.05);
+            border-left-color: var(--hu-blue);
+        }
+        
+        .notification-item.type-attendance { border-left-color: #17a2b8; }
+        .notification-item.type-payroll { border-left-color: var(--hu-green); }
+        .notification-item.type-security { border-left-color: #dc3545; }
+        .notification-item.type-general { border-left-color: var(--hu-blue); }
+        .notification-item.type-permission { border-left-color: var(--hu-gold); }
+        .notification-item.type-message { border-left-color: #6f42c1; }
+        .notification-item.type-bug { border-left-color: #fd7e14; }
+        
+        .notification-time {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+        
+        .notification-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 0.75rem;
+        }
+        .toast-container {
+            z-index: 1100;
+        }
+        .toast {
+            transition: opacity 0.15s ease-in-out;
+        }
+        .action-buttons .btn {
+            margin-right: 8px;
+            margin-top: 10px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+        }
+        
+        .empty-state i {
+            font-size: 50px;
+            margin-bottom: 15px;
+            color: #dee2e6;
+        }
+        
+        .status-badge {
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 10px;
+        }
+        
+        .status-pending { background-color: #fff3cd; color: #856404; }
+        .status-approved { background-color: #d4edda; color: #155724; }
+        .status-rejected { background-color: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="notification-container">
+        <h2 class="notification-header">
+            <i class="fas fa-bell me-2"></i>Notifications Center
+        </h2>
+        
+        <ul class="nav nav-tabs notification-tabs" id="notificationTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button">
+                    All <span class="badge bg-secondary" id="all-count">0</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="unread-tab" data-bs-toggle="tab" data-bs-target="#unread" type="button">
+                    Unread <span class="badge bg-primary" id="unread-count">0</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="alerts-tab" data-bs-toggle="tab" data-bs-target="#alerts" type="button">
+                    Alerts <span class="badge bg-warning" id="alerts-count">0</span>
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="messages-tab" data-bs-toggle="tab" data-bs-target="#messages" type="button">
+                    Messages <span class="badge bg-info" id="messages-count">0</span>
+                </button>
+            </li>
+        </ul>
+        
+        <div class="tab-content mt-3">
+            <!-- All Notifications Tab -->
+            <div class="tab-pane fade show active" id="all" role="tabpanel">
+                <div id="all-notifications">
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Loading notifications...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Unread Notifications Tab -->
+            <div class="tab-pane fade" id="unread" role="tabpanel">
+                <div id="unread-notifications"></div>
+            </div>
+            
+            <!-- Alerts Tab -->
+            <div class="tab-pane fade" id="alerts" role="tabpanel">
+                <div id="alert-notifications"></div>
+            </div>
+            
+            <!-- Messages Tab -->
+            <div class="tab-pane fade" id="messages" role="tabpanel">
+                <div id="message-notifications"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Item Template -->
+    <template id="notificationTemplate">
+        <div class="notification-card">
+            <div class="notification-item" data-id="" data-type="" data-read="">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <h5 class="mb-1 notification-title"></h5>
+                        <p class="mb-1 notification-content"></p>
+                        <small class="notification-time"></small>
+                    </div>
+                    <div>
+                        <span class="badge notification-badge rounded-pill"></span>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn btn-sm btn-outline-primary mark-as-read">
+                        <i class="fas fa-check me-1"></i> Mark as Read
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger delete-notification">
+                        <i class="fas fa-trash me-1"></i> Delete
+                    </button>
+                    <a href="#" class="btn btn-sm btn-outline-secondary view-details" style="display: none;">
+                        <i class="fas fa-eye me-1"></i> View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Empty State Template -->
+    <template id="emptyStateTemplate">
+        <div class="empty-state">
+            <i class="fas fa-bell-slash"></i>
+            <h5>No notifications found</h5>
+            <p class="text-muted">You're all caught up!</p>
+        </div>
+    </template>
+    <template id="permission-template">
+        <div class="card mb-3 permission-item">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 permission-type"></h5>
+                <span class="permission-status badge"></span>
+            </div>
+            <div class="card-body">
+                <p class="permission-reason"></p>
+                
+                <div class="employee-info mb-2" style="display: none;">
+                    <strong>Employee:</strong> <span class="employee-name"></span>
+                </div>
+                
+                <div class="mb-2">
+                    <a href="#" class="file-link btn btn-sm btn-outline-primary" style="display: none;">
+                        <i class="fas fa-file me-1"></i> View Attachment
+                    </a>
+                </div>
+                
+                <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted submission-time"></small>
+                    <div class="permission-actions"></div>
+                </div>
+            </div>
+        </div>
+    </template>
+    
+    <!-- Permissions Container -->
+    <div class="container mt-4">
+        <h2 class="mb-4">Permission Requests</h2>
+        
+        <div class="d-flex justify-content-between mb-3">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newPermissionModal">
+                <i class="fas fa-plus me-1"></i> New Request
+            </button>
+            <button class="btn btn-outline-secondary" onclick="refreshPermissions()">
+                <i class="fas fa-sync-alt me-1"></i> Refresh
+            </button>
+        </div>
+        
+        <div id="permissions-container">
+            <!-- Permissions will be rendered here -->
+        </div>
+    </div>
+    
+    <!-- New Permission Modal -->
+    <div class="modal fade" id="newPermissionModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">New Permission Request</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="permissionForm">
+                        <div class="mb-3">
+                            <label class="form-label">Type</label>
+                            <select class="form-select" name="permission_type" required>
+                                <option value="">Select type...</option>
+                                <option value="leave">Leave Request</option>
+                                <option value="remote">Remote Work</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Reason</label>
+                            <textarea class="form-control" name="permission_reason" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Attachment (Optional)</label>
+                            <input type="file" class="form-control" name="permission_file">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="submitPermissionForm()">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script>
+        // Global variables
+        let notifications = [];
+        let currentUserId = 1; // In real app, get from session
+        
+        // Initialize WebSocket connection
+        const socketProtocol = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+        const socketUrl = socketProtocol + window.location.host + '/notifications';
+        const socket = new WebSocket(socketUrl);
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Request notification permission
+            requestNotificationPermission();
+            
+            // Load initial notifications and permissions
+            fetchNotifications();
+            loadPermissionRequests();
+            
+            // Set up WebSocket handlers
+            socket.onopen = function() {
+                console.log('WebSocket connection established');
+                // Send user ID to server
+                socket.send(JSON.stringify({
+                    type: 'register',
+                    user_id: currentUserId
+                }));
+            };
+            
+            socket.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                
+                if (data.type === 'new_notification') {
+                    // Only add if notification is for current user or broadcast
+                    if (!data.user_id || data.user_id === currentUserId) {
+                        addNewNotification(data.notification);
+                        updateBadges();
+                        showDesktopNotification(data.notification);
+                    }
+                }
+                else if (data.type === 'notification_update') {
+                    handleNotificationUpdate(data);
+                }
+                else if (data.type === 'permission_update') {
+                    loadPermissionRequests(); // Refresh permission list
+                }
+            };
+            
+            socket.onclose = function() {
+                console.log('WebSocket connection closed');
+            };
+        });
+        
+        // Fetch notifications from server
+        function fetchNotifications() {
+            fetch(`/api/notifications?user_id=${currentUserId}`)
+                .then(response => response.json())
+                .then(data => {
+                    notifications = data.notifications;
+                    renderNotifications();
+                    updateBadges();
+                })
+                .catch(error => {
+                    console.error('Error fetching notifications:', error);
+                    showError('Failed to load notifications');
+                });
+        }
+        
+        // Render notifications in all tabs
+        function renderNotifications() {
+            renderTab('all', notifications);
+            renderTab('unread', notifications.filter(n => !n.is_read));
+            renderTab('alerts', notifications.filter(n => 
+                ['security', 'attendance', 'bug'].includes(n.type)));
+            renderTab('messages', notifications.filter(n => n.type === 'message'));
+        }
+        
+        // Render notifications in a specific tab
+        function renderTab(tabId, items) {
+            const container = document.getElementById(`${tabId}-notifications`);
+            container.innerHTML = '';
+            
+            if (items.length === 0) {
+                const emptyState = document.getElementById('emptyStateTemplate').content.cloneNode(true);
+                container.appendChild(emptyState);
+                return;
+            }
+            
+            items.forEach(notification => {
+                const template = document.getElementById('notificationTemplate').content.cloneNode(true);
+                const item = template.querySelector('.notification-item');
+                
+                item.setAttribute('data-id', notification.id);
+                item.setAttribute('data-type', notification.type);
+                item.setAttribute('data-read', notification.is_read);
+                item.classList.add(`type-${notification.type}`);
+                
+                if (!notification.is_read) {
+                    item.classList.add('unread');
+                }
+                
+                template.querySelector('.notification-title').textContent = notification.title;
+                template.querySelector('.notification-content').textContent = notification.message;
+                template.querySelector('.notification-time').textContent = formatTime(notification.timestamp);
+                template.querySelector('.notification-badge').textContent = notification.type.charAt(0).toUpperCase() + notification.type.slice(1);
+                template.querySelector('.notification-badge').classList.add('bg-' + getBadgeClass(notification.type));
+                
+                // Add event listeners to buttons
+                template.querySelector('.mark-as-read').addEventListener('click', () => markAsRead(notification.id));
+                template.querySelector('.delete-notification').addEventListener('click', () => deleteNotification(notification.id));
+                
+                // Add view details button if link exists
+                if (notification.link) {
+                    const viewBtn = template.querySelector('.view-details');
+                    viewBtn.style.display = 'inline-block';
+                    viewBtn.href = notification.link;
+                }
+                
+                container.appendChild(template);
+            });
+        }
+        
+        // Mark notification as read
+        function markAsRead(notificationId) {
+            fetch(`/api/notifications/${notificationId}/read`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Update local data
+                    const notification = notifications.find(n => n.id === notificationId);
+                    if (notification) {
+                        notification.is_read = true;
+                        renderNotifications();
+                        updateBadges();
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error marking notification as read:', error);
+            });
+        }
+        
+        // Delete notification
+        function deleteNotification(notificationId) {
+            if (!confirm('Are you sure you want to delete this notification?')) {
+                return;
+            }
+            
+            fetch(`/api/notifications/${notificationId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Remove from local array
+                    notifications = notifications.filter(n => n.id !== notificationId);
+                    renderNotifications();
+                    updateBadges();
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting notification:', error);
+            });
+        }
+        
+        // Add new notification (from WebSocket)
+        function addNewNotification(notification) {
+            // Check if notification already exists
+            if (!notifications.some(n => n.id === notification.id)) {
+                notifications.unshift(notification);
+                renderNotifications();
+                updateBadges();
+            }
+        }
+        
+        // Handle notification updates from WebSocket
+        function handleNotificationUpdate(data) {
+            if (data.type === 'read' || data.type === 'delete') {
+                // Refresh notifications if they affect current user
+                if (!data.user_id || data.user_id === currentUserId) {
+                    fetchNotifications();
+                }
+            }
+        }
+        
+        // Show desktop notification
+        function showDesktopNotification(notification) {
+            if (Notification.permission === 'granted') {
+                new Notification(notification.title, {
+                    body: notification.message,
+                    icon: 'https://www.haramaya.edu.et/wp-content/uploads/2022/05/haramaya-university-logo.png'
+                });
+            }
+        }
+        
+        // Request notification permission
+        function requestNotificationPermission() {
+            if (Notification.permission !== 'denied') {
+                Notification.requestPermission().then(permission => {
+                    console.log('Notification permission:', permission);
+                });
+            }
+        }
+        
+        // Update badge counts
+        function updateBadges() {
+            const unreadCount = notifications.filter(n => !n.is_read).length;
+            const messageCount = notifications.filter(n => n.type === 'message').length;
+            const alertCount = notifications.filter(n => 
+                ['security', 'attendance', 'bug'].includes(n.type)).length;
+            
+            document.getElementById('all-count').textContent = notifications.length;
+            document.getElementById('unread-count').textContent = unreadCount;
+            document.getElementById('messages-count').textContent = messageCount;
+            document.getElementById('alerts-count').textContent = alertCount;
+            
+            // Update browser tab title
+            document.title = unreadCount > 0 ? `(${unreadCount}) Notifications` : 'Notifications';
+        }
+        
+        // Format timestamp
+        function formatTime(timestamp) {
+            return moment(timestamp).fromNow();
+        }
+        
+        // Get badge class based on notification type
+        function getBadgeClass(type) {
+            const classes = {
+                'attendance': 'info',
+                'payroll': 'success',
+                'security': 'danger',
+                'general': 'primary',
+                'permission': 'warning',
+                'message': 'info',
+                'bug': 'danger'
+            };
+            return classes[type] || 'secondary';
+        }
+        
+        // Show error message
+        function showError(message) {
+            const alert = document.createElement('div');
+            alert.className = 'alert alert-danger alert-dismissible fade show';
+            alert.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.querySelector('.notification-container').prepend(alert);
+        }
+        
+        // Show toast message
+        function showToast(message, type = 'success') {
+            const toastContainer = document.getElementById('toast-container') || createToastContainer();
+            const toast = document.createElement('div');
+            toast.className = `toast show align-items-center text-white bg-${type}`;
+            toast.setAttribute('role', 'alert');
+            toast.setAttribute('aria-live', 'assertive');
+            toast.setAttribute('aria-atomic', 'true');
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">${message}</div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            `;
+            toastContainer.appendChild(toast);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 150);
+            }, 5000);
+        }
+        
+        function createToastContainer() {
+            const container = document.createElement('div');
+            container.id = 'toast-container';
+            container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+            container.style.zIndex = '11';
+            document.body.appendChild(container);
+            return container;
+        }
+        async function fetchPermissions(userId, employeeId = null) {
+            try {
+                let url = `/api/permissions?user_id=${userId}`;
+                if (employeeId) {
+                    url += `&employee_id=${employeeId}`;
+                }
+        
+                const response = await fetch(url);
+                const data = await response.json();
+        
+                if (!response.ok || !data.success) {
+                    throw new Error(data.error || 'Failed to fetch permissions');
+                }
+        
+                return data.permissions;
+            } catch (error) {
+                console.error('Error fetching permissions:', error);
+                showError('Failed to load permissions. Please try again.');
+                return [];
+            }
+        }
+        
+        async function createPermission(permissionData) {
+            try {
+                const response = await fetch('/api/permissions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(permissionData)
+                });
+        
+                const data = await response.json();
+        
+                if (!response.ok || !data.success) {
+                    throw new Error(data.error || 'Failed to create permission');
+                }
+        
+                return data;
+            } catch (error) {
+                console.error('Error creating permission:', error);
+                showError('Failed to submit permission request. Please try again.');
+                throw error;
+            }
+        }
+        
+        async function updatePermissionStatus(permissionId, newStatus) {
+            try {
+                const response = await fetch(`/api/permissions/${permissionId}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ status: newStatus })
+                });
+        
+                const data = await response.json();
+        
+                if (!response.ok || !data.success) {
+                    throw new Error(data.error || 'Failed to update permission status');
+                }
+        
+                return data;
+            } catch (error) {
+                console.error('Error updating permission status:', error);
+                showError('Failed to update permission status. Please try again.');
+                throw error;
+            }
+        }
+        
+        // Permission request functions
+        function loadPermissionRequests() {
+            fetch('/api/permissions?user_id=' + currentUserId)
+                .then(response => response.json())
+                .then(data => {
+                    renderPermissionRequests(data.permissions);
+                })
+                .catch(error => {
+                    console.error('Error loading permissions:', error);
+                    showToast('Failed to load permission requests', 'danger');
+                });
+        }
+        
+        function renderPermissionRequests(permissions) {
+            const container = document.getElementById('permission-requests');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            if (permissions.length === 0) {
+                container.innerHTML = '<div class="alert alert-info">No pending permission requests</div>';
+                return;
+            }
+            
+            permissions.forEach(perm => {
+                const card = document.createElement('div');
+                card.className = 'card mb-3';
+                card.innerHTML = `
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">${perm.employee_name} - ${perm.permission_type}</h5>
+                        <span class="badge rounded-pill bg-${perm.status === 'pending' ? 'warning' : perm.status === 'accepted' ? 'success' : 'danger'}">
+                            ${perm.status}
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">${perm.reason}</p>
+                        ${perm.file_path ? `
+                        <div class="mb-2">
+                            <a href="${perm.file_path}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-file me-1"></i> View Attachment
+                            </a>
+                        </div>
+                        ` : ''}
+                        <small class="text-muted">Submitted ${formatTime(perm.submitted_at)}</small>
+                        ${perm.status === 'pending' ? `
+                        <div class="mt-3 d-flex">
+                            <button class="btn btn-success btn-sm me-2" onclick="handlePermission(${perm.id}, 'accept')">
+                                <i class="fas fa-check me-1"></i> Accept
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="handlePermission(${perm.id}, 'decline')">
+                                <i class="fas fa-times me-1"></i> Decline
+                            </button>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+        function renderPermissions(permissions, containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+        
+            container.innerHTML = '';
+        
+            if (permissions.length === 0) {
+                container.innerHTML = '<div class="alert alert-info">No permissions found</div>';
+                return;
+            }
+        
+            const template = document.getElementById('permission-template');
+            if (!template) {
+                console.error('Permission template not found');
+                return;
+            }
+        
+            permissions.forEach(perm => {
+                const clone = template.content.cloneNode(true);
+                
+                // Fill in the template with permission data
+                clone.querySelector('.permission-type').textContent = perm.permission_type;
+                clone.querySelector('.permission-reason').textContent = perm.permission_reason;
+                clone.querySelector('.permission-status').textContent = perm.status;
+                clone.querySelector('.permission-status').className = `badge rounded-pill bg-${getStatusBadgeClass(perm.status)}`;
+                clone.querySelector('.submission-time').textContent = new Date(perm.submitted_at).toLocaleString();
+                
+                if (perm.file_path) {
+                    const fileLink = clone.querySelector('.file-link');
+                    fileLink.href = perm.file_path;
+                    fileLink.style.display = 'inline-block';
+                }
+                
+                // Add employee info if available
+                if (perm.employee) {
+                    clone.querySelector('.employee-info').textContent = `${perm.employee.full_name} (${perm.employee.employee_id})`;
+                    clone.querySelector('.employee-info').style.display = 'block';
+                }
+                
+                // Add action buttons based on status
+                const actionsDiv = clone.querySelector('.permission-actions');
+                if (perm.status === 'pending') {
+                    actionsDiv.innerHTML = `
+                        <button class="btn btn-sm btn-success me-2" onclick="handlePermissionAction(${perm.id}, 'accepted')">
+                            <i class="fas fa-check me-1"></i> Accept
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="handlePermissionAction(${perm.id}, 'declined')">
+                            <i class="fas fa-times me-1"></i> Decline
+                        </button>
+                    `;
+                } else {
+                    actionsDiv.innerHTML = `<span class="text-muted">Action completed</span>`;
+                }
+                
+                container.appendChild(clone);
+            });
+        }
+        
+        function getStatusBadgeClass(status) {
+            switch (status) {
+                case 'accepted': return 'success';
+                case 'declined': return 'danger';
+                default: return 'warning';
+            }
+        }
+        
+        // Event Handlers
+        async function handlePermissionAction(permissionId, action) {
+            try {
+                const result = await updatePermissionStatus(permissionId, action);
+                if (result.success) {
+                    showToast(`Permission ${action} successfully`);
+                    // Refresh the permissions list
+                    const permissions = await fetchPermissions(currentUserId);
+                    renderPermissions(permissions, 'permissions-container');
+                }
+            } catch (error) {
+                console.error('Error handling permission action:', error);
+            }
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Load permissions for the current user
+            const permissions = await fetchPermissions(currentUserId);
+            renderPermissions(permissions, 'permissions-container');
+        });
+        function handlePermission(permissionId, action) {
+            if (!['accept', 'decline'].includes(action)) return;
+            
+            fetch(`/api/permissions/${permissionId}/${action}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    showToast(`Permission request ${action}ed`, 'success');
+                    loadPermissionRequests();
+                } else {
+                    throw new Error('Failed to process permission');
+                }
+            })
+            .catch(error => {
+                console.error('Error handling permission:', error);
+                showToast('Failed to process permission', 'danger');
+            });
+        }
+    </script>
+</body>
+</html>

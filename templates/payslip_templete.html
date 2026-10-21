@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payslip</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .payslip-container {
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 600px;
+            margin: auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+        .header p {
+            margin: 0;
+            font-size: 14px;
+            color: #555;
+        }
+        .details {
+            margin-bottom: 20px;
+        }
+        .details p {
+            margin: 5px 0;
+        }
+        .salary-breakdown {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .salary-breakdown th, .salary-breakdown td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+        .salary-breakdown th {
+            background-color: #f9f9f9;
+        }
+        .footer {
+            text-align: center;
+            font-size: 12px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="payslip-container">
+        <div class="header">
+            <h1>Payslip</h1>
+            <p>Month: {{ payroll.month }}</p>
+        </div>
+        <div class="details">
+            <p><strong>Employee Name:</strong> {{ current_user.username }}</p>
+            <p><strong>Employee ID:</strong> {{ current_user.id }}</p>
+        </div>
+        <table class="salary-breakdown">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Basic Salary</td>
+                    <td>{{ payroll.basic_salary }}</td>
+                </tr>
+                <tr>
+                    <td>Deductions</td>
+                    <td>{{ payroll.deductions }}</td>
+                </tr>
+                <tr>
+                    <td>Bonuses</td>
+                    <td>{{ payroll.bonuses }}</td>
+                </tr>
+                <tr>
+                    <td><strong>Net Pay</strong></td>
+                    <td><strong>{{ payroll.net_pay }}</strong></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="footer">
+            <p>Generated on {{ payroll.created_at.strftime('%Y-%m-%d') }}</p>
+        </div>
+    </div>
+</body>
+</html>

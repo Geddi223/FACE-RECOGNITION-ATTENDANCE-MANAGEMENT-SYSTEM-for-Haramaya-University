@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Haramaya University</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --hu-green: #006633;
+            --hu-gold: #FFCC00;
+            --hu-light: #f8f9fa;
+            --hu-dark: #343a40;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+        
+        .hero-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/static/images/hu-campus-wide.jpg') no-repeat center center;
+            background-size: cover;
+            color: white;
+            padding: 120px 0 80px;
+            text-align: center;
+            position: relative;
+            clip-path: polygon(0 0, 100% 0, 100% 90%, 0% 100%);
+            margin-bottom: 60px;
+        }
+        
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+        }
+        
+        .hero-subtitle {
+            font-size: 1.5rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            opacity: 0.9;
+        }
+        
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            color: var(--hu-green);
+            font-weight: 700;
+            margin-bottom: 2rem;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: var(--hu-gold);
+        }
+        
+        .about-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: all 0.4s ease;
+            border-left: 5px solid var(--hu-green);
+        }
+        
+        .about-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+        }
+        
+        .icon-box {
+            width: 70px;
+            height: 70px;
+            background: var(--hu-green);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        
+        .about-card:hover .icon-box {
+            background: var(--hu-gold);
+            transform: rotate(15deg) scale(1.1);
+        }
+        
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 0;
+        }
+        
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            background: var(--hu-gold);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -2px;
+        }
+        
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            width: 50%;
+            box-sizing: border-box;
+            margin-bottom: 30px;
+        }
+        
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: var(--hu-green);
+            border-radius: 50%;
+            top: 15px;
+            z-index: 1;
+        }
+        
+        .left {
+            left: 0;
+            text-align: right;
+        }
+        
+        .right {
+            left: 50%;
+            text-align: left;
+        }
+        
+        .left::after {
+            right: -10px;
+        }
+        
+        .right::after {
+            left: -10px;
+        }
+        
+        .timeline-content {
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            position: relative;
+        }
+        
+        .timeline-content::before {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            top: 15px;
+        }
+        
+        .left .timeline-content::before {
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-left: 10px solid white;
+            right: -10px;
+        }
+        
+        .right .timeline-content::before {
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-right: 10px solid white;
+            left: -10px;
+        }
+        
+        .timeline-date {
+            font-weight: 600;
+            color: var(--hu-green);
+            margin-bottom: 5px;
+        }
+        
+        .stats-section {
+            background: linear-gradient(135deg, var(--hu-green) 0%, #004d29 100%);
+            color: white;
+            padding: 80px 0;
+            clip-path: polygon(0 10%, 100% 0, 100% 90%, 0% 100%);
+            margin: 60px 0;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--hu-gold);
+            margin-bottom: 10px;
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .stat-label {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        .social-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--hu-green);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+            font-size: 20px;
+            transition: all 0.3s;
+        }
+        
+        .social-icon:hover {
+            background: var(--hu-gold);
+            transform: translateY(-5px) scale(1.1);
+        }
+        
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .zoom-effect {
+            transition: transform 0.5s;
+        }
+        
+        .zoom-effect:hover {
+            transform: scale(1.05);
+        }
+        
+        footer {
+            background: var(--hu-dark);
+            color: white;
+            padding: 60px 0 20px;
+            text-align: center;
+        }
+        
+        .footer-logo {
+            width: 120px;
+            margin-bottom: 20px;
+        }
+        
+        .footer-links a {
+            color: #ddd;
+            text-decoration: none;
+            margin: 0 15px;
+            transition: all 0.3s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--hu-gold);
+        }
+        
+        .copyright {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .timeline::after {
+                left: 31px;
+            }
+            
+            .timeline-item {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 25px;
+            }
+            
+            .timeline-item::after {
+                left: 21px;
+            }
+            
+            .left, .right {
+                left: 0;
+                text-align: left;
+            }
+            
+            .left .timeline-content::before, .right .timeline-content::before {
+                border-left: 10px solid transparent;
+                border-right: 10px solid transparent;
+                border-bottom: 10px solid white;
+                top: -10px;
+                left: 30px;
+                right: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero-section animate__animated animate__fadeIn">
+        <div class="container">
+            <h1 class="hero-title animate__animated animate__fadeInDown">Haramaya University</h1>
+            <p class="hero-subtitle animate__animated animate__fadeIn animate__delay-1s">Building the Basis for Development Since 1954</p>
+            <a href="#about" class="btn btn-outline-light btn-lg animate__animated animate__fadeInUp animate__delay-1s">
+                <i class="fas fa-arrow-down me-2"></i> Explore Our Story
+            </a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 text-center mb-5">
+                <h2 class="section-title animate__animated animate__fadeIn">Our University at a Glance</h2>
+                <p class="lead animate__animated animate__fadeIn animate__delay-1s">One of Ethiopia's oldest and most prestigious higher education institutions</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-6 animate__animated animate__fadeInLeft">
+                <div class="about-card">
+                    <div class="icon-box">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                    <h3>Mission</h3>
+                    <p>The mission of Haramaya University is to train competent graduates in diverse fields of study, undertake knowledge-generating, problem-solving and cutting-edge research, and provide demand-driven and transformative community engagement activities that contribute to sustainable local, national, regional and global development.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-6 animate__animated animate__fadeInRight">
+                <div class="about-card">
+                    <div class="icon-box">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h3>Vision</h3>
+                    <p>Haramaya University strives to be one of the top ten universities in Eastern Africa with an international reputation by 2030. We aim to be a center of excellence in teaching, research, and community service.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-6 animate__animated animate__fadeInLeft animate__delay-1s">
+                <div class="about-card">
+                    <div class="icon-box">
+                        <i class="fas fa-flag"></i>
+                    </div>
+                    <h3>Goal</h3>
+                    <p>To evolve as an autonomous and independent graduate and research university with competitive national and international quality and relevance standards in its academic, research, and community engagement endeavors.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-6 animate__animated animate__fadeInRight animate__delay-1s">
+                <div class="about-card">
+                    <div class="icon-box">
+                        <i class="fas fa-hand-holding-heart"></i>
+                    </div>
+                    <h3>Core Values</h3>
+                    <p>Excellence, innovation, social responsibility, integrity, embracing diversity and inclusiveness, democratic culture, good governance, teamwork and collaboration, lifelong learning, and respect for nature and the environment.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section animate__animated animate__fadeIn">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 col-6 stat-item">
+                    <div class="stat-number floating">65+</div>
+                    <div class="stat-label">Years of Excellence</div>
+                </div>
+                <div class="col-md-3 col-6 stat-item">
+                    <div class="stat-number floating">30K+</div>
+                    <div class="stat-label">Students</div>
+                </div>
+                <div class="col-md-3 col-6 stat-item">
+                    <div class="stat-number floating">1.5K+</div>
+                    <div class="stat-label">Academic Staff</div>
+                </div>
+                <div class="col-md-3 col-6 stat-item">
+                    <div class="stat-number floating">80+</div>
+                    <div class="stat-label">Academic Programs</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- History Timeline -->
+    <section class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 text-center mb-5">
+                <h2 class="section-title animate__animated animate__fadeIn">Our History</h2>
+                <p class="lead animate__animated animate__fadeIn animate__delay-1s">A legacy of academic excellence and community service</p>
+            </div>
+        </div>
+        
+        <div class="timeline">
+            <div class="timeline-item left animate__animated animate__fadeInLeft">
+                <div class="timeline-content">
+                    <div class="timeline-date">1954</div>
+                    <h3>Establishment</h3>
+                    <p>Founded as the Imperial Ethiopian College of Agricultural and Mechanical Arts (IECAMA) by Emperor Haile Selassie I with assistance from Oklahoma State University.</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item right animate__animated animate__fadeInRight">
+                <div class="timeline-content">
+                    <div class="timeline-date">1967</div>
+                    <h3>Name Change</h3>
+                    <p>Renamed to Alemaya College of Agriculture, becoming a faculty of Haile Selassie I University (now Addis Ababa University).</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item left animate__animated animate__fadeInLeft">
+                <div class="timeline-content">
+                    <div class="timeline-date">1985</div>
+                    <h3>Autonomous Status</h3>
+                    <p>Gained autonomous status as Alemaya University of Agriculture under the Provisional Military Government of Socialist Ethiopia.</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item right animate__animated animate__fadeInRight">
+                <div class="timeline-content">
+                    <div class="timeline-date">2006</div>
+                    <h3>Current Name</h3>
+                    <p>Renamed to Haramaya University, expanding its scope beyond agriculture to become a comprehensive university.</p>
+                </div>
+            </div>
+            
+            <div class="timeline-item left animate__animated animate__fadeInLeft">
+                <div class="timeline-content">
+                    <div class="timeline-date">Present</div>
+                    <h3>Modern University</h3>
+                    <p>Now one of Ethiopia's leading universities with multiple campuses, offering diverse programs in agriculture, health sciences, natural sciences, social sciences, and humanities.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Campuses Section -->
+    <section class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 text-center mb-5">
+                <h2 class="section-title animate__animated animate__fadeIn">Our Campuses</h2>
+                <p class="lead animate__animated animate__fadeIn animate__delay-1s">Multiple locations serving diverse academic needs</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-4 mb-4 animate__animated animate__fadeInUp">
+                <div class="card h-100 border-0 shadow-sm zoom-effect">
+                    <img src="/static/images/main-campus.jpg" class="card-img-top" alt="Main Campus">
+                    <div class="card-body">
+                        <h3 class="card-title">Main Campus</h3>
+                        <p class="card-text">Located in Haramaya, 15km from Harar and 40km from Dire Dawa, this is the historic heart of the university with beautiful landscapes and modern facilities.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4 animate__animated animate__fadeInUp animate__delay-1s">
+                <div class="card h-100 border-0 shadow-sm zoom-effect">
+                    <img src="/static/images/dire-dawa-campus.jpg" class="card-img-top" alt="Dire Dawa Campus">
+                    <div class="card-body">
+                        <h3 class="card-title">Dire Dawa Campus</h3>
+                        <p class="card-text">The university's urban campus offering programs in business, social sciences, and technology in Ethiopia's second largest city.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4 animate__animated animate__fadeInUp animate__delay-2s">
+                <div class="card h-100 border-0 shadow-sm zoom-effect">
+                    <img src="/static/images/health-campus.jpg" class="card-img-top" alt="Health Sciences Campus">
+                    <div class="card-body">
+                        <h3 class="card-title">Health Sciences Campus</h3>
+                        <p class="card-text">Dedicated to medical education and research, housing the College of Health and Medical Sciences with modern teaching hospitals.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Media Section -->
+    <section class="container py-5 text-center">
+        <h2 class="section-title animate__animated animate__fadeIn">Connect With Us</h2>
+        <p class="lead mb-4 animate__animated animate__fadeIn animate__delay-1s">Stay updated with our latest news and events</p>
+        
+        <div class="social-icons">
+            <a href="https://www.facebook.com/pg/HRMUNIV/" class="social-icon animate__animated animate__bounceIn animate__delay-1s" target="_blank">
+                <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="https://twitter.com/haramayauniver4" class="social-icon animate__animated animate__bounceIn animate__delay-2s" target="_blank">
+                <i class="fab fa-twitter"></i>
+            </a>
+            <a href="https://www.youtube.com/channel/UCd6Bb1Xc6FyycH0_DFmkxNQ" class="social-icon animate__animated animate__bounceIn animate__delay-3s" target="_blank">
+                <i class="fab fa-youtube"></i>
+            </a>
+            <a href="https://www.linkedin.com/school/haramaya-university/" class="social-icon animate__animated animate__bounceIn animate__delay-4s" target="_blank">
+                <i class="fab fa-linkedin-in"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="animate__animated animate__fadeIn">
+        <div class="container">
+            <img src="/static/images/hu-logo-white.png" alt="Haramaya University Logo" class="footer-logo floating">
+            <div class="footer-links mb-4">
+                <a href="https://www.haramaya.edu.et" target="_blank">University Website</a>
+                <a href="https://www.haramaya.edu.et/admission/" target="_blank">Admissions</a>
+                <a href="https://www.haramaya.edu.et/academics/" target="_blank">Academics</a>
+                <a href="https://www.haramaya.edu.et/research/" target="_blank">Research</a>
+                <a href="https://www.haramaya.edu.et/contact/" target="_blank">Contact</a>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 Haramaya University. All Rights Reserved.</p>
+                <p>P.O. Box 138, Dire Dawa, Ethiopia | Phone: +251 255 530 003</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Animation on scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            const animatedElements = document.querySelectorAll('.animate__animated');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const animation = entry.target.getAttribute('data-animation');
+                        entry.target.classList.add(animation);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            
+            animatedElements.forEach(element => {
+                observer.observe(element);
+            });
+            
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

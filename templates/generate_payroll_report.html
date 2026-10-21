@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payroll Report</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        .container {
+            margin-top: 30px;
+        }
+        .card-header {
+            background-color: #007bff;
+            color: white;
+        }
+        .summary-table th, .summary-table td {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Add to your existing modal form -->
+<div class="modal-body">
+    <!-- Existing fields... -->
+    
+    <div class="row mt-3">
+        <div class="col-md-4">
+            <label for="late_days" class="form-label">Late Days</label>
+            <input type="number" class="form-control" id="late_days" name="late_days" value="0" min="0">
+        </div>
+        <div class="col-md-4">
+            <label for="overtime_hours" class="form-label">Overtime Hours</label>
+            <input type="number" step="0.5" class="form-control" id="overtime_hours" name="overtime_hours" value="0" min="0">
+        </div>
+    </div>
+    
+    <div class="row mt-3">
+        <div class="col-12">
+            <div class="alert alert-info">
+                <strong>Calculations Preview:</strong>
+                <div class="row">
+                    <div class="col-md-3">
+                        <small>Performance Bonus: <span id="performanceBonusPreview">$0.00</span></small>
+                    </div>
+                    <div class="col-md-3">
+                        <small>Absence Penalty: <span id="absencePenaltyPreview">$0.00</span></small>
+                    </div>
+                    <div class="col-md-3">
+                        <small>Late Penalty: <span id="latePenaltyPreview">$0.00</span></small>
+                    </div>
+                    <div class="col-md-3">
+                        <small>Estimated Tax: <span id="taxPreview">$0.00</span></small>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <strong>Net Pay: <span id="netPayPreview">$0.00</span></strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add this JavaScript -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const baseSalary = document.getElementById('base_salary');
+    const allowances = document.getElementById('allowances');
+    const bonuses = document.getElementById('bonuses');
+    const deductions = document.getElementById('deductions');
+    const absences = document.getElementById('absences');
+    const lateDays = document.getElementById('late_days');
+    const performance = document.getElementById('performance');
+    
+    const previewElements = {
+        performanceBonus: document.getElementById('performanceBonusPreview'),
+        absencePenalty: document.getElementById('absencePenaltyPreview'),
+        latePenalty: document.getElementById('latePenaltyPreview'),
+        tax: document.getElementById('taxPreview'),
+        netPay: document.getElementById('netPayPreview')
+    };
+    
+    // Add event listeners to all relevant inputs
+    [baseSalary, allowances, bonuses, deductions, absences, lateDays, performance].forEach(input => {
+        input.addEventListener('input', updateCalculations);
+    });
+    
+    function updateCalculations() {
+        const base = parseFloat(baseSalary.value) || 0;
+        const allowance = parseFloat(allowances.value) || 0;
+        const bonus = parseFloat(bonuses.value) || 0;
+        const deduction = parseFloat(deductions.value) || 0;
+        const absenceDays = parseInt(absences.value) || 0;
+        const lateDayCount = parseInt(lateDays.value) || 0;
+        const perfRating = performance.value;
+        
+        // Calculate components
+        const dailyRate = base / 30;
+        const performanceBonus = base * getPerformanceMultiplier(perfRating);
+        const absencePenalty = absenceDays * dailyRate * 1.5;
+        const latePenalty = lateDayCount * (dailyRate * 0.2);
+        const taxableIncome = base + allowance + bonus + performanceBonus;
+        const tax = calculateTax(taxableIncome);
+        
+        // Calculate net pay
+        const grossPay = base + allowance + bonus + performanceBonus;
+        const totalDeductions = deduction + absencePenalty + latePenalty + tax;
+        const netPay = grossPay - totalDeductions;
+        
+        // Update previews
+        previewElements.performanceBonus.textContent = '$' + performanceBonus.toFixed(2);
+        previewElements.absencePenalty.textContent = '$' + absencePenalty.toFixed(2);
+        previewElements.latePenalty.textContent = '$' + latePenalty.toFixed(2);
+        previewElements.tax.textContent = '$' + tax.toFixed(2);
+        previewElements.netPay.textContent = '$' + netPay.toFixed(2);
+    }
+    
+    function getPerformanceMultiplier(rating) {
+        const multipliers = {
+            'Outstanding': 0.15,
+            'Excellent': 0.10,
+            'Good': 0.05,
+            'Average': 0,
+            'Poor': -0.05
+        };
+        return multipliers[rating] || 0;
+    }
+    
+    function calculateTax(income) {
+        if (income <= 10000) return income * 0.10;
+        if (income <= 30000) return 1000 + (income - 10000) * 0.15;
+        return 4000 + (income - 30000) * 0.20;
+    }
+});
+</script>
+
+<!-- Payroll Report Template (new file payroll_report.html) -->
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h2>Payroll Report - {{ report.month }}</h2>
+        </div>
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card text-white bg-success">
+                        <div class="card-body">
+                            <h5>Total Payroll</h5>
+                            <h3>${{ "%.2f"|format(report.total_payroll) }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-info">
+                        <div class="card-body">
+                            <h5>Total Tax</h5>
+                            <h3>${{ "%.2f"|format(report.total_tax) }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-warning">
+                        <div class="card-body">
+                            <h5>Total Penalties</h5>
+                            <h3>${{ "%.2f"|format(report.total_absence_penalties + report.total_late_penalties) }}</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-white bg-secondary">
+                        <div class="card-body">
+                            <h5>Total Bonuses</h5>
+                            <h3>${{ "%.2f"|format(report.total_performance_bonuses) }}</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Employee</th>
+                            <th>Department</th>
+                            <th>Base Salary</th>
+                            <th>Bonuses</th>
+                            <th>Tax</th>
+                            <th>Penalties</th>
+                            <th>Net Pay</th>
+                            <th>Performance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for emp in report.employees %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ emp.name }}</td>
+                            <td>{{ emp.department }}</td>
+                            <td>${{ "%.2f"|format(emp.base_salary) }}</td>
+                            <td>${{ "%.2f"|format(emp.bonuses + emp.performance_bonus) }}</td>
+                            <td>${{ "%.2f"|format(emp.tax) }}</td>
+                            <td>${{ "%.2f"|format(emp.absence_penalty + emp.late_penalty) }}</td>
+                            <td class="fw-bold">${{ "%.2f"|format(emp.net_salary) }}</td>
+                            <td>
+                                <span class="badge 
+                                    {% if emp.performance == 'Outstanding' %}bg-success
+                                    {% elif emp.performance == 'Excellent' %}bg-info
+                                    {% elif emp.performance == 'Good' %}bg-primary
+                                    {% elif emp.performance == 'Average' %}bg-warning
+                                    {% else %}bg-danger{% endif %}">
+                                    {{ emp.performance }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="mt-4 text-center">
+                <button class="btn btn-primary" onclick="window.print()">
+                    <i class="bi bi-printer"></i> Print Report
+                </button>
+                <a href="{{ url_for('export_payroll_report', month=request.args.get('month')) }}" class="btn btn-success">
+                    <i class="bi bi-file-excel"></i> Export to Excel
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+    <div class="container">
+        <h1 class="text-center mb-4">Payroll Report</h1>
+        <div class="text-right mb-3">
+            <a href="{{ url_for('generate_salary_csv') }}" class="btn btn-primary">
+                <i class="fa fa-download"></i> Download Salary CSV
+            </a>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                Payroll Summary
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered summary-table">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Total Employees</th>
+                            <th>Total Base Salary</th>
+                            <th>Total Deductions</th>
+                            <th>Total Adjusted Salary</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ total_employees }}</td>
+                            <td>${{ total_base_salary }}</td>
+                            <td>${{ total_deductions }}</td>
+                            <td>${{ total_adjusted_salary }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header bg-primary text-white">
+                Detailed Payroll Report
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Employee ID</th>
+                            <th>Name</th>
+                            <th>Bank Account Number</th>
+                            <th>Amount</th>
+                            <th>Payment Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if employees %}
+                            {% for employee in employees %}
+                            <tr>
+                                <td>{{ loop.index }}</td>
+                                <td>{{ employees.id }}</td>
+                                <td>{{ employees.name }}</td>
+                                <td>{{ employees.bank_account }}</td>
+                                <td>${{ employees.amount }}</td>
+                                <td>{{ employees.payment_date }}</td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center">No payroll data available.</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

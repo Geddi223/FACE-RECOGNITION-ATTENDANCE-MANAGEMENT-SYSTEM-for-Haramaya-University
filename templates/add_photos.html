@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Photo Registration | Haramaya University</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="{{ url_for('static', filename='images/hu-favicon.ico') }}" type="image/x-icon">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Noto+Serif:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --hu-green: #006633;       /* Haramaya primary green */
+            --hu-gold: #FFCC00;       /* Haramaya gold accent */
+            --hu-light: #f8f9fa;
+            --hu-dark: #343a40;
+            --hu-accent: #0056b3;
+            --hu-light-green: #e6f2e9;
+            --hu-dark-green: #004d29;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--hu-light);
+            color: var(--hu-dark);
+            line-height: 1.6;
+        }
+
+        /* Header matching Haramaya style */
+        .hu-header {
+            background-color: white;
+            border-bottom: 3px solid var(--hu-green);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .hu-logo {
+            height: 50px;
+            margin-right: 15px;
+        }
+
+        .hu-navbar-brand {
+            font-family: 'Noto Serif', serif;
+            font-weight: 700;
+            color: var(--hu-green) !important;
+            font-size: 1.5rem;
+        }
+
+        .hu-nav-link {
+            color: var(--hu-dark) !important;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .hu-nav-link:hover,
+        .hu-nav-link.active {
+            color: var(--hu-green) !important;
+            border-bottom-color: var(--hu-gold);
+        }
+
+        /* Main content area */
+        .hu-main-content {
+            padding: 3rem 0;
+            min-height: 70vh;
+        }
+
+        /* Registration card */
+        .hu-registration-card {
+            border-radius: 8px;
+            border: 1px solid rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            overflow: hidden;
+            background-color: white;
+        }
+
+        .hu-card-header {
+            background-color: var(--hu-green);
+            color: white;
+            padding: 1.5rem;
+            border-bottom: 3px solid var(--hu-gold);
+        }
+
+        .hu-card-body {
+            padding: 2rem;
+        }
+
+        /* Progress indicators */
+        .hu-progress-container {
+            background-color: var(--hu-light-green);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .hu-progress-bar-container {
+            height: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+
+        .hu-progress-bar {
+            height: 100%;
+            background-color: var(--hu-green);
+            transition: width 0.6s ease;
+        }
+
+        /* Instructions */
+        .hu-instruction-card {
+            background-color: white;
+            border-left: 4px solid var(--hu-gold);
+            border-radius: 4px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .hu-instruction-title {
+            color: var(--hu-green);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .hu-instruction-icon {
+            color: var(--hu-gold);
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        /* Capture button */
+        .hu-capture-btn {
+            background-color: var(--hu-green);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 2rem auto;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .hu-capture-btn:hover {
+            background-color: var(--hu-dark-green);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .hu-capture-btn:active {
+            transform: translateY(0);
+        }
+
+        .hu-capture-icon {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        /* Status indicators */
+        .hu-status {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .hu-status-value {
+            color: var(--hu-green);
+            font-weight: 600;
+        }
+
+        /* Footer */
+        .hu-footer {
+            background-color: var(--hu-dark);
+            color: white;
+            padding: 3rem 0 1rem;
+        }
+
+        .hu-footer-logo {
+            height: 60px;
+            margin-bottom: 1rem;
+        }
+
+        .hu-footer-title {
+            font-family: 'Noto Serif', serif;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .hu-footer-link {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .hu-footer-link:hover {
+            color: var(--hu-gold);
+            text-decoration: underline;
+        }
+
+        .hu-social-icon {
+            color: white;
+            font-size: 1.2rem;
+            margin-right: 1rem;
+            transition: all 0.3s;
+        }
+
+        .hu-social-icon:hover {
+            color: var(--hu-gold);
+        }
+
+        .hu-copyright {
+            border-top: 1px solid rgba(255,255,255,0.2);
+            padding-top: 1.5rem;
+            margin-top: 2rem;
+            text-align: center;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .hu-card-body {
+                padding: 1.5rem;
+            }
+            
+            .hu-capture-btn {
+                width: 100%;
+                margin: 1.5rem auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="hu-header">
+        <nav class="navbar navbar-expand-lg navbar-light container">
+            <div class="container-fluid">
+                <a class="navbar-brand hu-navbar-brand" href="https://www.haramaya.edu.et/">
+                    <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Haramaya University Logo" class="hu-logo">
+                    Haramaya University
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link hu-nav-link" href="">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link hu-nav-link" href="https://www.haramaya.edu.et/about-hu/">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link hu-nav-link active" href="#">HR Portal</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link hu-nav-link" href="contact">Contact</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="hu-main-content">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="hu-registration-card">
+                        <!-- Card Header -->
+                        <div class="hu-card-header text-center">
+                            <h2 class="mb-0">
+                                <i class="fas fa-camera me-2"></i>Employee Photo Registration
+                            </h2>
+                        </div>
+                        
+                        <!-- Card Body -->
+                        <div class="hu-card-body">
+                            <!-- Employee Info -->
+                            <div class="text-center mb-4">
+                                <img src="{{ url_for('static', filename=user.photo_url) if user.photo_url else url_for('static', filename='images/default-avatar.png') }}" 
+                                    class="rounded-circle mb-3" 
+                                    width="120" 
+                                    height="120" 
+                                    alt="{{ user.username }}"
+                                    onerror="this.src='{{ url_for('static', filename='images/default-avatar.png') }}'">
+                                <h3>{{ user.username }}</h3>
+                                <p class="text-muted">{{ user.position }} | {{ user.department }}</p>
+                            </div>
+                            
+                            <!-- Progress Section -->
+                            <div class="hu-progress-container">
+                                <h4 class="text-center mb-3"><i class="fas fa-tasks me-2"></i>Registration Progress</h4>
+                                
+                                <div class="hu-status">
+                                    <span>Current Samples:</span>
+                                    <span class="hu-status-value">{{ current_samples }} / {{ min_samples }}</span>
+                                </div>
+                                
+                                <div class="hu-progress-bar-container">
+                                    <div class="hu-progress-bar" style="width: {{ (current_samples/min_samples)*100 }}%"></div>
+                                </div>
+                                
+                                <div class="text-center text-muted small">
+                                    {% if current_samples >= min_samples %}
+                                        <i class="fas fa-check-circle text-success me-1"></i> Registration complete!
+                                    {% else %}
+                                        {{ min_samples - current_samples }} more samples needed
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <!-- Instructions -->
+                            <div class="hu-instruction-card">
+                                <h5 class="hu-instruction-title">
+                                    <i class="fas fa-info-circle hu-instruction-icon"></i>
+                                    Photo Capture Guidelines
+                                </h5>
+                                <ul class="mb-0">
+                                    <li class="mb-2">Ensure good lighting with no shadows on your face</li>
+                                    <li class="mb-2">Remove glasses, hats or any face coverings</li>
+                                    <li class="mb-2">Position your face straight in the camera frame</li>
+                                    <li class="mb-2">Follow the system prompts for different angles</li>
+                                    <li>Remain still during each capture</li>
+                                </ul>
+                            </div>
+                            
+                            <!-- Capture Procedure -->
+                            <div class="hu-instruction-card">
+                                <h5 class="hu-instruction-title">
+                                    <i class="fas fa-list-ol hu-instruction-icon"></i>
+                                    Capture Procedure
+                                </h5>
+                                <ol class="mb-0">
+                                    <li class="mb-2">Click "Start Photo Capture" below</li>
+                                    <li class="mb-2">Allow camera access when prompted</li>
+                                    <li class="mb-2">Follow the on-screen instructions</li>
+                                    <li class="mb-2">The system will automatically capture multiple angles</li>
+                                    <li>Complete all {{ min_samples }} samples for full registration</li>
+                                </ol>
+                            </div>
+                            
+                            <!-- Start Button -->
+                            <form method="POST" action="{{ url_for('add_photos', user_id=user.id) }}">
+                                <button type="submit" class="hu-capture-btn">
+                                    <i class="fas fa-camera hu-capture-icon"></i>
+                                    {% if current_samples >= min_samples %}
+                                        Retake Photos
+                                    {% else %}
+                                        Start Photo Capture
+                                    {% endif %}
+                                </button>
+                            </form>
+                            
+                            <!-- Note -->
+                            <div class="text-center text-muted small">
+                                <i class="fas fa-exclamation-circle me-1"></i>
+                                This process typically takes 2-3 minutes to complete
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="hu-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Haramaya University Logo" class="hu-footer-logo">
+                    <p>Haramaya University is one of the oldest higher education institutions in Ethiopia, committed to excellence in teaching, research and community services.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h4 class="hu-footer-title">Quick Links</h4>
+                    <a href="https://www.haramaya.edu.et/about-hu/" class="hu-footer-link">About HU</a>
+                    <a href="https://www.haramaya.edu.et/academic/" class="hu-footer-link">Academic Programs</a>
+                    <a href="https://www.haramaya.edu.et/research/" class="hu-footer-link">Research</a>
+                    <a href="https://www.haramaya.edu.et/contact-us/" class="hu-footer-link">Contact Us</a>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h4 class="hu-footer-title">Connect With Us</h4>
+                    <div class="mb-3">
+                        <a href="https://www.facebook.com/haramaya.university" class="hu-social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://twitter.com/HaramayaUniv" class="hu-social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="https://www.youtube.com/user/haramayauniversity" class="hu-social-icon"><i class="fab fa-youtube"></i></a>
+                        <a href="https://www.linkedin.com/school/haramaya-university/" class="hu-social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                    <p><i class="fas fa-map-marker-alt me-2"></i> Haramaya, Ethiopia</p>
+                    <p><i class="fas fa-phone me-2"></i> +251 (0)25 553 0363</p>
+                    <p><i class="fas fa-envelope me-2"></i> info@haramaya.edu.et</p>
+                </div>
+            </div>
+            <div class="hu-copyright">
+                &copy; {{ current_year }} Haramaya University. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

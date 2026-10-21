@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Haramaya University - Attendance System</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --hu-green: #006633;  /* Haramaya University green */
+            --hu-gold: #FFCC00;   /* Haramaya University gold */
+            --hu-blue: #005BAA;   /* Additional blue */
+            --hu-light: #F5F5F5;
+            --hu-dark: #333333;
+        }
+        
+        body {
+            background-color: var(--hu-light);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .hu-navbar {
+            background: linear-gradient(135deg, var(--hu-green), #004d29);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .hu-brand {
+            font-weight: 700;
+            color: white !important;
+        }
+        
+        .hu-brand img {
+            height: 40px;
+            margin-right: 10px;
+        }
+        
+        .settings-sidebar {
+            position: sticky;
+            top: 20px;
+            height: calc(100vh - 40px);
+            overflow-y: auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .settings-sidebar:hover {
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        .settings-sidebar .nav-link {
+            color: var(--hu-dark);
+            border-radius: 8px;
+            margin: 2px 0;
+            padding: 10px 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .settings-sidebar .nav-link.active {
+            color: white;
+            background: linear-gradient(135deg, var(--hu-green), var(--hu-blue));
+            transform: translateX(5px);
+            box-shadow: 0 4px 8px rgba(0,102,51,0.2);
+        }
+        
+        .settings-sidebar .nav-link:hover:not(.active) {
+            background-color: rgba(0,102,51,0.1);
+            transform: translateX(3px);
+        }
+        
+        .settings-sidebar .nav-link i {
+            width: 20px;
+            text-align: center;
+            margin-right: 8px;
+        }
+        
+        .settings-content .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .settings-content .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+        }
+        
+        .settings-content .card-header {
+            background: linear-gradient(135deg, var(--hu-light), white);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            font-weight: 600;
+            color: var(--hu-green);
+            padding: 15px 20px;
+        }
+        
+        .logo-preview {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            border: 2px dashed #ddd;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            transition: all 0.3s ease;
+        }
+        
+        .logo-preview:hover {
+            border-color: var(--hu-green);
+        }
+        
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,102,51,0.8);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        
+        .hu-btn-primary {
+            background: linear-gradient(135deg, var(--hu-green), var(--hu-blue));
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 10px 25px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .hu-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,102,51,0.3);
+            color: white;
+        }
+        
+        .hu-section-title {
+            position: relative;
+            padding-bottom: 10px;
+            color: var(--hu-green);
+        }
+        
+        .hu-section-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--hu-green), var(--hu-gold));
+        }
+        
+        /* Face Recognition Specific Styles */
+        .face-recognition-preview {
+            width: 100%;
+            height: 300px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .face-recognition-preview video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .face-recognition-preview .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        /* Animation classes */
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .settings-sidebar {
+                height: auto;
+                margin-bottom: 20px;
+            }
+            
+            .hu-brand img {
+                height: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar with Haramaya University Branding -->
+    <nav class="navbar navbar-expand-lg hu-navbar sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand hu-brand d-flex align-items-center" href="#">
+                <img src="https://www.haramaya.edu.et/wp-content/uploads/2020/04/cropped-logo-1-32x32.png" alt="Haramaya University Logo">
+                <span>HU Attendance System</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#"><i class="fas fa-home me-1"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white active" href="#"><i class="fas fa-cog me-1"></i> Settings</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#"><i class="fas fa-user me-1"></i> Profile</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4 animate-fade-in">
+        <div class="row">
+            <!-- Enhanced Settings Sidebar -->
+            <div class="col-md-3 col-lg-2 d-md-block sidebar pt-3 settings-sidebar">
+                <ul class="nav flex-column">
+                    <li class="nav-item mb-3">
+                        <div class="nav-link disabled small text-uppercase fw-bold" style="color: var(--hu-green);">System Configuration</div>
+                    </li>
+                    
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#general" data-bs-toggle="tab">
+                            <i class="fas fa-cog"></i> General Settings
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#attendance" data-bs-toggle="tab">
+                            <i class="fas fa-user-clock"></i> Attendance
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#face-recognition" data-bs-toggle="tab">
+                            <i class="fas fa-camera"></i> Face Recognition
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#user-management" data-bs-toggle="tab">
+                            <i class="fas fa-users-cog"></i> User Management
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#roles-permissions" data-bs-toggle="tab">
+                            <i class="fas fa-shield-alt"></i> Roles & Permissions
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#payroll" data-bs-toggle="tab">
+                            <i class="fas fa-money-bill-wave"></i> Payroll System
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#leave-holidays" data-bs-toggle="tab">
+                            <i class="fas fa-calendar-alt"></i> Leave & Holidays
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#notifications" data-bs-toggle="tab">
+                            <i class="fas fa-bell"></i> Notifications
+                        </a>
+                    </li>
+                    <li class="nav-item mt-3">
+                        <div class="nav-link disabled small text-uppercase fw-bold" style="color: var(--hu-green);">System Tools</div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#reports" data-bs-toggle="tab">
+                            <i class="fas fa-chart-bar"></i> Reports
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#activity-log" data-bs-toggle="tab">
+                            <i class="fas fa-clipboard-list"></i> Activity Log
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#backup" data-bs-toggle="tab">
+                            <i class="fas fa-database"></i> Backup & Restore
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Settings Content Area -->
+            <div class="col-md-9 col-lg-10 ms-sm-auto px-md-4 py-4 settings-content">
+                <div class="tab-content">
+                    <!-- General Settings Tab -->
+                    <div class="tab-pane fade show active" id="general">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+                            <h1 class="hu-section-title"><i class="fas fa-cog me-2"></i>General Settings</h1>
+                            <div class="btn-toolbar mb-2 mb-md-0">
+                                <button class="hu-btn-primary" id="saveGeneralSettings">
+                                    <i class="fas fa-save me-1"></i> Save Changes
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <form id="generalSettingsForm" class="needs-validation" novalidate>
+                            <div class="row g-3">
+                                <!-- System Identity -->
+                                <div class="col-md-6">
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h5 class="mb-0"><i class="fas fa-id-card me-2"></i>System Identity</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label for="portalName" class="form-label">Portal Name</label>
+                                                <input type="text" class="form-control" id="portalName" name="portal_name" required>
+                                                <div class="invalid-feedback">Please provide a portal name.</div>
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <label for="logoUpload" class="form-label">System Logo</label>
+                                                <div class="d-flex align-items-center">
+                                                    <img src="https://www.haramaya.edu.et/wp-content/uploads/2020/04/cropped-logo-1-32x32.png" id="logoPreview" class="logo-preview me-3">
+                                                    <div class="flex-grow-1">
+                                                        <input class="form-control" type="file" id="logoUpload" accept="image/*" style="display: none;">
+                                                        <button class="btn btn-outline-primary" type="button" onclick="document.getElementById('logoUpload').click()">
+                                                            <i class="fas fa-upload me-1"></i> Upload Logo
+                                                        </button>
+                                                        <small class="text-muted d-block mt-1">Recommended size: 200x200px</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Regional Settings -->
+                                <div class="col-md-6">
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h5 class="mb-0"><i class="fas fa-globe-africa me-2"></i>Regional Settings</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row g-3">
+                                                <div class="col-md-6">
+                                                    <label for="systemLanguage" class="form-label">System Language</label>
+                                                    <select class="form-select" id="systemLanguage" name="system_language" required>
+                                                        <option value="en">English</option>
+                                                        <option value="am">Amharic</option>
+                                                        <option value="or">Oromo</option>
+                                                        <option value="ti">Tigrinya</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="timezone" class="form-label">Timezone</label>
+                                                    <select class="form-select" id="timezone" name="timezone" required>
+                                                        <option value="Africa/Addis_Ababa">Addis Ababa (EAT)</option>
+                                                        <option value="UTC">UTC</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="currency" class="form-label">Currency</label>
+                                                    <select class="form-select" id="currency" name="currency" required>
+                                                        <option value="ETB">ETB (Ethiopian Birr)</option>
+                                                        <option value="USD">USD (US Dollar)</option>
+                                                        <option value="EUR">EUR (Euro)</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="dateFormat" class="form-label">Date Format</label>
+                                                    <select class="form-select" id="dateFormat" name="date_format" required>
+                                                        <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                                                        <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                                                        <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Contact Information -->
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5 class="mb-0"><i class="fas fa-envelope me-2"></i>Contact Information</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row g-3">
+                                                <div class="col-md-6">
+                                                    <label for="adminEmail" class="form-label">Admin Email</label>
+                                                    <input type="email" class="form-control" id="adminEmail" name="admin_email" required>
+                                                    <div class="invalid-feedback">Please provide a valid email address.</div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="supportPhone" class="form-label">Support Phone</label>
+                                                    <input type="tel" class="form-control" id="supportPhone" name="support_phone">
+                                                </div>
+                                                <div class="col-12">
+                                                    <label for="systemAddress" class="form-label">System Address</label>
+                                                    <textarea class="form-control" id="systemAddress" name="system_address" rows="2"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Face Recognition Tab -->
+                    <div class="tab-pane fade" id="face-recognition">
+                        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+                            <h1 class="hu-section-title"><i class="fas fa-camera me-2"></i>Face Recognition Settings</h1>
+                            <div class="btn-toolbar mb-2 mb-md-0">
+                                <button class="hu-btn-primary" id="saveFaceSettings">
+                                    <i class="fas fa-save me-1"></i> Save Changes
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <form id="faceRecognitionForm">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h5 class="mb-0"><i class="fas fa-sliders-h me-2"></i>Recognition Settings</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <label for="recognitionThreshold" class="form-label">Recognition Threshold</label>
+                                                <input type="range" class="form-range" min="0.5" max="1" step="0.05" id="recognitionThreshold" value="0.8">
+                                                <div class="d-flex justify-content-between">
+                                                    <small>Low (0.5)</small>
+                                                    <small>High (1.0)</small>
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="mb-3">
+                                                <label for="modelVersion" class="form-label">Model Version</label>
+                                                <select class="form-select" id="modelVersion">
+                                                    <option value="v1">Version 1.0 (Basic)</option>
+                                                    <option value="v2" selected>Version 2.0 (Enhanced)</option>
+                                                    <option value="v3">Version 3.0 (Advanced)</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input" type="checkbox" id="enableLiveness" checked>
+                                                <label class="form-check-label" for="enableLiveness">Enable Liveness Detection</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="card mb-4">
+                                        <div class="card-header">
+                                            <h5 class="mb-0"><i class="fas fa-video me-2"></i>Camera Preview</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="face-recognition-preview">
+                                                <div class="overlay">
+                                                    <i class="fas fa-camera fa-3x mb-2"></i>
+                                                    <p>Camera feed will appear here</p>
+                                                    <button class="btn btn-light mt-2" id="startCameraPreview">
+                                                        <i class="fas fa-play me-1"></i> Start Preview
+                                                    </button>
+                                                </div>
+                                                <video id="cameraFeed" class="d-none" autoplay playsinline></video>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5 class="mb-0"><i class="fas fa-users me-2"></i>Face Database</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="table-responsive">
+                                                <table class="table table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>ID</th>
+                                                            <th>Name</th>
+                                                            <th>Department</th>
+                                                            <th>Last Updated</th>
+                                                            <th>Status</th>
+                                                            <th>Actions</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>1001</td>
+                                                            <td>John Doe</td>
+                                                            <td>Computer Science</td>
+                                                            <td>2023-10-15</td>
+                                                            <td><span class="badge bg-success">Active</span></td>
+                                                            <td>
+                                                                <button class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></button>
+                                                                <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>1002</td>
+                                                            <td>Jane Smith</td>
+                                                            <td>Electrical Engineering</td>
+                                                            <td>2023-10-10</td>
+                                                            <td><span class="badge bg-success">Active</span></td>
+                                                            <td>
+                                                                <button class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></button>
+                                                                <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <button class="btn btn-primary mt-3">
+                                                <i class="fas fa-plus me-1"></i> Add New Face
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- User Management Tab -->
+                    <div class="tab-pane fade" id="user-management">
+                        <!-- Content would follow similar structure -->
+                    </div>
+                    
+                    <!-- Roles & Permissions Tab -->
+                    <div class="tab-pane fade" id="roles-permissions">
+                        <!-- Content would follow similar structure -->
+                    </div>
+                    
+                    <!-- Payroll System Tab -->
+                    <div class="tab-pane fade" id="payroll">
+                        <!-- Content would follow similar structure -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay d-none" id="loadingOverlay">
+        <div class="spinner-border text-white" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <span class="ms-2 text-white">Processing...</span>
+    </div>
+
+    <!-- Success Toast -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="successToast" class="toast align-items-center text-white bg-success" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="fas fa-check-circle me-2"></i>
+                    <span id="toastMessage">Settings saved successfully!</span>
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Initialize toast
+        const toast = new bootstrap.Toast(document.getElementById('successToast'));
+        
+        // Global settings management object
+        const SettingsManager = {
+            currentSettings: {},
+            
+            init: function() {
+                this.setupEventListeners();
+                this.loadInitialSettings();
+            },
+            
+            setupEventListeners: function() {
+                // Logo preview
+                document.getElementById('logoUpload').addEventListener('change', this.handleLogoUpload);
+                
+                // Save buttons for each tab
+                document.getElementById('saveGeneralSettings').addEventListener('click', () => this.saveSettings('general'));
+                document.getElementById('saveFaceSettings').addEventListener('click', () => this.saveSettings('face-recognition'));
+                
+                // Camera preview
+                document.getElementById('startCameraPreview').addEventListener('click', this.startCameraPreview);
+                
+                // Tab persistence
+                document.addEventListener('DOMContentLoaded', this.handleTabPersistence);
+                
+                // Form validation
+                this.setupFormValidation();
+            },
+            
+            startCameraPreview: function() {
+                const preview = document.querySelector('.face-recognition-preview .overlay');
+                const video = document.getElementById('cameraFeed');
+                
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    navigator.mediaDevices.getUserMedia({ video: true })
+                        .then(function(stream) {
+                            video.srcObject = stream;
+                            video.classList.remove('d-none');
+                            preview.classList.add('d-none');
+                        })
+                        .catch(function(error) {
+                            console.error("Camera error: ", error);
+                            alert("Could not access the camera. Please check permissions.");
+                        });
+                } else {
+                    alert("Camera access is not supported in your browser.");
+                }
+            },
+            
+            loadInitialSettings: function() {
+                // Load settings for the active tab
+                const activeTab = document.querySelector('.tab-pane.active');
+                if (activeTab) {
+                    const tabId = activeTab.id;
+                    this.fetchSettings(tabId);
+                }
+            },
+            
+            fetchSettings: function(category) {
+                fetch(`/api/settings/${category}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        this.currentSettings[category] = data;
+                        this.populateForm(category, data);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching settings:', error);
+                        this.showToast('Failed to load settings', false);
+                    });
+            },
+            
+            populateForm: function(category, data) {
+                const form = document.querySelector(`#${category}Form`);
+                if (!form) return;
+                
+                for (const [key, value] of Object.entries(data)) {
+                    const element = form.querySelector(`#${key}`);
+                    if (!element) continue;
+                    
+                    if (element.type === 'checkbox') {
+                        element.checked = value;
+                    } else if (element.type === 'radio') {
+                        document.querySelector(`#${key}[value="${value}"]`).checked = true;
+                    } else {
+                        element.value = value;
+                    }
+                }
+                
+                // Special handling for logo preview
+                if (category === 'general' && data.logo_url) {
+                    document.getElementById('logoPreview').src = data.logo_url;
+                }
+            },
+            
+            saveSettings: function(category) {
+                const form = document.querySelector(`#${category}Form`);
+                if (!form || (form.checkValidity && !form.checkValidity())) {
+                    if (form) form.classList.add('was-validated');
+                    return;
+                }
+                
+                const formData = new FormData(form);
+                const settingsData = {};
+                
+                // Convert FormData to object
+                for (const [key, value] of formData.entries()) {
+                    settingsData[key] = value;
+                }
+                
+                // Handle file uploads separately
+                const logoFile = document.getElementById('logoUpload')?.files[0];
+                if (logoFile && category === 'general') {
+                    const logoFormData = new FormData();
+                    logoFormData.append('logo', logoFile);
+                    
+                    // First upload the logo
+                    this.showLoading(true);
+                    fetch('/api/settings/upload-logo', {
+                        method: 'POST',
+                        body: logoFormData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            settingsData.logo_url = data.url;
+                            return this.saveSettingsData(category, settingsData);
+                        } else {
+                            throw new Error('Logo upload failed');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error uploading logo:', error);
+                        this.showLoading(false);
+                        this.showToast('Failed to upload logo', false);
+                    });
+                } else {
+                    // No file to upload, just save settings
+                    this.showLoading(true);
+                    this.saveSettingsData(category, settingsData);
+                }
+            },
+            
+            saveSettingsData: function(category, data) {
+                fetch(`/api/settings/${category}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    this.showLoading(false);
+                    if (data.success) {
+                        this.showToast('Settings saved successfully', true);
+                        this.currentSettings[category] = data.settings;
+                    } else {
+                        throw new Error(data.message || 'Failed to save settings');
+                    }
+                })
+                .catch(error => {
+                    this.showLoading(false);
+                    console.error('Error saving settings:', error);
+                    this.showToast(error.message || 'Failed to save settings', false);
+                });
+            },
+            
+            handleLogoUpload: function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        document.getElementById('logoPreview').src = event.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            },
+            
+            handleTabPersistence: function() {
+                // Activate tab from URL hash
+                const hash = window.location.hash;
+                if (hash) {
+                    const tabTrigger = new bootstrap.Tab(document.querySelector(`a[href="${hash}"]`));
+                    tabTrigger.show();
+                }
+                
+                // Update URL hash when tab changes
+                const tabEls = document.querySelectorAll('a[data-bs-toggle="tab"]');
+                tabEls.forEach(tabEl => {
+                    tabEl.addEventListener('shown.bs.tab', function(e) {
+                        window.location.hash = e.target.getAttribute('href');
+                        const tabId = e.target.getAttribute('href').substring(1);
+                        SettingsManager.fetchSettings(tabId);
+                    });
+                });
+            },
+            
+            setupFormValidation: function() {
+                'use strict';
+                const forms = document.querySelectorAll('.needs-validation');
+                Array.from(forms).forEach(function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            },
+            
+            showLoading: function(show) {
+                document.getElementById('loadingOverlay').classList.toggle('d-none', !show);
+            },
+            
+            showToast: function(message, isSuccess) {
+                const toast = document.getElementById('successToast');
+                const toastMessage = document.getElementById('toastMessage');
+                
+                toastMessage.textContent = message;
+                toast.className = `toast align-items-center text-white ${isSuccess ? 'bg-success' : 'bg-danger'}`;
+                
+                const bsToast = new bootstrap.Toast(toast);
+                bsToast.show();
+            }
+        };
+        
+        // Initialize the settings manager
+        document.addEventListener('DOMContentLoaded', () => SettingsManager.init());
+    </script>
+</body>
+</html>

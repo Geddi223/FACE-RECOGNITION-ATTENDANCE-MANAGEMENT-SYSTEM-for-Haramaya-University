@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Report - Haramaya University</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <style>
+        :root {
+            --hu-primary: #0056b3;
+            --hu-secondary: #6c757d;
+            --hu-success: #28a745;
+            --hu-warning: #ffc107;
+            --hu-danger: #dc3545;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .university-header {
+            background: linear-gradient(135deg, var(--hu-primary), #003366);
+            color: white;
+            padding: 25px 0;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 86, 179, 0.15);
+        }
+        
+        .report-card {
+            border-left: 4px solid var(--hu-primary);
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .report-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+        }
+        
+        .late-employee {
+            background-color: rgba(255, 193, 7, 0.08);
+            border-left: 4px solid var(--hu-warning);
+        }
+        
+        .summary-card {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .summary-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .employee-photo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #e9ecef;
+        }
+        
+        .badge-late {
+            background-color: var(--hu-warning);
+            color: #212529;
+        }
+        
+        .badge-ontime {
+            background-color: var(--hu-success);
+        }
+        
+        .badge-absent {
+            background-color: var(--hu-danger);
+        }
+        
+        .hours-cell {
+            font-weight: 600;
+            color: var(--hu-primary);
+        }
+        
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+        
+        .table-hover tbody tr:hover {
+            background-color: rgba(0, 86, 179, 0.05);
+        }
+        
+        .card-header {
+            font-weight: 600;
+        }
+        
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            
+            body {
+                font-size: 11pt;
+                background: none;
+                color: #000;
+            }
+            
+            .university-header {
+                background: var(--hu-primary) !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .report-card {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+            
+            .table {
+                page-break-inside: avoid;
+            }
+        }
+        
+        /* Animation for summary cards */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .summary-card {
+            animation: fadeInUp 0.5s ease forwards;
+        }
+        
+        .summary-card:nth-child(1) { animation-delay: 0.1s; }
+        .summary-card:nth-child(2) { animation-delay: 0.2s; }
+        .summary-card:nth-child(3) { animation-delay: 0.3s; }
+    </style>
+</head>
+<body>
+    <!-- University Header -->
+    <header class="university-header text-center">
+        <div class="container">
+            <div class="d-flex justify-content-center align-items-center mb-3">
+                <img src="{{ url_for('static', filename='images/hu-logo-white.png') }}" alt="Haramaya University Logo" style="height: 60px; margin-right: 15px;">
+                <div>
+                    <h1 class="mb-1">Haramaya University</h1>
+                    <h4 class="mb-0">Human Resource Management System</h4>
+                </div>
+            </div>
+            <h3 class="mb-0"><i class="fas fa-calendar-check me-2"></i> Attendance Report</h3>
+            <h5 id="report-date" class="mt-2">{{ report_date.strftime('%A, %B %d, %Y') }}</h5>
+        </div>
+    </header>
+
+    <div class="container mb-5">
+        <!-- Summary Statistics -->
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <div class="card summary-card h-100 border-top-0 border-start-0 border-end-0 border-bottom-3 border-primary">
+                    <div class="card-body text-center">
+                        <div class="d-flex justify-content-center align-items-center mb-2">
+                            <div class="bg-primary bg-opacity-10 p-3 rounded-circle me-3">
+                                <i class="fas fa-users fa-2x text-primary"></i>
+                            </div>
+                            <div>
+                                <h2 class="mb-0 counter" data-target="{{ summary.total_employees }}">0</h2>
+                                <p class="text-muted mb-0">Total Employees</p>
+                            </div>
+                        </div>
+                        <div class="progress mt-2" style="height: 6px;">
+                            <div class="progress-bar bg-primary" role="progressbar" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-3">
+                <div class="card summary-card h-100 border-top-0 border-start-0 border-end-0 border-bottom-3 border-success">
+                    <div class="card-body text-center">
+                        <div class="d-flex justify-content-center align-items-center mb-2">
+                            <div class="bg-success bg-opacity-10 p-3 rounded-circle me-3">
+                                <i class="fas fa-user-check fa-2x text-success"></i>
+                            </div>
+                            <div>
+                                <h2 class="mb-0 counter" data-target="{{ summary.present_employees }}">0</h2>
+                                <p class="text-muted mb-0">Present Today</p>
+                            </div>
+                        </div>
+                        <div class="progress mt-2" style="height: 6px;">
+                            <div class="progress-bar bg-success" role="progressbar" 
+                                 style="width: {{ (summary.present_employees/summary.total_employees)*100 if summary.total_employees > 0 else 0 }}%">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-3">
+                <div class="card summary-card h-100 border-top-0 border-start-0 border-end-0 border-bottom-3 border-warning">
+                    <div class="card-body text-center">
+                        <div class="d-flex justify-content-center align-items-center mb-2">
+                            <div class="bg-warning bg-opacity-10 p-3 rounded-circle me-3">
+                                <i class="fas fa-clock fa-2x text-warning"></i>
+                            </div>
+                            <div>
+                                <h2 class="mb-0 counter" data-target="{{ summary.late_comers }}">0</h2>
+                                <p class="text-muted mb-0">Late Arrivals</p>
+                            </div>
+                        </div>
+                        <div class="progress mt-2" style="height: 6px;">
+                            <div class="progress-bar bg-warning" role="progressbar" 
+                                 style="width: {{ (summary.late_comers/summary.total_employees)*100 if summary.total_employees > 0 else 0 }}%">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Attendance Summary -->
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Late Comers Section -->
+                {% if late_comers %}
+                <div class="card report-card mb-4">
+                    <div class="card-header bg-warning bg-opacity-10 text-dark d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i> Late Arrivals (After 8:30 AM)</h4>
+                        <span class="badge bg-warning rounded-pill">{{ late_comers|length }}</span>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width: 50px;">Photo</th>
+                                        <th>Employee</th>
+                                        <th>Department</th>
+                                        <th>Time In</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for employee in late_comers %}
+                                    <tr class="late-employee align-middle">
+                                        <td>
+                                            <img src="{{ employee.photo_url or url_for('static', filename='images/default-profile.png') }}" 
+                                                class="employee-photo" alt="{{ employee.full_name }}" loading="lazy">
+                                        </td>
+                                        <td>
+                                            <strong>{{ employee.full_name }}</strong><br>
+                                            <small class="text-muted">{{ employee.position }}</small>
+                                        </td>
+                                        <td>{{ employee.department }}</td>
+                                        <td>
+                                            <span class="badge bg-warning text-dark">{{ employee.time_in|time_format }}</span>
+                                        </td>
+                                        <td>
+                                            <span class="status-indicator bg-warning"></span>
+                                            Late by {{ employee.late_minutes }} minutes
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Full Attendance Records -->
+                <div class="card report-card">
+                    <div class="card-header bg-primary bg-opacity-10 text-primary d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0"><i class="fas fa-clipboard-list me-2"></i> Detailed Attendance Records</h4>
+                        <span class="badge bg-primary rounded-pill">{{ attendance_records|length }}</span>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0" id="attendanceTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width: 50px;">Photo</th>
+                                        <th>Employee</th>
+                                        <th>Department</th>
+                                        <th>Time In</th>
+                                        <th>Time Out</th>
+                                        <th>Hours</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for record in attendance_records %}
+                                    <tr class="align-middle">
+                                        <td>
+                                            <img src="{{ record.employee.photo_url or url_for('static', filename='images/default-profile.png') }}" 
+                                                class="employee-photo" alt="{{ record.employee.full_name }}" loading="lazy">
+                                        </td>
+                                        <td>
+                                            <strong>{{ record.employee.full_name }}</strong><br>
+                                            <small class="text-muted">{{ record.employee.position }}</small>
+                                        </td>
+                                        <td>{{ record.employee.department }}</td>
+                                        <td>{{ record.time_in|time_format if record.time_in else '--:--' }}</td>
+                                        <td>{{ record.time_out|time_format if record.time_out else '--:--' }}</td>
+                                        <td class="hours-cell">{{ record.working_hours|hours_format if record.working_hours else '--' }}</td>
+                                        <td>
+                                            {% if record.status == 'present' %}
+                                                <span class="badge bg-success">
+                                                    <i class="fas fa-check-circle me-1"></i> Present
+                                                </span>
+                                            {% elif record.status == 'late' %}
+                                                <span class="badge bg-warning text-dark">
+                                                    <i class="fas fa-clock me-1"></i> Late
+                                                </span>
+                                            {% elif record.status == 'absent' %}
+                                                <span class="badge bg-danger">
+                                                    <i class="fas fa-times-circle me-1"></i> Absent
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">
+                                                    <i class="fas fa-question-circle me-1"></i> Unknown
+                                                </span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Attendance Analytics Sidebar -->
+            <div class="col-lg-4">
+                <div class="card report-card mb-4">
+                    <div class="card-header bg-info bg-opacity-10 text-info">
+                        <h4 class="mb-0"><i class="fas fa-chart-pie me-2"></i> Attendance Distribution</h4>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="attendanceChart" height="250"></canvas>
+                        <div class="mt-3">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span><i class="fas fa-circle text-success me-2"></i> Present</span>
+                                <strong>{{ summary.present_employees }} ({{ ((summary.present_employees/summary.total_employees)*100)|round(1) if summary.total_employees > 0 else 0 }}%)</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span><i class="fas fa-circle text-warning me-2"></i> Late</span>
+                                <strong>{{ summary.late_comers }} ({{ ((summary.late_comers/summary.total_employees)*100)|round(1) if summary.total_employees > 0 else 0 }}%)</strong>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span><i class="fas fa-circle text-danger me-2"></i> Absent</span>
+                                <strong>{{ summary.absent_employees }} ({{ ((summary.absent_employees/summary.total_employees)*100)|round(1) if summary.total_employees > 0 else 0 }}%)</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Department Breakdown -->
+                <div class="card report-card">
+                    <div class="card-header bg-purple bg-opacity-10 text-purple">
+                        <h4 class="mb-0"><i class="fas fa-building me-2"></i> By Department</h4>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            {% for dept in department_stats %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ dept.name }}
+                                <span class="badge bg-primary rounded-pill">{{ dept.present_count }}/{{ dept.total }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Report Actions -->
+        <div class="row mt-4 no-print">
+            <div class="col-md-6">
+                <button class="btn btn-primary me-2" onclick="window.print()">
+                    <i class="fas fa-print me-1"></i> Print Report
+                </button>
+                <a href="{{ url_for('reports.export_attendance', date=report_date.strftime('%Y-%m-%d')) }}" class="btn btn-success me-2">
+                    <i class="fas fa-file-excel me-1"></i> Export Excel
+                </a>
+                <a href="{{ url_for('reports.export_attendance_pdf', date=report_date.strftime('%Y-%m-%d')) }}" class="btn btn-danger">
+                    <i class="fas fa-file-pdf me-1"></i> Export PDF
+                </a>
+            </div>
+            <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                <a href="{{ url_for('dashboard.index') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
+                </a>
+                <button class="btn btn-outline-info ms-2" id="refreshReport">
+                    <i class="fas fa-sync-alt me-1"></i> Refresh
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        $(document).ready(function() {
+            // Initialize DataTable
+            $('#attendanceTable').DataTable({
+                order: [[2, 'asc']], // Sort by department
+                pageLength: 25,
+                responsive: true,
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search employees...",
+                }
+            });
+            
+            // Update printed date with current time
+            const now = new Date();
+            const printDate = now.toLocaleString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            $('#report-date').append(` <small class="text-white-50">(Generated: ${printDate})</small>`);
+            
+            // Animated counter for statistics
+            $('.counter').each(function() {
+                $(this).prop('Counter', 0).animate({
+                    Counter: $(this).data('target')
+                }, {
+                    duration: 1500,
+                    easing: 'swing',
+                    step: function(now) {
+                        $(this).text(Math.ceil(now));
+                    }
+                });
+            });
+            
+            // Initialize attendance chart
+            const ctx = document.getElementById('attendanceChart').getContext('2d');
+            const attendanceChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Present', 'Late', 'Absent'],
+                    datasets: [{
+                        data: [
+                            {{ summary.present_employees }},
+                            {{ summary.late_comers }},
+                            {{ summary.absent_employees }}
+                        ],
+                        backgroundColor: [
+                            '#28a745',
+                            '#ffc107',
+                            '#dc3545'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const value = context.raw;
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${context.label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '70%'
+                }
+            });
+            
+            // Refresh button functionality
+            $('#refreshReport').click(function() {
+                const $btn = $(this);
+                $btn.prop('disabled', true);
+                $btn.find('i').addClass('fa-spin');
+                
+                // Simulate refresh (in real app, this would reload data)
+                setTimeout(function() {
+                    $btn.find('i').removeClass('fa-spin');
+                    $btn.prop('disabled', false);
+                    toastr.success('Report data refreshed successfully');
+                }, 1500);
+            });
+            
+            // Add print styles dynamically
+            const printStyles = `
+                @media print {
+                    .card {
+                        border: 1px solid #ddd !important;
+                    }
+                    .table thead th {
+                        background-color: #f8f9fa !important;
+                        -webkit-print-color-adjust: exact;
+                    }
+                    .badge {
+                        border: 1px solid #000 !important;
+                    }
+                }
+            `;
+            $('head').append(`<style>${printStyles}</style>`);
+        });
+    </script>
+</body>
+</html>

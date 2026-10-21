@@ -1,0 +1,3580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Haramaya University AMS</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom Styles -->
+    <style>
+        /* ========== ROOT VARIABLES ========== */
+        :root {
+            /* Haramaya University Colors */
+            --hu-blue: #0a3d62;
+            --hu-yellow: #fbc531;
+            --hu-grey: #bdc3c7;
+
+            /* General Theme Colors (Light) */
+            --primary-color: var(--hu-blue);
+            --primary-light: rgba(10, 61, 98, 0.1); /* Light shade of blue */
+            --primary-dark: #072a40; /* Darker shade of blue */
+            --secondary-color: #28a745; /* Green for success */
+            --danger-color: #dc3545; /* Red for danger */
+            --warning-color: #ffc107; /* Yellow for warning */
+            --info-color: #17a2b8; /* Cyan for info */
+            --dark-color: #343a40; /* Dark grey for text */
+            --light-color: #f8f9fa; /* Light grey for background */
+            --gray-color: #e9ecef; /* Lighter grey for borders */
+            --white-color: #ffffff;
+            --black-color: #000000;
+            --payroll-color: #6f42c1; /* Purple for payroll */
+            --primary-color: #0a3d62;
+            --background-color: #ffffff;
+            --text-color: #343a40;
+            --card-background: #f8f9fa;
+            --border-color: #e9ecef;
+
+            /* Dark Theme Colors */
+            --dark-primary: #5a8cdb;
+            --dark-secondary: #218838;
+            --dark-danger: #c82333;
+            --dark-warning: #e0a800;
+            --dark-info: #138496;
+            --dark-text: #e9ecef;
+            --dark-bg: #1a1a1a;
+            --dark-card: #2d2d2d;
+            --dark-border: #444;
+            --dark-payroll: #5a359a;
+
+            /* Layout */
+            --sidebar-width: 250px;
+            --topbar-height: 70px;
+            --transition-speed: 0.3s;
+            --border-radius: 0.5rem;
+        }
+
+        [data-theme="dark"] {
+            --primary-color: var(--dark-primary);
+            --primary-light: rgba(90, 140, 219, 0.1);
+            --primary-dark: #4a70b0;
+            --secondary-color: var(--dark-secondary);
+            --danger-color: var(--dark-danger);
+            --warning-color: var(--dark-warning);
+            --info-color: var(--dark-info);
+            --dark-color: var(--dark-text);
+            --light-color: var(--dark-bg);
+            --gray-color: var(--dark-border);
+            --white-color: var(--dark-card);
+            --black-color: #f8f9fa;
+            --payroll-color: var(--dark-payroll);
+            --primary-color: #5a8cdb;
+            --background-color: #1a1a1a;
+            --text-color: #e9ecef;
+            --card-background: #2d2d2d;
+            --border-color: #444;
+        }
+
+        /* ========== BASE STYLES ========== */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            transition: all var(--transition-speed) ease;
+            overflow-x: hidden;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: all var(--transition-speed) ease;
+        }
+
+        /* ========== LAYOUT ========== */
+        .wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+        .card {
+            background-color: var(--card-background);
+            border-color: var(--border-color);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: var(--hu-blue) !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            padding: 0.75rem 1.5rem;
+        }
+
+        .navbar.scrolled {
+            background-color: rgba(10, 61, 98, 0.95) !important;
+            backdrop-filter: blur(10px);
+            padding: 0.5rem 1.5rem;
+        }
+
+        /* Branding Styles */
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            transition: transform 0.2s;
+        }
+
+        .navbar-brand:hover {
+            transform: scale(1.02);
+        }
+
+        #university-name {
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #fff;
+        }
+
+        #system-name {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Search Box */
+        .search-box {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 15px;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.7);
+            z-index: 10;
+        }
+
+        .search-box input {
+            padding-left: 40px;
+            background-color: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: white;
+            border-radius: 50px;
+            transition: all 0.3s;
+        }
+
+        .search-box input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .search-box input:focus {
+            background-color: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Notification Badge */
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            font-size: 0.6rem;
+            background-color: var(--danger-color);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* User Avatar */
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        /* Dropdown Menus */
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-top: 5px;
+            border-radius: var(--border-radius);
+        }
+
+        .dropdown-item {
+            padding: 0.6rem 1.25rem;
+            transition: all 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--light-color);
+        }
+
+        /* Dark Mode Switch */
+        .form-check-input:checked {
+            background-color: var(--hu-blue);
+            border-color: var(--hu-blue);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100; /* Behind the navbar */
+            padding: 4.8rem 0 0; /* Offset for navbar height */
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+            width: var(--sidebar-width);
+            transition: transform var(--transition-speed) ease;
+            background-color: var(--white-color);
+        }
+
+        .sidebar .nav-link {
+            color: var(--dark-color);
+            padding: 0.75rem 1.5rem;
+            transition: all var(--transition-speed) ease;
+            border-radius: var(--border-radius);
+            margin: 0.2rem 0.5rem;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: var(--gray-color);
+            color: var(--primary-color);
+            transform: translateX(5px);
+        }
+
+        .sidebar .nav-link.active {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            font-weight: 600;
+            border-left: 4px solid var(--primary-color);
+            padding-left: calc(1.5rem - 4px);
+        }
+
+        .sidebar-sticky {
+            position: relative;
+            top: 0;
+            height: calc(100vh - 48px);
+            overflow-x: hidden;
+            overflow-y: auto; /* Scrollable contents */
+        }
+
+        .sidebar-header {
+            padding: 1rem 1.5rem 0.5rem;
+            border-bottom: 1px solid var(--gray-color);
+            margin-bottom: 1rem;
+        }
+
+        .sidebar-header h5 {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--dark-color);
+            opacity: 0.7;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        /* Main Content */
+        main {
+            margin-left: var(--sidebar-width);
+            transition: margin-left var(--transition-speed) ease;
+            padding-top: 1.5rem;
+        }
+
+        /* Mobile Menu Adjustments */
+        @media (max-width: 991.98px) {
+            .sidebar {
+                transform: translateX(-100%);
+                padding-top: 70px; /* Adjust for smaller navbar height */
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+                box-shadow: 5px 0 15px rgba(0, 0, 0, 0.2);
+            }
+
+            main {
+                margin-left: 0;
+            }
+
+            .search-box {
+                margin: 10px 0;
+                order: 1;
+                width: 100%;
+            }
+
+            .navbar-collapse {
+                padding-bottom: 15px;
+            }
+
+            .navbar-nav {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: space-around;
+            }
+
+            .nav-item {
+                margin: 5px 0;
+            }
+        }
+
+        /* Dark Mode Styles */
+        body[data-theme="dark"] {
+            background-color: var(--dark-bg);
+            color: var(--dark-text);
+        }
+
+        body[data-theme="dark"] .navbar {
+            background-color: var(--dark-card) !important;
+        }
+
+        body[data-theme="dark"] .dropdown-menu {
+            background-color: var(--dark-card);
+        }
+
+        body[data-theme="dark"] .dropdown-item {
+            color: var(--dark-text);
+        }
+
+        body[data-theme="dark"] .dropdown-item:hover {
+            background-color: var(--dark-border);
+        }
+
+        body[data-theme="dark"] .search-box input {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--dark-text);
+        }
+
+        body[data-theme="dark"] .sidebar {
+            background-color: var(--dark-card);
+            box-shadow: inset -1px 0 0 rgba(255, 255, 255, .1);
+        }
+
+        body[data-theme="dark"] .sidebar .nav-link {
+            color: var(--dark-text);
+        }
+
+        body[data-theme="dark"] .sidebar .nav-link:hover {
+            background-color: var(--dark-border);
+            color: var(--dark-primary);
+        }
+
+        body[data-theme="dark"] .sidebar .nav-link.active {
+            background-color: var(--primary-light);
+            color: var(--dark-primary);
+            border-left-color: var(--dark-primary);
+        }
+
+        body[data-theme="dark"] .sidebar-header {
+            border-bottom-color: var(--dark-border);
+        }
+
+        body[data-theme="dark"] .sidebar-header h5 {
+            color: var(--dark-text);
+        }
+
+        body[data-theme="dark"] .card {
+            background-color: var(--dark-card);
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(0, 0, 0, 0.2);
+        }
+
+        body[data-theme="dark"] .card-header {
+            background-color: var(--dark-border);
+            border-bottom-color: var(--dark-border);
+            color: var(--dark-text);
+        }
+
+        body[data-theme="dark"] .stat-card {
+            border-left-color: var(--dark-primary) !important;
+        }
+        body[data-theme="dark"] .stat-card.success { border-left-color: var(--dark-secondary) !important; }
+        body[data-theme="dark"] .stat-card.danger { border-left-color: var(--dark-danger) !important; }
+        body[data-theme="dark"] .stat-card.warning { border-left-color: var(--dark-warning) !important; }
+        body[data-theme="dark"] .stat-card.info { border-left-color: var(--dark-info) !important; }
+
+
+        body[data-theme="dark"] .stat-label,
+        body[data-theme="dark"] .stat-value {
+            color: var(--dark-text);
+        }
+
+        body[data-theme="dark"] .progress {
+            background-color: var(--dark-border);
+        }
+
+        body[data-theme="dark"] .table {
+            color: var(--dark-text);
+        }
+
+        body[data-theme="dark"] .table th {
+            color: var(--dark-text);
+            opacity: 0.8;
+        }
+
+        body[data-theme="dark"] .btn-outline-secondary {
+            color: var(--dark-text);
+            border-color: var(--dark-border);
+        }
+        body[data-theme="dark"] .btn-outline-secondary:hover {
+            background-color: var(--dark-border);
+            color: var(--dark-text);
+        }
+
+        body[data-theme="dark"] .form-control,
+        body[data-theme="dark"] .form-select {
+            background-color: var(--dark-card);
+            color: var(--dark-text);
+            border-color: var(--dark-border);
+        }
+
+        body[data-theme="dark"] .form-control::placeholder {
+            color: rgba(233, 236, 239, 0.7);
+        }
+
+        body[data-theme="dark"] .form-control:focus,
+        body[data-theme="dark"] .form-select:focus {
+            border-color: var(--dark-primary);
+            box-shadow: 0 0 0 0.25rem rgba(90, 140, 219, 0.25);
+        }
+
+        body[data-theme="dark"] .loading-overlay {
+             background-color: rgba(45, 45, 45, 0.8);
+         }
+
+        body[data-theme="dark"] .loading-overlay .text-center {
+             background-color: var(--dark-card);
+             color: var(--dark-text);
+         }
+
+        body[data-theme="dark"] .payroll-item {
+             background-color: var(--dark-border) !important;
+             color: var(--dark-text);
+         }
+
+         body[data-theme="dark"] .payroll-item strong {
+             color: var(--dark-text);
+         }
+
+        body[data-theme="dark"] .text-muted {
+             color: rgba(233, 236, 239, 0.7) !important;
+         }
+
+         body[data-theme="dark"] .text-payroll {
+             color: var(--dark-payroll) !important;
+         }
+
+        body[data-theme="dark"] .btn-payroll {
+             background-color: var(--dark-payroll);
+             border-color: var(--dark-payroll);
+             color: white;
+         }
+
+        body[data-theme="dark"] .btn-payroll:hover {
+             background-color: var(--dark-payroll);
+             border-color: var(--dark-payroll);
+             filter: brightness(1.1);
+         }
+        /* ========== COMPONENTS ========== */
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: var(--border-radius);
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+            transition: all var(--transition-speed) ease;
+            margin-bottom: 1.5rem;
+            background-color: var(--white-color);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            background-color: var(--light-color);
+            border-bottom: 1px solid var(--gray-color);
+            padding: 1rem 1.5rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            border-radius: var(--border-radius) var(--border-radius) 0 0 !important;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Stat Cards */
+        .stat-card {
+            position: relative;
+            overflow: hidden;
+            padding: 1.5rem;
+            border-left: 4px solid var(--primary-color);
+            transition: all var(--transition-speed) ease;
+            background-color: var(--white-color);
+        }
+
+        .stat-card.primary { border-left-color: var(--primary-color); }
+        .stat-card.success { border-left-color: var(--secondary-color); }
+        .stat-card.danger { border-left-color: var(--danger-color); }
+        .stat-card.warning { border-left-color: var(--warning-color); }
+        .stat-card.info { border-left-color: var(--info-color); }
+        .stat-card.purple { border-left-color: var(--payroll-color); }
+
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--dark-color);
+            opacity: 0.7;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+            color: var(--dark-color);
+        }
+
+        .stat-icon {
+            position: absolute;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2.5rem;
+            opacity: 0.15;
+            color: var(--primary-color);
+        }
+        .stat-icon.primary { color: var(--primary-color); }
+        .stat-icon.success { color: var(--secondary-color); }
+        .stat-icon.danger { color: var(--danger-color); }
+        .stat-icon.warning { color: var(--warning-color); }
+        .stat-icon.info { color: var(--info-color); }
+        .stat-icon.purple { color: var(--payroll-color); }
+
+
+        /* Progress Bars */
+        .progress {
+            height: 0.75rem;
+            border-radius: var(--border-radius);
+            background-color: var(--gray-color);
+        }
+
+        .progress-bar {
+            background-color: var(--primary-color);
+            border-radius: var(--border-radius);
+            transition: width 1s ease;
+        }
+
+        /* Badges */
+        .badge {
+            font-weight: 500;
+            padding: 0.4em 0.7em;
+            letter-spacing: 0.05em;
+            border-radius: 0.35rem;
+        }
+
+        .badge-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        /* Tables */
+        .table {
+            color: var(--dark-color);
+        }
+
+        .table th {
+            border-top: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 0.05rem;
+            color: var(--dark-color);
+            opacity: 0.7;
+        }
+
+        .table-responsive {
+            border-radius: var(--border-radius);
+            overflow: hidden;
+        }
+
+        /* Buttons */
+        .btn {
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            padding: 0.6rem 1.2rem;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            color: var(--white-color);
+        }
+
+        .btn-payroll {
+            background-color: var(--payroll-color);
+            border-color: var(--payroll-color);
+            color: white;
+        }
+
+        .btn-payroll:hover {
+            background-color: var(--payroll-color);
+            border-color: var(--payroll-color);
+            filter: brightness(1.1);
+        }
+
+        /* Dropdowns */
+
+
+        /* Forms */
+        .form-control, .form-select {
+            padding: 0.6rem 1rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--gray-color);
+            transition: all var(--transition-speed) ease;
+            background-color: var(--white-color);
+            color: var(--dark-color);
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(10, 61, 98, 0.25);
+            background-color: var(--white-color);
+            color: var(--dark-color);
+        }
+        body[data-theme="dark"] .form-control:focus, body[data-theme="dark"] .form-select:focus {
+            border-color: var(--dark-primary);
+            box-shadow: 0 0 0 0.25rem rgba(90, 140, 219, 0.25);
+            background-color: var(--dark-card);
+            color: var(--dark-text);
+        }
+
+
+        /* Avatar */
+
+        /* Activity Feed */
+        .activity-item {
+            border-bottom: 1px solid var(--gray-color);
+            padding-bottom: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .activity-badge {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        /* Payroll Specific Styles */
+        .text-payroll {
+            color: var(--payroll-color) !important;
+        }
+
+        .payroll-summary .metric-card {
+            background-color: var(--light-color);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--gray-color);
+        }
+
+        body[data-theme="dark"] .payroll-summary .metric-card {
+            background-color: var(--dark-border);
+            border-color: var(--dark-border);
+        }
+
+        .payroll-summary .metric-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--dark-color);
+            opacity: 0.7;
+            margin-bottom: 0.25rem;
+        }
+
+        .payroll-summary .metric-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--payroll-color);
+        }
+
+        .payroll-item {
+            transition: all 0.2s ease;
+        }
+
+        .payroll-item:hover {
+            background-color: var(--gray-color) !important;
+        }
+
+        .status-paid { color: var(--secondary-color); }
+        .status-pending { color: var(--warning-color); }
+        .status-processing { color: var(--info-color); }
+        .status-rejected { color: var(--danger-color); }
+
+        /* Payslip Preview */
+        .payslip-container {
+            border: 1px dashed var(--gray-color);
+            padding: 2rem;
+            background-color: var(--white-color);
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+        }
+        body[data-theme="dark"] .payslip-container {
+            border-color: var(--dark-border);
+            background-color: var(--dark-card);
+            color: var(--dark-text);
+        }
+
+        .payslip-header h2 {
+            color: var(--hu-blue);
+            font-weight: 700;
+        }
+        body[data-theme="dark"] .payslip-header h2 {
+            color: var(--dark-primary);
+        }
+
+        .payslip-header h3 {
+            font-weight: 700;
+        }
+
+        .payslip-container table {
+            margin-bottom: 0;
+        }
+
+        .payslip-container table th {
+            font-size: 0.85rem;
+            color: var(--dark-color);
+        }
+        body[data-theme="dark"] .payslip-container table th {
+            color: var(--dark-text);
+        }
+
+        .payslip-container table td {
+            font-size: 0.9rem;
+        }
+
+        .payslip-container .table-bordered {
+            border-color: var(--gray-color);
+        }
+        body[data-theme="dark"] .payslip-container .table-bordered {
+            border-color: var(--dark-border);
+        }
+        body[data-theme="dark"] .payslip-container .table-bordered th,
+        body[data-theme="dark"] .payslip-container .table-bordered td {
+            border-color: var(--dark-border);
+        }
+
+        .payslip-footer h4 {
+            font-weight: 700;
+        }
+
+        .signature-line {
+            border-top: 1px solid var(--gray-color);
+            width: 200px;
+            margin-left: auto;
+            margin-right: 0;
+            text-align: center;
+        }
+        body[data-theme="dark"] .signature-line {
+            border-top-color: var(--dark-border);
+        }
+
+        /* Chart Styles */
+        .chart-container {
+            position: relative;
+            height: 300px; /* Adjust height as needed */
+            width: 100%;
+        }
+
+        /* Department Distribution Legend */
+        .dept-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .dept-legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+            color: var(--dark-color);
+        }
+        body[data-theme="dark"] .dept-legend-item {
+            color: var(--dark-text);
+        }
+
+        .dept-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 3px;
+            margin-right: 5px;
+        }
+
+        .dept-name {
+            margin-right: 5px;
+        }
+
+        .dept-count {
+            font-weight: 600;
+        }
+
+        /* Additional Metrics */
+        .metric-card {
+            background-color: var(--light-color);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--gray-color);
+            text-align: center;
+        }
+        body[data-theme="dark"] .metric-card {
+            background-color: var(--dark-border);
+            border-color: var(--dark-border);
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--dark-color);
+            opacity: 0.7;
+            margin-bottom: 0.25rem;
+        }
+        body[data-theme="dark"] .metric-label {
+            color: var(--dark-text);
+        }
+
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        body[data-theme="dark"] .metric-value {
+            color: var(--dark-primary);
+        }
+
+
+        .metric-percentage {
+            font-size: 0.9rem;
+            color: var(--dark-color);
+        }
+        body[data-theme="dark"] .metric-percentage {
+            color: var(--dark-text);
+        }
+
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+        }
+
+        body[data-theme="dark"] .loading-overlay {
+            background-color: rgba(45, 45, 45, 0.8);
+        }
+        body[data-theme="dark"] .loading-overlay .spinner-border {
+            color: var(--dark-primary) !important;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--gray-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+        body[data-theme="dark"] ::-webkit-scrollbar-track {
+            background: var(--dark-border);
+        }
+        body[data-theme="dark"] ::-webkit-scrollbar-thumb {
+            background: var(--dark-primary);
+        }
+        body[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+
+        /* Toast Notifications */
+        #toastContainer {
+            z-index: 1050; /* Above modals */
+        }
+
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top" style="background-color: #0a3d62;">
+        <div class="container-fluid">
+            <!-- University Branding -->
+            <a class="navbar-brand" href="https://www.haramayauniversity.edu.et" aria-label="Haramaya University">
+                <img src="{{url_for('static',filename='images/logo.jpg')}}" width="50" height="50" class="d-inline-block align-top" alt="HU Logo">
+                <div class="d-none d-md-inline ms-2">
+                    <div class="fw-bold fs-5" id="university-name" data-i18n="universityName">Haramaya University</div>
+                    <div class="small" id="system-name" data-i18n="systemName">Attendance Management System</div>
+                </div>
+            </a>
+
+            <!-- Mobile Toggle -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navbar Content -->
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <!-- Search Box -->
+                <div class="search-box mx-lg-auto">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="globalSearch" class="form-control" placeholder="Search..." aria-label="Search" data-i18n="[placeholder]searchPlaceholder">
+                </div>
+
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <!-- Language Selector -->
+                    <li class="nav-item dropdown me-3">
+                        <a class="nav-link dropdown-toggle" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Language Selector">
+                            <i class="fas fa-language fa-fw"></i>
+                            <span id="current-language">English</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
+                            <li><a class="dropdown-item language-option" href="#" data-lang="en">English</a></li>
+                            <li><a class="dropdown-item language-option" href="#" data-lang="om">Afaan Oromoo</a></li>
+                            <li><a class="dropdown-item language-option" href="#" data-lang="am">አማርኛ</a></li>
+                        </div>
+                    </li>
+
+                    <!-- Dark Mode Toggle -->
+                    <li class="nav-item me-3">
+                        <div class="form-check form-switch my-1">
+                            <input class="form-check-input" type="checkbox" id="darkModeSwitch" aria-label="Toggle Dark Mode">
+                            <label class="form-check-label" for="darkModeSwitch">
+                                <i class="fas fa-moon"></i>
+                            </label>
+                        </div>
+                    </li>
+
+                    <!-- Notifications -->
+                    <li class="nav-item dropdown me-3">
+                        <a class="nav-link position-relative" href="#" id="notificationsDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Notifications">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-badge" id="notificationCount">{{ pending_leave_requests }}</span>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-end dropdown-menu-lg" aria-labelledby="notificationsDropdown">
+                            <h6 class="dropdown-header" data-i18n="notifications">Notifications</h6>
+                            <!-- Dynamic content loaded via JS -->
+                            <div id="notificationList">
+                                {% if 'pending_leave_requests' in template_vars and pending_leave_requests > 0 %}
+                                <a class="dropdown-item d-flex align-items-center" href="{{ url_for('manage_leave_requests') }}">
+                                    <div class="me-3">
+                                        <div class="icon-circle bg-warning">
+                                            <i class="fas fa-calendar-alt text-white"></i>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="small text-gray-500">Today</div>
+                                        You have {{ pending_leave_requests }} pending leave request{{ 's' if pending_leave_requests > 1 else '' }}.
+                                    </div>
+                                </a>
+                                {% else %}
+                                <div class="dropdown-item text-muted text-center py-3">
+                                    <i class="fas fa-check-circle me-2"></i> No new notifications
+                                </div>
+                                {% endif %}
+                                
+                                <!-- Other notification items can go here -->
+                            </div>
+                            
+                            {% if 'pending_leave_requests' in template_vars and pending_leave_requests > 0 %}
+                            <a class="dropdown-item text-center small text-gray-500" href="{{ url_for('manage_leave_requests') }}">
+                                Show All Alerts
+                            </a>
+                            {% endif %}
+                    <!-- User Profile -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="avatar bg-primary text-white me-2 rounded-circle d-flex justify-content-center align-items-center" style="width: 35px; height: 35px;">AD</div>
+                            <span class="d-none d-lg-inline fw-semibold">Admin</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2 text-primary"></i> <span data-i18n="profile">Profile</span></a></li>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2 text-primary"></i> <span data-i18n="settings">Settings</span></a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt me-2"></i> <span data-i18n="logout">Logout</span></a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="col-md-3 col-lg-2 d-md-block sidebar collapse bg-white border-end" id="sidebarMenu">
+        <div class="position-sticky pt-3 sidebar-sticky">
+            <div class="sidebar-header mb-3 px-3">
+                <h5 class="text-muted text-uppercase small fw-bold">Quick Actions</h5>
+            </div>
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center py-2 px-3 rounded" href="{{ url_for('register') }}">
+                        <span class="badge-dot bg-primary me-2"></span>
+                        <i class="fas fa-user-plus me-2 text-primary"></i>
+                        <span>Register New Employee</span>
+                    </a>
+                </li>
+    
+                {# Link to a general employee management page #}
+                {# This replaces the loop for individual employee edit links #}
+                <li class="nav-item">
+                    {% for employee in employees %}
+                        <a class="nav-link d-flex align-items-center py-2 px-3 rounded"
+                        href="{{ url_for('edit_employee', employee_id=employee.id) }}">
+                        Edit {{ employee.name }}
+                    </a>
+                    {% endfor %}
+                </li>
+    
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center py-2 px-3 rounded" href="{{ url_for('reports') }}">
+                        <span class="badge-dot bg-success me-2"></span>
+                        <i class="fas fa-file-alt me-2 text-success"></i>
+                        <span>Generate Report</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center py-2 px-3 rounded" href="{{ url_for('manage_leave_requests') }}">
+                        <span class="badge-dot bg-warning me-2"></span>
+                        <i class="fas fa-calendar-alt me-2 text-warning"></i>
+                        <span>Manage Leave Requests</span>
+                        {% if pending_leave_requests is defined and pending_leave_requests > 0 %}
+                            <span class="badge bg-danger rounded-pill ms-auto">{{ pending_leave_requests }}</span>
+                        {% endif %}
+                    </a>
+                </li>
+    
+                <!-- Add Photos Section -->
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center py-2 px-3 rounded" href="{{ url_for('select_employee_for_photos') }}">
+                        <span class="badge-dot bg-info me-2"></span>
+                        <i class="fas fa-camera me-2 text-info"></i>
+                        <span>Add Employee Photos</span>
+                    </a>
+                </li>
+    
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center py-2 px-3 rounded" href="{{ url_for('train_page') }}">
+                        <span class="badge-dot bg-danger me-2"></span>
+                        <i class="fas fa-graduation-cap me-2 text-danger"></i>
+                        <span>Train Model</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center py-2 px-3 rounded" href="{{ url_for('view_messages') }}">
+                        <span class="badge-dot bg-purple me-2"></span>
+                        <i class="fas fa-envelope me-2 text-purple"></i>
+                        <span>View Messages</span>
+                    </a>
+                </li>
+                
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center py-2 px-3 rounded" href="{{ url_for('settings') }}">
+                        <span class="badge-dot bg-dark me-2"></span>
+                        <i class="fas fa-cog me-2 text-dark"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+    
+            <!-- System Status Widget -->
+            <div class="mt-4 px-3">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-3">
+                        <h6 class="card-title d-flex align-items-center mb-2">
+                            <i class="fas fa-server me-2 text-info"></i>
+                            System Status
+                        </h6>
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="flex-grow-1">
+                                <div class="progress" style="height: 6px;">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: 85%" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                            <span class="badge bg-success bg-opacity-10 text-success ms-2">85%</span>
+                        </div>
+                        <div class="d-flex justify-content-between small text-muted">
+                            <span>Storage</span>
+                            <span>15GB/20GB</span>
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary w-100 mt-2">
+                            <i class="fas fa-rocket me-1"></i> Upgrade
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
+                <!-- Dashboard Header -->
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <div>
+                        <h1 class="h2 mb-1" data-aos="fade-right">
+                            <i class="fas fa-tachometer-alt me-2 text-primary"></i>Admin Dashboard
+                        </h1>
+                        <p class="text-muted mb-0" data-aos="fade-right" data-aos-delay="100">Welcome back, <strong>Admin</strong>! Here's what's happening today.</p>
+                    </div>
+                    <div class="btn-toolbar mb-2 mb-md-0" data-aos="fade-left">
+                        <div class="btn-group me-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-share-alt me-1"></i> Share
+                            </button>
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="exportDropdown" data-bs-toggle="dropdown">
+                                    <i class="fas fa-download me-1"></i> Export
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="exportDropdown">
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-file-pdf me-2 text-danger"></i>PDF</a></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-file-excel me-2 text-success"></i>Excel</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="#"><i class="fas fa-print me-2"></i>Print</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-primary d-flex align-items-center">
+                            <i class="fas fa-plus me-1"></i> Add New
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="row mb-4 g-3">
+                    <!-- Total Employees -->
+                    <div class="col-xl-3 col-md-6" data-aos="fade-up" data-aos-delay="150">
+                        <div class="card stat-card primary border-0 shadow-sm h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="stat-label text-muted mb-1">Total Employees</h6>
+                                        <h2 class="stat-value mb-0">{{ total_num_of_emp }}</h2>
+                                        <div class="stat-change text-primary mt-2">
+                                            <i class="fas fa-user-plus me-1"></i> +{{ new_employees_month }} this month
+                                        </div>
+                                    </div>
+                                    <div class="stat-icon primary">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Present Today -->
+                    <div class="col-xl-3 col-md-6" data-aos="fade-up" data-aos-delay="250">
+                        <div class="card stat-card success border-0 shadow-sm h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="stat-label text-muted mb-1">Present Today</h6>
+                                        <h2 class="stat-value mb-0">{{ present_today }}</h2>
+                                        {% set attendance_rate = ((present_today / total_num_of_emp) * 100) if total_num_of_emp else 0 %}
+                                        <div class="stat-change {{ 'text-success' if attendance_rate >= 80 else 'text-warning' if attendance_rate >= 60 else 'text-danger' }} mt-2">
+                                            {% if total_num_of_emp > 0 %}
+                                                {{ attendance_rate|round(1) }}% Attendance
+                                            {% else %}
+                                                0% Attendance
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="stat-icon success">
+                                        <i class="fas fa-user-check"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Late Arrivals -->
+                    <div class="col-xl-3 col-md-6" data-aos="fade-up" data-aos-delay="350">
+                        <div class="card stat-card warning border-0 shadow-sm h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="stat-label text-muted mb-1">Late Arrivals Today</h6>
+                                        <h2 class="stat-value mb-0">{{ late_today }}</h2>
+                                        {% set late_rate = ((late_today / present_today) * 100) if present_today else 0 %}
+                                        <div class="stat-change {{ 'text-danger' if late_rate > 10 else 'text-warning' }} mt-2">
+                                            {% if present_today > 0 %}
+                                                {{ late_rate|round(1) }}% of Present
+                                            {% else %}
+                                                0%
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="stat-icon warning">
+                                        <i class="fas fa-clock"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pending Requests -->
+                    <div class="col-xl-3 col-md-6" data-aos="fade-up" data-aos-delay="450">
+                        <div class="card stat-card danger border-0 shadow-sm h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="stat-label text-muted mb-1">Pending Leave Requests</h6>
+                                        <h2 class="stat-value mb-0">{{ pending_leave_requests }}</h2>
+                                         {% set request_rate = ((pending_leave_requests / total_num_of_emp) * 100) if total_num_of_emp else 0 %}
+                                        <div class="stat-change {{ 'text-danger' if request_rate > 5 else 'text-info' }} mt-2">
+                                            {% if total_num_of_emp > 0 %}
+                                                {{ request_rate|round(1) }}% of Employees
+                                            {% else %}
+                                                0%
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="stat-icon danger">
+                                        <i class="fas fa-bell"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity and Attendance Section -->
+                <div class="row g-3 mb-4">
+                    <!-- Recent Activity -->
+                    <div class="col-lg-6" data-aos="fade-right" data-aos-delay="500">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                                <h6 class="m-0 font-weight-bold">
+                                    <i class="fas fa-history me-2 text-primary"></i>Recent Activity
+                                </h6>
+                                <button class="btn btn-sm btn-link text-muted p-0" id="refreshActivities" data-bs-toggle="tooltip" title="Refresh Activities">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
+                            <div class="card-body position-relative">
+                                <div class="loading-overlay" style="display: none;">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+
+                                <div class="activity-feed" id="activity-list">
+                                    <!-- Activities will be loaded here -->
+                                    {% if recent_activities %}
+                                        {% for activity in recent_activities %}
+                                            <div class="activity-item mb-3">
+                                                <div class="d-flex">
+                                                    <div class="activity-badge bg-{{ activity.type if activity.type in ['primary', 'success', 'warning', 'danger', 'info'] else 'secondary' }} me-3">
+                                                        <i class="fas fa-{{ activity.icon or 'bell' }} text-white"></i>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <div class="d-flex justify-content-between">
+                                                            <h6 class="mb-1">{{ activity.title }}</h6>
+                                                            <small class="text-muted">{{ activity.time.strftime('%H:%M') }}</small>
+                                                        </div>
+                                                        <p class="mb-0 text-muted small">{{ activity.description }}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    {% else %}
+                                        <div class="text-center py-4 text-muted">
+                                            <i class="fas fa-inbox fa-2x mb-2"></i>
+                                            <p>No recent activities found</p>
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="text-center mt-3">
+                                    <a href="#" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-history me-1"></i> View All Activity
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Today's Attendance -->
+                    <div class="col-lg-6" data-aos="fade-left" data-aos-delay="600">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                                <h6 class="m-0 font-weight-bold">
+                                    <i class="fas fa-clipboard-list me-2 text-primary"></i>Today's Attendance
+                                </h6>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="attendanceFilter" data-bs-toggle="dropdown">
+                                        <i class="fas fa-filter me-1"></i> Filter
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="attendanceFilter">
+                                        <li><h6 class="dropdown-header">Filter by Status</h6></li>
+                                        <li><a class="dropdown-item" href="#" data-filter="all">All Employees</a></li>
+                                        <li><a class="dropdown-item" href="#" data-filter="present">Present Only</a></li>
+                                        <li><a class="dropdown-item" href="#" data-filter="absent">Absent Only</a></li>
+                                        <li><a class="dropdown-item" href="#" data-filter="late">Late Arrivals</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" href="#" data-filter="export"><i class="fas fa-download me-2"></i>Export Data</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="card-body position-relative">
+                                <div class="loading-overlay" style="display: none;">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle" id="attendance-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Employee</th>
+                                                <th>Status</th>
+                                                <th>Time</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% if monitoring_logs %}
+                                                {% for employee_name, status, timestamp in monitoring_logs %}
+                                                <tr class="{{ 'table-warning' if status == 'Late' else '' }}">
+                                                    <td>
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="avatar avatar-sm me-2 bg-{{ 'success' if status == 'Present' else 'danger' if status == 'Absent' else 'warning' }}">
+                                                                {{ employee_name[0] if employee_name else '?' }}
+                                                            </div>
+                                                            <div>
+                                                                <div class="fw-bold">{{ employee_name or 'Unknown' }}</div>
+                                                                <small class="text-muted">ID: {{ loop.index }}</small> {# Replace with actual employee ID if available #}
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        {% if status == 'Present' %}
+                                                            <span class="badge bg-success">Present</span>
+                                                        {% elif status == 'Absent' %}
+                                                            <span class="badge bg-danger">Absent</span>
+                                                        {% elif status == 'Late' %}
+                                                            <span class="badge bg-warning">Late</span>
+                                                        {% else %}
+                                                            <span class="badge bg-secondary">Unknown</span>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        {% if timestamp %}
+                                                            <span class="text-muted">{{ timestamp.strftime('%H:%M') }}</span>
+                                                        {% else %}
+                                                            <span class="text-muted">-</span>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="Edit">
+                                                            <i class="fas fa-edit"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-outline-secondary ms-1" data-bs-toggle="tooltip" title="View Details">
+                                                            <i class="fas fa-eye"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            {% else %}
+                                                <tr>
+                                                    <td colspan="4" class="text-center text-muted py-4">
+                                                        <i class="fas fa-list-alt fa-2x mb-2"></i>
+                                                        <p>No attendance records for today.</p>
+                                                    </td>
+                                                </tr>
+                                            {% endif %}
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="text-center mt-3">
+                                    <a href="{{ url_for('view_attendance_home') }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-external-link-alt me-1"></i> View Full Report
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-4 g-3">
+                    <!-- Weekly Attendance Overview (Enhanced) -->
+                    <div class="col-lg-8" data-aos="fade-right" data-aos-delay="700">
+                        <div class="card shadow-sm fade-in h-100">
+                            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                                <div>
+                                    <h6 class="m-0 font-weight-bold text-primary">
+                                        <i class="fas fa-calendar-week me-2"></i>Weekly Attendance Overview
+                                    </h6>
+                                    <small class="text-muted" id="weekRangeLabel">Loading date range...</small>
+                                </div>
+                                <div class="d-flex align-items-center gap-2">
+                                    <button id="refreshAttendance" class="btn btn-sm btn-outline-primary" data-bs-toggle="tooltip" title="Refresh data">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </button>
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle d-flex align-items-center" type="button" id="weekSelector" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="far fa-calendar-alt me-2"></i>
+                                            <span id="currentWeekLabel">Select Week</span>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="weekSelector" id="weekDropdown">
+                                            <li><div class="dropdown-header">Available Weeks</div></li>
+                                            <!-- Weeks will be populated dynamically -->
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body position-relative">
+                                <!-- Loading overlay -->
+                                <div class="loading-overlay" style="display: none;">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+
+                                <div class="chart-container" style="position: relative; height: 300px;">
+                                    <canvas id="attendanceChart"></canvas>
+                                </div>
+
+                                <!-- Statistics Cards -->
+                                <div class="row mt-3 g-3" id="attendanceStats">
+                                    <!-- Stats will be populated here -->
+                                    <div class="col-md-4">
+                                        <div class="stat-card bg-success bg-opacity-10 border-start border-success border-4">
+                                            <div class="stat-content">
+                                                <div class="stat-label">Avg Presence</div>
+                                                <div class="stat-value text-success">-</div>
+                                                <div class="stat-change text-muted">-</div>
+                                            </div>
+                                            <div class="stat-icon">
+                                                <i class="fas fa-user-check text-success"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="stat-card bg-primary bg-opacity-10 border-start border-primary border-4">
+                                            <div class="stat-content">
+                                                <div class="stat-label">Total Present</div>
+                                                <div class="stat-value text-primary">-</div>
+                                                <div class="stat-change text-muted">-</div>
+                                            </div>
+                                            <div class="stat-icon">
+                                                <i class="fas fa-user-clock text-primary"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="stat-card bg-danger bg-opacity-10 border-start border-danger border-4">
+                                            <div class="stat-content">
+                                                <div class="stat-label">Total Absent</div>
+                                                <div class="stat-value text-danger">-</div>
+                                                <div class="stat-change text-muted">-</div>
+                                            </div>
+                                            <div class="stat-icon">
+                                                <i class="fas fa-user-slash text-danger"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Additional Metrics -->
+                                <div class="row mt-3 g-3" id="additionalMetrics">
+                                    <div class="col-md-4">
+                                        <div class="metric-card">
+                                            <div class="metric-label">Best Day</div>
+                                            <div class="metric-value" id="bestDay">-</div>
+                                            <div class="metric-percentage" id="bestDayPercentage">-</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="metric-card">
+                                            <div class="metric-label">Worst Day</div>
+                                            <div class="metric-value" id="worstDay">-</div>
+                                            <div class="metric-percentage" id="worstDayPercentage">-</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="metric-card">
+                                            <div class="metric-label">Consistency</div>
+                                            <div class="metric-value" id="consistency">-</div>
+                                            <div class="metric-percentage" id="consistencyTrend">-</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Department Distribution (Enhanced) -->
+                    <div class="col-lg-4" data-aos="fade-left" data-aos-delay="800">
+                        <div class="card shadow-sm fade-in h-100">
+                            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">
+                                    <i class="fas fa-building me-2"></i>Department Distribution
+                                </h6>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-link text-muted p-0" type="button" id="deptFilterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-ellipsis-v"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="deptFilterDropdown">
+                                        <li><h6 class="dropdown-header">Filter by Status</h6></li>
+                                        <li><a class="dropdown-item" href="#" data-filter="all">All Departments</a></li>
+                                        <li><a class="dropdown-item" href="#" data-filter="active">Active Employees</a></li>
+                                        <li><a class="dropdown-item" href="#" data-filter="inactive">Inactive Employees</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" href="#" data-filter="export"><i class="fas fa-download me-2"></i>Export Data</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="card-body position-relative">
+                                <!-- Loading overlay -->
+                                <div class="loading-overlay" style="display: none;">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+
+                                <div class="chart-container" style="position: relative; height: 300px;">
+                                    <canvas id="departmentChart"></canvas>
+                                </div>
+
+                                <!-- Department Legend -->
+                                <div class="dept-legend mt-3" id="departmentLegend">
+                                    <!-- Legend will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-4 g-3">
+                    <div class="col-lg-8">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                                <h6 class="m-0 font-weight-bold">
+                                    <i class="fas fa-calculator me-2 text-primary"></i>Payroll Processing
+                                </h6>
+                                <div class="dropdown">
+                                    <button class="btn btn-sm btn-primary dropdown-toggle" type="button" id="payrollActions" data-bs-toggle="dropdown">
+                                        <i class="fas fa-cog me-1"></i> Actions
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><a class="dropdown-item" href="#" id="newPayrollBtn"><i class="fas fa-plus me-2"></i>New Payroll</a></li>
+                                        <li><a class="dropdown-item" href="#" id="recalculatePayrollBtn"><i class="fas fa-sync-alt me-2"></i>Recalculate</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <a class="dropdown-item" href="{{ url_for('payroll_dashboard') }}">
+                                                <i class="fas fa-external-link-alt me-2"></i>Payroll Dashboard
+                                            </a>
+                                        </li>                                          
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Pay Period</label>
+                                        <select class="form-select" id="payPeriod">
+                                            <option value="monthly">Monthly</option>
+                                            <option value="biweekly">Bi-Weekly</option>
+                                            <option value="weekly">Weekly</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Month</label>
+                                        <select class="form-select" id="payMonth">
+                                            <option value="1">January</option>
+                                            <option value="2">February</option>
+                                            <option value="3">March</option>
+                                            <option value="4">April</option>
+                                            <option value="5">May</option>
+                                            <option value="6">June</option>
+                                            <option value="7">July</option>
+                                            <option value="8">August</option>
+                                            <option value="9">September</option>
+                                            <option value="10">October</option>
+                                            <option value="11">November</option>
+                                            <option value="12">December</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Year</label>
+                                        <select class="form-select" id="payYear">
+                                            <option value="2023">2024</option>
+                                            <option value="2024">2025</option>
+                                        </select>
+                                    </div>
+                                </div>
+                
+                                <div class="table-responsive">
+                                    <table class="table table-hover" id="payrollTable">
+                                        <thead>
+                                            <tr>
+                                                <th>Employee</th>
+                                                <th>Department</th>
+                                                <th>Basic Salary</th>
+                                                <th>Work Hours</th>
+                                                <th>Deductions</th>
+                                                <th>Net Pay</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Data will be loaded via JavaScript -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <div class="col-lg-4">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                                <h6 class="m-0 font-weight-bold">
+                                    <i class="fas fa-file-invoice me-2 text-primary"></i>Payslip Preview
+                                </h6>
+                                <div>
+                                    <button class="btn btn-sm btn-outline-secondary" id="printPayslipBtn">
+                                        <i class="fas fa-print me-1"></i> Print
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body" id="payslipPreview">
+                                <div class="text-center py-5">
+                                    <i class="fas fa-user-tie fa-3x text-muted mb-3"></i>
+                                    <p class="text-muted">Select an employee to view payslip</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- JavaScript for Payroll System -->
+                <script>
+                    function renderPayrollTable() {
+                        const tableBody = document.querySelector('#payrollTable tbody');
+                        tableBody.innerHTML = '';
+
+                        if (payrollData.length === 0) {
+                            tableBody.innerHTML = `
+                                <tr>
+                                    <td colspan="8" class="text-center py-4 text-muted">
+                                        No payroll data available for selected period
+                                    </td>
+                                </tr>
+                            `;
+                            return;
+                        }
+
+                        payrollData.forEach(employee => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${employee.name}</td>
+                            <td>${employee.department}</td>
+                            <td>ETB ${Number(employee.basic_salary).toLocaleString()}</td>
+                            <td>${employee.work_hours}</td>
+                            <td>ETB ${Number(employee.deductions).toLocaleString()}</td>
+                            <td class="fw-bold">ETB ${Number(employee.net_pay).toLocaleString()}</td>
+                            <td>
+                                <span class="badge ${employee.status === 'Paid' ? 'bg-success' : 'bg-warning'}">${employee.status}</span>
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary view-payslip" data-id="${employee.id}">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+
+    // Add event listeners to view buttons
+                    document.querySelectorAll('.view-payslip').forEach(button => {
+                        button.addEventListener('click', function() {
+                            const employeeId = this.getAttribute('data-id');
+                            viewPayslip(employeeId);
+                        });
+                    });
+                }
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Initialize payroll data
+                    let payrollData = [];
+                    
+                    // Fetch payroll data from backend
+                    function fetchPayrollData() {
+                        const period = document.getElementById('payMonth').value.padStart(2, '0');
+                        const year = document.getElementById('payYear').value;
+                        const periodStr = `${year}-${period}`;
+                        fetch(`/api/payroll?period=${periodStr}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                payrollData = data;
+                                renderPayrollTable();
+                            })
+                            
+                    }
+                    
+                    // Render payroll table
+                    function renderPayrollTable() {
+                        const tableBody = document.querySelector('#payrollTable tbody');
+                        tableBody.innerHTML = '';
+                        
+                        if (payrollData.length === 0) {
+                            tableBody.innerHTML = `
+                                <tr>
+                                    <td colspan="9" class="text-center py-4 text-muted">
+                                        No payroll data available for selected period
+                                    </td>
+                                </tr>
+                            `;
+                            return;
+                        }
+                        
+                        payrollData.forEach(employee => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${employee.employee_id}</td>
+                                <td>${employee.name}</td>
+                                <td>ETB ${employee.basic_salary.toLocaleString()}</td>
+                                <td>ETB ${employee.overtime.toLocaleString()}</td>
+                                <td>ETB ${employee.deductions.toLocaleString()}</td>
+                                <td class="fw-bold">ETB ${employee.net_pay.toLocaleString()}</td>
+                                <td>${employee.bank_account}</td>
+                                <td>${employee.pay_date}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary view-payslip" data-id="${employee.employee_id}">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </td>
+                            `;
+                            tableBody.appendChild(row);
+                        });
+                        
+                        // Add event listeners to view buttons
+                        document.querySelectorAll('.view-payslip').forEach(button => {
+                            button.addEventListener('click', function() {
+                                const employeeId = this.getAttribute('data-id');
+                                viewPayslip(employeeId);
+                            });
+                        });
+                    }
+                    
+                    // View payslip for specific employee
+                    function viewPayslip(employeeId) {
+                        const employee = payrollData.find(emp => emp.employee_id === employeeId);
+                        if (!employee) return;
+                        
+                        const payslipPreview = document.getElementById('payslipPreview');
+                        payslipPreview.innerHTML = `
+                            <div class="payslip">
+                                <div class="payslip-header text-center mb-4">
+                                    <h4>Haramaya University</h4>
+                                    <h5>Payroll Department</h5>
+                                    <h6 class="text-muted">PAYSLIP</h6>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <p><strong>Employee ID:</strong> ${employee.employee_id}</p>
+                                        <p><strong>Name:</strong> ${employee.name}</p>
+                                        <p><strong>Department:</strong> ${employee.department || 'N/A'}</p>
+                                    </div>
+                                    <div class="col-md-6 text-end">
+                                        <p><strong>Pay Period:</strong> ${document.getElementById('payMonth').options[document.getElementById('payMonth').selectedIndex].text} ${document.getElementById('payYear').value}</p>
+                                        <p><strong>Pay Date:</strong> ${employee.pay_date}</p>
+                                        <p><strong>Bank Account:</strong> ${employee.bank_account}</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="card mb-3">
+                                            <div class="card-header bg-light">
+                                                <h6 class="mb-0">Earnings</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <table class="table table-sm">
+                                                    <tr>
+                                                        <td>Basic Salary</td>
+                                                        <td class="text-end">ETB ${employee.basic_salary.toLocaleString()}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Overtime</td>
+                                                        <td class="text-end">ETB ${employee.overtime.toLocaleString()}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Allowances</td>
+                                                        <td class="text-end">ETB ${employee.allowances.toLocaleString()}</td>
+                                                    </tr>
+                                                    <tr class="table-active">
+                                                        <td><strong>Total Earnings</strong></td>
+                                                        <td class="text-end"><strong>ETB ${(employee.basic_salary + employee.overtime + employee.allowances).toLocaleString()}</strong></td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card mb-3">
+                                            <div class="card-header bg-light">
+                                                <h6 class="mb-0">Deductions</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <table class="table table-sm">
+                                                    <tr>
+                                                        <td>Tax</td>
+                                                        <td class="text-end">ETB ${employee.tax.toLocaleString()}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Pension</td>
+                                                        <td class="text-end">ETB ${employee.pension.toLocaleString()}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Other Deductions</td>
+                                                        <td class="text-end">ETB ${(employee.deductions - employee.tax - employee.pension).toLocaleString()}</td>
+                                                    </tr>
+                                                    <tr class="table-active">
+                                                        <td><strong>Total Deductions</strong></td>
+                                                        <td class="text-end"><strong>ETB ${employee.deductions.toLocaleString()}</strong></td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="card bg-light">
+                                    <div class="card-body text-center">
+                                        <h5 class="mb-0">NET PAY: ETB ${employee.net_pay.toLocaleString()}</h5>
+                                    </div>
+                                </div>
+                                
+                                <div class="text-center mt-3">
+                                    <small class="text-muted">This is an electronically generated document and does not require a signature.</small>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    
+                    // Event listeners for dropdown changes
+                    document.getElementById('payPeriod').addEventListener('change', fetchPayrollData);
+                    document.getElementById('payMonth').addEventListener('change', fetchPayrollData);
+                    document.getElementById('payYear').addEventListener('change', fetchPayrollData);
+                    
+                    // Print payslip button
+                    document.getElementById('printPayslipBtn').addEventListener('click', function() {
+                        const payslipContent = document.getElementById('payslipPreview').innerHTML;
+                        const printWindow = window.open('', '', 'width=800,height=600');
+                        printWindow.document.write(`
+                            <!DOCTYPE html>
+                            <html>
+                            <head>
+                                <title>Payslip</title>
+                                <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+                                <style>
+                                    body { padding: 20px; }
+                                    .payslip { max-width: 800px; margin: 0 auto; }
+                                </style>
+                            </head>
+                            <body>
+                                ${payslipContent}
+                                <script>
+                                    window.onload = function() { window.print(); }
+                                <\/script>
+                            </body>
+                            </html>
+                        `);
+                        printWindow.document.close();
+                    });
+                    
+                    // New payroll button
+                    document.getElementById('newPayrollBtn').addEventListener('click', function() {
+                        // Implement new payroll creation logic
+                        alert('New payroll creation feature will be implemented here');
+                    });
+                    
+                    // Recalculate button
+                    document.getElementById('recalculatePayrollBtn').addEventListener('click', function() {
+                        fetchPayrollData();
+                        alert('Payroll recalculation initiated');
+                    });
+                    
+                    // Initial data load
+                    fetchPayrollData();
+                });
+            </script>
+
+    <!-- Toast Container -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100" id="toastContainer">
+        <!-- Toasts will be appended here -->
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- AOS Animation JS -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true,
+            easing: 'ease-in-out'
+        });
+    </script>
+    <!-- jQuery (for easier AJAX and DOM manipulation) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        // Initialize tooltips
+        document.addEventListener('DOMContentLoaded', function() {
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+
+            // Initialize AOS
+            AOS.init({
+                duration: 800,
+                once: true,
+                easing: 'ease-in-out'
+            });
+
+            // Load initial data
+            loadActivities();
+            loadAttendanceData(0); // Load current week attendance
+            loadDepartmentData('all'); // Load all departments distribution
+            loadPayrollPeriods(); // Load payroll periods for the dropdown
+            loadPayrollData(); // Load initial payroll data
+
+            // ===== DARK MODE TOGGLE =====
+            document.addEventListener('DOMContentLoaded', function () {
+                const darkModeSwitch = document.getElementById('darkModeSwitch');
+            
+                // Load saved preference
+                const savedTheme = localStorage.getItem('darkMode');
+                if (savedTheme === 'enabled') {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    darkModeSwitch.checked = true;
+                } else {
+                    document.documentElement.setAttribute('data-theme', 'light');
+                    darkModeSwitch.checked = false;
+                }
+            
+                // Toggle handler
+                darkModeSwitch.addEventListener('change', function () {
+                    if (this.checked) {
+                        document.documentElement.setAttribute('data-theme', 'dark');
+                        localStorage.setItem('darkMode', 'enabled');
+                    } else {
+                        document.documentElement.setAttribute('data-theme', 'light');
+                        localStorage.setItem('darkMode', 'disabled');
+                    }
+                });
+            });
+            // ===== MULTILINGUAL SUPPORT =====
+            const languageOptions = {
+                en: {
+                    universityName: "Haramaya University",
+                    systemName: "Attendance Management System",
+                    searchPlaceholder: "Search employees, reports...",
+                    notifications: "Notifications",
+                    profile: "Profile",
+                    settings: "Settings",
+                    logout: "Logout",
+                    quickActions: "Quick Actions",
+                    registerEmployee: "Register New Employee",
+                    editEmployee: "Edit Employee",
+                    generateReport: "Generate Report",
+                    manageLeaveRequests: "Manage Leave Requests",
+                    addPhotos: "Add Photos",
+                    trainModel: "Train Model",
+                    viewMessages: "View Messages",
+                    systemStatus: "System Status",
+                    storage: "Storage",
+                    upgrade: "Upgrade",
+                    adminDashboard: "Admin Dashboard",
+                    welcomeMessage: "Welcome back, Admin! Here's what's happening today.",
+                    share: "Share",
+                    export: "Export",
+                    addNew: "Add New",
+                    totalEmployees: "Total Employees",
+                    presentToday: "Present Today",
+                    lateArrivals: "Late Arrivals Today",
+                    pendingLeaveRequests: "Pending Leave Requests",
+                    recentActivity: "Recent Activity",
+                    refreshActivities: "Refresh Activities",
+                    viewAllActivity: "View All Activity",
+                    todaysAttendance: "Today's Attendance",
+                    filter: "Filter",
+                    allEmployees: "All Employees",
+                    presentOnly: "Present Only",
+                    absentOnly: "Absent Only",
+                    lateArrivalsFilter: "Late Arrivals",
+                    exportData: "Export Data",
+                    employee: "Employee",
+                    status: "Status",
+                    time: "Time",
+                    actions: "Actions",
+                    viewFullReport: "View Full Report",
+                    weeklyAttendanceOverview: "Weekly Attendance Overview",
+                    loadingDateRange: "Loading date range...",
+                    refreshData: "Refresh data",
+                    selectWeek: "Select Week",
+                    availableWeeks: "Available Weeks",
+                    avgPresence: "Avg Presence",
+                    totalPresent: "Total Present",
+                    totalAbsent: "Total Absent",
+                    bestDay: "Best Day",
+                    worstDay: "Worst Day",
+                    consistency: "Consistency",
+                    departmentDistribution: "Department Distribution",
+                    allDepartments: "All Departments",
+                    activeEmployees: "Active Employees",
+                    inactiveEmployees: "Inactive Employees",
+                    payrollProcessing: "Payroll Processing",
+                    processPayroll: "Process Payroll",
+                    payPeriod: "Pay Period",
+                    paymentDate: "Payment Date",
+                    basicSalary: "Basic Salary",
+                    allowances: "Allowances",
+                    deductions: "Deductions",
+                    netPay: "Net Pay",
+                    showing: "Showing",
+                    of: "of",
+                    employees: "employees",
+                    previous: "Previous",
+                    next: "Next",
+                    payrollSummary: "Payroll Summary",
+                    payrollTotal: "Payroll Total",
+                    recentPayslips: "Recent Payslips",
+                    viewAll: "View All",
+                    payslipPreview: "Payslip Preview",
+                    print: "Print",
+                    email: "Email",
+                    payslipDetails: "Payslip Details",
+                    close: "Close",
+                    paid: "Paid",
+                    pending: "Pending",
+                    processing: "Processing",
+                    rejected: "Rejected",
+                    unknown: "Unknown",
+                    noRecentActivities: "No recent activities found",
+                    failedToLoadActivities: "Failed to load activities. Please try again.",
+                    noAttendanceRecords: "No attendance records for today.",
+                    loadingPayrollData: "Loading payroll data...",
+                    failedToLoadPayrollData: "Failed to load payroll data. Please try again.",
+                    noRecentPayslips: "No recent payslips found",
+                    processingPayroll: "Processing Payroll",
+                    pleaseWaitProcessing: "Please wait while we process payroll for",
+                    payrollProcessedSuccessfully: "Payroll processed successfully!",
+                    failedToLoadPayslip: "Failed to load payslip",
+                    payslipEmailedSuccessfully: "Payslip emailed successfully!",
+                    failedToEmailPayslip: "Failed to email payslip",
+                    errorSendingEmail: "Error sending email"
+                },
+                om: {
+                    universityName: "Yuunivarsiitii Haramayaa",
+                    systemName: "Sirna Sagantaa fi Kaffaltii Misha",
+                    searchPlaceholder: "Hojjettoota, gabaasa barbaadi...",
+                    notifications: "Beeksisaawwan",
+                    profile: "Profile",
+                    settings: "Settings",
+                    logout: "Ba'i",
+                    quickActions: "Wantoota Ariifachiisoo",
+                    registerEmployee: "Hojjetaa Haaraa Galmeessi",
+                    editEmployee: "Hojjetaa Edit Gochuuf",
+                    generateReport: "Gabaasa Qopheessi",
+                    manageLeaveRequests: "Iyyannoo Boqonnaa Bulchi",
+                    addPhotos: "Suuraawwan Dabalii",
+                    trainModel: "Model Hojjechiisuu",
+                    viewMessages: "Ergaawwan Daawwadhu",
+                    systemStatus: "Haala Sirnaa",
+                    storage: "Kuusaa",
+                    upgrade: "Guddifachuu",
+                    adminDashboard: "Daashboordii Bulchaa",
+                    welcomeMessage: "Baga nagaan dhuftan Bulchaa! Har'a wantoota armaan gaditti argitu.",
+                    share: "Qooduu",
+                    export: "Erguu",
+                    addNew: "Haaraa Dabaluu",
+                    totalEmployees: "Hojjettoota Waliigalaa",
+                    presentToday: "Har'a Jiran",
+                    lateArrivals: "Har'a Turaan",
+                    pendingLeaveRequests: "Iyyannoo Boqonnaa Hafoo",
+                    recentActivity: "Sochii Dhihoo",
+                    refreshActivities: "Sochii Haareessuu",
+                    viewAllActivity: "Sochii Hunda Daawwadhu",
+                    todaysAttendance: "Sagantaa Har'aa",
+                    filter: "Filadhu",
+                    allEmployees: "Hojjettoota Hunda",
+                    presentOnly: "Jiran Qofaa",
+                    absentOnly: "Hin Jirree Qofaa",
+                    lateArrivalsFilter: "Turaan",
+                    exportData: "Dantaa Erguu",
+                    employee: "Hojjetaa",
+                    status: "Haala",
+                    time: "Sa'aa",
+                    actions: "Dalagaawwan",
+                    viewFullReport: "Gabaasa Guutuu Daawwadhu",
+                    weeklyAttendanceOverview: "Sagantaa Torbanii Waliigalaa",
+                    loadingDateRange: "Lakkoofsa guyyaa fe'amaa jira...",
+                    refreshData: "Dantaa Haareessuu",
+                    selectWeek: "Torbee Filadhu",
+                    availableWeeks: "Torbeewwan Argaman",
+                    avgPresence: "Jireenya Giddugaleessaa",
+                    totalPresent: "Waliigala Jiran",
+                    totalAbsent: "Waliigala Hin Jirree",
+                    bestDay: "Guyyaa Gaarii",
+                    worstDay: "Guyyaa Hamaa",
+                    consistency: "Ijaajummaa",
+                    departmentDistribution: "Hirama Waajjiraa",
+                    allDepartments: "Waajjira Hunda",
+                    activeEmployees: "Hojjettoota Dalagaa Irratti Jiran",
+                    inactiveEmployees: "Hojjettoota Dalagaa Irratti Hin Jirree",
+                    payrollProcessing: "Kaffaltii Hojjechuu",
+                    processPayroll: "Kaffaltii Hojjedhu",
+                    payPeriod: "Yeroo Kaffaltii",
+                    paymentDate: "Guyyaa Kaffaltii",
+                    basicSalary: "Mindaa Bu'uuraa",
+                    allowances: "Deeggarsaalee",
+                    deductions: "Hir'isaa",
+                    netPay: "Kaffaltii Qulqulluu",
+                    showing: "Argisiisaa Jira",
+                    of: "keessaa",
+                    employees: "hojjettoota",
+                    previous: "Kan Duraa",
+                    next: "Kan Itti Aanuu",
+                    payrollSummary: "Cuunfaa Kaffaltii",
+                    payrollTotal: "Kaffaltii Waliigalaa",
+                    recentPayslips: "Baatiiwwan Dhihoo",
+                    viewAll: "Hunda Daawwadhu",
+                    payslipPreview: "Baatii Kaffaltii Argisiisuu",
+                    print: "Maxxansuu",
+                    email: "Imeelii Erguu",
+                    payslipDetails: "Ibsa Baatii Kaffaltii",
+                    close: "Cufuu",
+                    paid: "Kaffalameera",
+                    pending: "Hafee jira",
+                    processing: "Hojjetamaa jira",
+                    rejected: "Didee jira",
+                    unknown: "Hin Beekamu",
+                    noRecentActivities: "Sochiin dhihoo hin argamne",
+                    failedToLoadActivities: "Sochii fe'uun hin milkoofne. Irra deebi'i.",
+                    noAttendanceRecords: "Sagantaan har'aa hin jiru.",
+                    loadingPayrollData: "Dantaa kaffaltii fe'amaa jira...",
+                    failedToLoadPayrollData: "Dantaa kaffaltii fe'uun hin milkoofne. Irra deebi'i.",
+                    noRecentPayslips: "Baatiiwwan dhihoo hin argamne",
+                    processingPayroll: "Kaffaltii Hojjechuu",
+                    pleaseWaitProcessing: "Maaloo yeroo kaffaltii hojjechuu nu eegi",
+                    payrollProcessedSuccessfully: "Kaffaltiin milkiin hojjetame!",
+                    failedToLoadPayslip: "Baatii kaffaltii fe'uun hin milkoofne",
+                    payslipEmailedSuccessfully: "Baatiin kaffaltii milkiin ergameera!",
+                    failedToEmailPayslip: "Baatii kaffaltii erguun hin milkoofne",
+                    errorSendingEmail: "Imeelii erguutti dogoggora"
+                },
+                am: {
+                    universityName: "የሀረማያ ዩኒቨርሲቲ",
+                    systemName: "የመገኘት እና ደመወዝ ስርዓት",
+                    searchPlaceholder: "ሰራተኞች፣ ሪፖርቶችን ፈልግ...",
+                    notifications: "ማስታወቂያዎች",
+                    profile: "መገለጫ",
+                    settings: "ቅንብሮች",
+                    logout: "ውጣ",
+                    quickActions: "ፈጣን እርምጃዎች",
+                    registerEmployee: "አዲስ ሰራተኛ አስመዝግብ",
+                    editEmployee: "ሰራተኛ አስተካክል",
+                    generateReport: "ሪፖርት አዘጋጅ",
+                    manageLeaveRequests: "የእረፍት ጥያቄዎችን አስተዳድር",
+                    addPhotos: "ፎቶዎችን አክል",
+                    trainModel: "ሞዴል አሰልጥን",
+                    viewMessages: "መልዕክቶችን እይ",
+                    systemStatus: "የስርዓት ሁኔታ",
+                    storage: "ማከማቻ",
+                    upgrade: "አሻሽል",
+                    adminDashboard: "የአስተዳዳሪ ዳሽቦርድ",
+                    welcomeMessage: "እንኳን ደህና መጣህ አስተዳዳሪ! የዛሬው ሁኔታ ይህ ነው።",
+                    share: "አጋራ",
+                    export: "ላክ",
+                    addNew: "አዲስ ጨምር",
+                    totalEmployees: "ጠቅላላ ሰራተኞች",
+                    presentToday: "ዛሬ ያሉ",
+                    lateArrivals: "ዛሬ የዘገዩ",
+                    pendingLeaveRequests: "ያልተፈቱ የእረፍት ጥያቄዎች",
+                    recentActivity: "የቅርብ ጊዜ እንቅስቃሴ",
+                    refreshActivities: "እንቅስቃሴዎችን አድስ",
+                    viewAllActivity: "ሁሉንም እንቅስቃሴ እይ",
+                    todaysAttendance: "የዛሬ መገኘት",
+                    filter: "አጣራ",
+                    allEmployees: "ሁሉም ሰራተኞች",
+                    presentOnly: "ያሉ ብቻ",
+                    absentOnly: "የሌሉ ብቻ",
+                    lateArrivalsFilter: "የዘገዩ",
+                    exportData: "መረጃ ላክ",
+                    employee: "ሰራተኛ",
+                    status: "ሁኔታ",
+                    time: "ሰዓት",
+                    actions: "እርምጃዎች",
+                    viewFullReport: "ሙሉ ሪፖርት እይ",
+                    weeklyAttendanceOverview: "ሳምንታዊ የመገኘት አጠቃላይ እይታ",
+                    loadingDateRange: "የቀን ክልል በመጫን ላይ...",
+                    refreshData: "መረጃ አድስ",
+                    selectWeek: "ሳምንት ምረጥ",
+                    availableWeeks: "የሚገኙ ሳምንታት",
+                    avgPresence: "አማካይ መገኘት",
+                    totalPresent: "ጠቅላላ ያሉ",
+                    totalAbsent: "ጠቅላላ የሌሉ",
+                    bestDay: "ምርጥ ቀን",
+                    worstDay: "የከፋ ቀን",
+                    consistency: "ተመሳሳይነት",
+                    departmentDistribution: "የመምሪያ ክፍፍል",
+                    allDepartments: "ሁሉም መምሪያዎች",
+                    activeEmployees: "በስራ ላይ ያሉ ሰራተኞች",
+                    inactiveEmployees: "በስራ ላይ ያልሆኑ ሰራተኞች",
+                    payrollProcessing: "የደመወዝ ሂደት",
+                    processPayroll: "ደመወዝ አዘጋጅ",
+                    payPeriod: "የክፍያ ጊዜ",
+                    paymentDate: "የክፍያ ቀን",
+                    basicSalary: "መሰረታዊ ደመወዝ",
+                    allowances: "ጥቅማጥቅሞች",
+                    deductions: "ቅናሾች",
+                    netPay: "የተጣራ ክፍያ",
+                    showing: "በማሳየት ላይ",
+                    of: "ከ",
+                    employees: "ሰራተኞች",
+                    previous: "ቀዳሚ",
+                    next: "ቀጣይ",
+                    payrollSummary: "የደመወዝ ማጠቃለያ",
+                    payrollTotal: "ጠቅላላ ደመወዝ",
+                    recentPayslips: "የቅርብ ጊዜ የክፍያ ደብተሮች",
+                    viewAll: "ሁሉንም እይ",
+                    payslipPreview: "የክፍያ ደብተር ቅድመ እይታ",
+                    print: "አትም",
+                    email: "ኢሜል",
+                    payslipDetails: "የክፍያ ደብተር ዝርዝሮች",
+                    close: "ዝጋ",
+                    paid: "ተከፍሏል",
+                    pending: "በሂደት ላይ",
+                    processing: "በማዘጋጀት ላይ",
+                    rejected: "ተጥሏል",
+                    unknown: "የማይታወቅ",
+                    noRecentActivities: "የቅርብ ጊዜ እንቅስቃሴ አልተገኘም",
+                    failedToLoadActivities: "እንቅስቃሴዎችን መጫን አልተሳካም. እባክዎ እንደገና ይሞክሩ.",
+                    noAttendanceRecords: "ለዛሬ የመገኘት መዝገብ የለም።",
+                    loadingPayrollData: "የደመወዝ መረጃ በመጫን ላይ...",
+                    failedToLoadPayrollData: "የደመወዝ መረጃ መጫን አልተሳካም. እባክዎ እንደገና ይሞክሩ.",
+                    noRecentPayslips: "የቅርብ ጊዜ የክፍያ ደብተሮች አልተገኙም",
+                    processingPayroll: "የደመወዝ ሂደት በመካሄድ ላይ",
+                    pleaseWaitProcessing: "እባክዎ ደመወዝ እስኪዘጋጅ ይጠብቁ",
+                    payrollProcessedSuccessfully: "ደመወዝ በተሳካ ሁኔታ ተዘጋጅቷል!",
+                    failedToLoadPayslip: "የክፍያ ደብተር መጫን አልተሳካም",
+                    payslipEmailedSuccessfully: "የክፍያ ደብተር በተሳካ ሁኔታ ተልኳል!",
+                    failedToEmailPayslip: "የክፍያ ደብተር መላክ አልተሳካም",
+                    errorSendingEmail: "ኢሜል በመላክ ላይ ስህተት"
+                }
+            };
+
+            // Set language
+            function setLanguage(lang) {
+                const elements = document.querySelectorAll('[data-i18n]');
+                elements.forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    if (key.startsWith('[placeholder]')) {
+                        el.placeholder = languageOptions[lang][key.replace('[placeholder]', '')] || el.placeholder;
+                    } else {
+                        el.textContent = languageOptions[lang][key] || el.textContent;
+                    }
+                });
+
+                // Update specific elements
+                document.getElementById('university-name').textContent = languageOptions[lang].universityName;
+                document.getElementById('system-name').textContent = languageOptions[lang].systemName;
+                document.getElementById('current-language').textContent =
+                    lang === 'en' ? 'English' : lang === 'om' ? 'Afaan Oromoo' : 'አማርኛ';
+
+                localStorage.setItem('language', lang);
+            }
+
+            // Initialize language
+            const savedLang = localStorage.getItem('language') || 'en';
+            setLanguage(savedLang);
+
+            // Language selector
+            document.querySelectorAll('.language-option').forEach(option => {
+                option.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const lang = this.getAttribute('data-lang');
+                    setLanguage(lang);
+                });
+            });
+
+            // ===== SEARCH FUNCTIONALITY =====
+            document.getElementById('globalSearch').addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') {
+                    window.location.href = `/search?q=${encodeURIComponent(this.value)}`;
+                }
+            });
+
+             // ===== NAVBAR SCROLL EFFECT =====
+            const navbar = document.querySelector('.navbar');
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+
+
+        });
+
+
+        // ===== ACTIVITY FEED =====
+        function loadActivities() {
+            const container = document.getElementById('activity-list');
+            const overlay = container.closest('.card-body').querySelector('.loading-overlay');
+
+            overlay.style.display = 'flex';
+
+            // Simulate fetching data (replace with actual fetch from Flask backend)
+            // Example data structure: [{ title: '...', description: '...', time: '...', type: '...', icon: '...' }]
+            // type: 'primary', 'success', 'warning', 'danger', 'info'
+            // icon: font awesome icon name (e.g., 'user-plus', 'calendar-check')
+            fetch('/api/recent-activities')
+                .then(response => response.json())
+                .then(data => {
+                    container.innerHTML = '';
+
+                    if (!data || data.length === 0) {
+                        container.innerHTML = `
+                            <div class="text-center py-4 text-muted">
+                                <i class="fas fa-inbox fa-2x mb-2"></i>
+                                <p data-i18n="noRecentActivities">${languageOptions[localStorage.getItem('language') || 'en'].noRecentActivities}</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    data.slice(0, 5).forEach(item => {
+                        const activityItem = document.createElement('div');
+                        activityItem.className = 'activity-item mb-3';
+                        activityItem.innerHTML = `
+                            <div class="d-flex">
+                                <div class="activity-badge bg-${item.type || 'secondary'} me-3">
+                                    <i class="fas fa-${item.icon || 'bell'} text-white"></i>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <div class="d-flex justify-content-between">
+                                        <h6 class="mb-1">${item.title}</h6>
+                                        <small class="text-muted">${new Date(item.time).toLocaleTimeString()}</small>
+                                    </div>
+                                    <p class="mb-0 text-muted small">${item.description}</p>
+                                </div>
+                            </div>
+                        `;
+                        container.appendChild(activityItem);
+                    });
+                })
+                .catch(error => {
+                    console.error("Failed to load activities:", error);
+                    container.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <span data-i18n="failedToLoadActivities">${languageOptions[localStorage.getItem('language') || 'en'].failedToLoadActivities}</span>
+                        </div>
+                    `;
+                })
+                .finally(() => {
+                    overlay.style.display = 'none';
+                });
+        }
+
+        // Refresh activities button
+        document.getElementById('refreshActivities').addEventListener('click', function(e) {
+            e.preventDefault();
+            loadActivities();
+        });
+
+        // ===== ATTENDANCE TABLE FILTERING =====
+        document.querySelectorAll('#attendanceFilter + .dropdown-menu a[data-filter]').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                const filter = this.getAttribute('data-filter');
+
+                if (filter === 'export') {
+                    // Handle export (implement export logic here or redirect)
+                    console.log('Exporting attendance data');
+                    showToast('Exporting attendance data...', 'info');
+                    // Example: window.location.href = '/api/attendance/export?filter=' + filter;
+                    return;
+                }
+
+                const tableBody = document.querySelector('#attendance-table tbody');
+                const rows = tableBody.querySelectorAll('tr');
+                const overlay = tableBody.closest('.card-body').querySelector('.loading-overlay');
+
+                overlay.style.display = 'flex';
+
+                // Simulate filtering with timeout (replace with actual fetch from Flask backend)
+                setTimeout(() => {
+                    rows.forEach(row => {
+                        const statusCell = row.querySelector('td:nth-child(2) .badge');
+                        if (statusCell) {
+                            const status = statusCell.textContent.trim().toLowerCase();
+
+                            if (filter === 'all' ||
+                                (filter === 'present' && status === 'present') ||
+                                (filter === 'absent' && status === 'absent') ||
+                                (filter === 'late' && status === 'late')) {
+                                row.style.display = '';
+                            } else {
+                                row.style.display = 'none';
+                            }
+                        } else {
+                             // Handle rows without status badge (e.g., "No records found")
+                            if (filter === 'all') {
+                                row.style.display = '';
+                            } else {
+                                row.style.display = 'none';
+                            }
+                        }
+                    });
+
+                    overlay.style.display = 'none';
+                }, 500); // Simulate network delay
+            });
+        });
+
+        // ===== WEEKLY ATTENDANCE CHART =====
+        var attendanceChart; // Declare chart variable globally
+
+        // Color palette for charts
+        const chartColors = {
+            primary: '#4e73df',
+            success: '#1cc88a',
+            warning: '#f6c23e',
+            danger: '#e74a3b',
+            info: '#36b9cc',
+            secondary: '#858796',
+            purple: '#6f42c1'
+        };
+
+        function updateWeekRangeLabel(range) {
+            document.getElementById('weekRangeLabel').innerHTML = `
+                <i class="far fa-calendar me-1"></i>${range.start} to ${range.end}
+            `;
+        }
+
+        function loadAttendanceData(weekOffset = 0) {
+            // Show loading state
+            const overlay = document.getElementById('attendanceChart').closest('.card-body').querySelector('.loading-overlay');
+            overlay.style.display = 'flex';
+
+            fetch(`/api/attendance/weekly?week_offset=${weekOffset}`)
+                .then(response => response.json())
+                .then(data => {
+                    updateAttendanceChart(data.chart_data);
+                    updateAttendanceStats(data.stats);
+                    updateWeekDropdown(data.available_weeks, weekOffset);
+                    updateAdditionalMetrics(data.metrics);
+                    updateWeekRangeLabel(data.week_range);
+                })
+                .catch(error => {
+                    console.error('Error loading attendance data:', error);
+                    showToast('Failed to load attendance data', 'danger');
+                })
+                .finally(() => {
+                    overlay.style.display = 'none';
+                });
+        }
+
+        function updateAttendanceChart(data) {
+            const ctx = document.getElementById('attendanceChart').getContext('2d');
+
+            // Destroy previous chart if exists
+            if (attendanceChart) {
+                attendanceChart.destroy();
+            }
+
+            // Create new chart
+            attendanceChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.days,
+                    datasets: [
+                        {
+                            label: 'Present',
+                            data: data.present,
+                            borderColor: chartColors.primary,
+                            backgroundColor: chartColors.primary + '1A', // 10% opacity
+                            tension: 0.3,
+                            fill: true,
+                            borderWidth: 2,
+                            pointBackgroundColor: chartColors.primary,
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        },
+                        {
+                            label: 'Absent',
+                            data: data.absent,
+                            borderColor: chartColors.danger,
+                            backgroundColor: chartColors.danger + '1A', // 10% opacity
+                            tension: 0.3,
+                            fill: true,
+                            borderWidth: 2,
+                            pointBackgroundColor: chartColors.danger,
+                            pointRadius: 4,
+                            pointHoverRadius: 6
+                        },
+                        {
+                            label: 'Late',
+                            data: data.late,
+                            borderColor: chartColors.warning,
+                            backgroundColor: chartColors.warning + '1A', // 10% opacity
+                            tension: 0.3,
+                            fill: true,
+                            borderWidth: 2,
+                            pointBackgroundColor: chartColors.warning,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            hidden: true // Initially hidden
+                        }
+                    ]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20,
+                                font: {
+                                    size: 12
+                                },
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--dark-color') // Use CSS variable
+                            },
+                            onClick: function(e, legendItem, legend) {
+                                const index = legendItem.datasetIndex;
+                                const ci = legend.chart;
+                                const meta = ci.getDatasetMeta(index);
+
+                                // See controller.isDatasetVisible comment
+                                meta.hidden = meta.hidden === null ? !ci.data.datasets[index].hidden : null;
+
+                                ci.update();
+                            }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--dark-color'), // Use CSS variable
+                            titleFont: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                size: 12
+                            },
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.raw}`;
+                                },
+                                footer: function(tooltipItems) {
+                                    const total = tooltipItems.reduce((sum, item) => sum + item.raw, 0);
+                                    return `Total: ${total}`;
+                                }
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Employees',
+                                font: {
+                                    weight: 'bold'
+                                },
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--dark-color') // Use CSS variable
+                            },
+                            ticks: {
+                                precision: 0,
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--dark-color') // Use CSS variable
+                            },
+                            grid: {
+                                drawBorder: false,
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--gray-color') // Use CSS variable
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Day of Week',
+                                font: {
+                                    weight: 'bold'
+                                },
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--dark-color') // Use CSS variable
+                            },
+                            ticks: {
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--dark-color') // Use CSS variable
+                            },
+                            grid: {
+                                drawBorder: false,
+                                color: getComputedStyle(document.documentElement).getPropertyValue('--gray-color') // Use CSS variable
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+
+        function updateAttendanceStats(stats) {
+            const statsHtml = `
+                <div class="col-md-4">
+                    <div class="stat-card bg-success bg-opacity-10 border-start border-success border-4 h-100">
+                        <div class="stat-content">
+                            <div class="stat-label" data-i18n="avgPresence">${languageOptions[localStorage.getItem('language') || 'en'].avgPresence}</div>
+                            <div class="stat-value text-success">${stats.avg_presence}%</div>
+                            <div class="stat-change ${stats.attendance_change >= 0 ? 'text-success' : 'text-danger'}">
+                                <i class="fas fa-arrow-${stats.attendance_change >= 0 ? 'up' : 'down'} me-1"></i>
+                                ${Math.abs(stats.attendance_change)}% from last week
+                            </div>
+                        </div>
+                        <div class="stat-icon success">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card bg-primary bg-opacity-10 border-start border-primary border-4 h-100">
+                        <div class="stat-content">
+                            <div class="stat-label" data-i18n="totalPresent">${languageOptions[localStorage.getItem('language') || 'en'].totalPresent}</div>
+                            <div class="stat-value text-primary">${stats.total_present}</div>
+                            <div class="stat-change text-primary">
+                                ${stats.present_change >= 0 ? '+' : ''}${stats.present_change} from last week
+                            </div>
+                        </div>
+                        <div class="stat-icon primary">
+                            <i class="fas fa-user-clock"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card bg-danger bg-opacity-10 border-start border-danger border-4 h-100">
+                        <div class="stat-content">
+                            <div class="stat-label" data-i18n="totalAbsent">${languageOptions[localStorage.getItem('language') || 'en'].totalAbsent}</div>
+                            <div class="stat-value text-danger">${stats.total_absent}</div>
+                            <div class="stat-change ${stats.absent_change <= 0 ? 'text-success' : 'text-danger'}">
+                                <i class="fas fa-arrow-${stats.absent_change <= 0 ? 'down' : 'up'} me-1"></i>
+                                ${Math.abs(stats.absent_change)} from last week
+                            </div>
+                        </div>
+                        <div class="stat-icon danger">
+                            <i class="fas fa-user-slash"></i>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('attendanceStats').innerHTML = statsHtml;
+             // Re-apply AOS to newly added elements
+            document.querySelectorAll('#attendanceStats .stat-card').forEach((card, index) => {
+                card.setAttribute('data-aos', 'fade-up');
+                card.setAttribute('data-aos-delay', 750 + (index * 100)); // Offset from parent
+            });
+            AOS.refresh(); // Refresh AOS to pick up new elements
+        }
+
+        function updateAdditionalMetrics(metrics) {
+            document.getElementById('bestDay').textContent = metrics.best_day.day;
+            document.getElementById('bestDayPercentage').innerHTML = `${metrics.best_day.percentage}% <small class="text-success"><i class="fas fa-arrow-up"></i> ${metrics.best_day.change}%</small>`;
+
+            document.getElementById('worstDay').textContent = metrics.worst_day.day;
+            document.getElementById('worstDayPercentage').innerHTML = `${metrics.worst_day.percentage}% <small class="text-danger"><i class="fas fa-arrow-down"></i> ${metrics.worst_day.change}%</small>`;
+
+            document.getElementById('consistency').textContent = metrics.consistency.score;
+            document.getElementById('consistencyTrend').innerHTML = `
+                <small class="${metrics.consistency.trend === 'up' ? 'text-success' : 'text-danger'}">
+                    <i class="fas fa-arrow-${metrics.consistency.trend === 'up' ? 'up' : 'down'}"></i>
+                    ${metrics.consistency.change}%
+                </small>
+            `;
+             // Re-apply AOS to newly added elements
+            document.querySelectorAll('#additionalMetrics .metric-card').forEach((card, index) => {
+                card.setAttribute('data-aos', 'fade-up');
+                card.setAttribute('data-aos-delay', 850 + (index * 100)); // Offset from parent
+            });
+             AOS.refresh(); // Refresh AOS to pick up new elements
+        }
+
+        function updateWeekDropdown(weeks, currentWeekOffset) {
+            const dropdown = document.getElementById('weekDropdown');
+            dropdown.innerHTML = '';
+
+            // Add header
+            const header = document.createElement('li');
+            header.innerHTML = '<div class="dropdown-header" data-i18n="availableWeeks">Available Weeks</div>';
+            dropdown.appendChild(header);
+
+            // Add weeks
+            weeks.forEach(week => {
+                const activeClass = week.offset === currentWeekOffset ? 'active' : '';
+                const currentBadge = week.offset === 0 ? `<span class="badge bg-primary ms-2" data-i18n="current">Current</span>` : '';
+
+                const weekItem = document.createElement('li');
+                weekItem.innerHTML = `
+                    <a class="dropdown-item ${activeClass} d-flex justify-content-between align-items-center" href="#" data-offset="${week.offset}">
+                        <span>${week.label}</span>
+                        ${currentBadge}
+                    </a>
+                `;
+                dropdown.appendChild(weekItem);
+            });
+
+            // Add event listeners to new dropdown items
+            dropdown.querySelectorAll('a[data-offset]').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const offset = parseInt(this.getAttribute('data-offset'));
+                    loadAttendanceData(offset);
+
+                    // Update active class
+                    dropdown.querySelectorAll('a').forEach(link => link.classList.remove('active'));
+                    this.classList.add('active');
+                    document.getElementById('currentWeekLabel').textContent = this.querySelector('span').textContent;
+                });
+            });
+
+             // Update current week label initially
+            const currentWeekLink = dropdown.querySelector(`a[data-offset="${currentWeekOffset}"]`);
+            if (currentWeekLink) {
+                document.getElementById('currentWeekLabel').textContent = currentWeekLink.querySelector('span').textContent;
+            }
+        }
+
+        // Refresh button event
+        document.getElementById('refreshAttendance').addEventListener('click', function() {
+            const currentOffsetElement = document.querySelector('#weekDropdown a.active');
+            const currentOffset = currentOffsetElement ? parseInt(currentOffsetElement.getAttribute('data-offset')) : 0;
+            loadAttendanceData(currentOffset);
+        });
+
+
+        // ===== DEPARTMENT DISTRIBUTION CHART =====
+        var departmentChart; // Declare chart variable globally
+
+        // Color palette for departments (can be customized)
+        const departmentColors = [
+            chartColors.primary, chartColors.success, chartColors.info, chartColors.warning,
+            chartColors.danger, chartColors.secondary, chartColors.purple, '#20c997',
+            '#17a2b8', '#ffc107', '#dc3545', '#858796'
+        ];
+
+        function loadDepartmentData(filter = 'all') {
+            // Show loading state
+            const overlay = document.getElementById('departmentChart').closest('.card-body').querySelector('.loading-overlay');
+            overlay.style.display = 'flex';
+
+            fetch(`/api/departments/distribution?filter=${filter}`)
+                .then(response => response.json())
+                .then(data => {
+                    updateDepartmentChart(data.data);
+                    updateDepartmentLegend(data.data);
+                })
+                .catch(error => {
+                    console.error('Error loading department data:', error);
+                    showToast('Failed to load department data', 'danger');
+                })
+                .finally(() => {
+                    overlay.style.display = 'none';
+                });
+        }
+
+        function updateDepartmentChart(data) {
+            const ctx = document.getElementById('departmentChart').getContext('2d');
+
+            // Destroy previous chart if exists
+            if (departmentChart) {
+                departmentChart.destroy();
+            }
+
+            // Prepare data for chart
+            const labels = data.map(dept => dept.name);
+            const counts = data.map(dept => dept.count);
+            const backgrounds = data.map((_, index) => departmentColors[index % departmentColors.length]);
+
+            // Create new chart
+            departmentChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: counts,
+                        backgroundColor: backgrounds,
+                        borderWidth: 1,
+                        borderColor: getComputedStyle(document.documentElement).getPropertyValue('--white-color') // Use CSS variable
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false // Hide default legend, we'll create a custom one
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = total > 0 ? Math.round((value / total) * 100) : 0;
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            },
+                            backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--dark-color'), // Use CSS variable
+                            titleFont: { size: 14, weight: 'bold' },
+                            bodyFont: { size: 12 }
+                        }
+                    },
+                    cutout: '70%' // Makes it a doughnut chart
+                }
+            });
+        }
+
+        function updateDepartmentLegend(data) {
+            const legendContainer = document.getElementById('departmentLegend');
+            legendContainer.innerHTML = '';
+
+            const totalCount = data.reduce((sum, d) => sum + d.count, 0);
+
+            data.forEach((dept, index) => {
+                const color = departmentColors[index % departmentColors.length];
+                const percentage = totalCount > 0 ? Math.round((dept.count / totalCount) * 100) : 0;
+
+                const legendItem = document.createElement('div');
+                legendItem.className = 'dept-legend-item';
+                legendItem.innerHTML = `
+                    <div class="dept-color" style="background-color: ${color};"></div>
+                    <div class="dept-name">${dept.name}</div>
+                    <div class="dept-count">${dept.count}</div>
+                    <div class="dept-percentage">${percentage}%</div>
+                `;
+                legendContainer.appendChild(legendItem);
+            });
+        }
+
+        // Department filter events
+        document.querySelectorAll('#deptFilterDropdown .dropdown-item[data-filter]').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                const filter = this.getAttribute('data-filter');
+                if (filter === 'export') {
+                    // Handle export
+                    console.log('Export department data');
+                    showToast('Exporting department data...', 'info');
+                     // Example: window.location.href = '/api/departments/export?filter=' + filter;
+                } else {
+                    loadDepartmentData(filter);
+                }
+            });
+        });
+
+        // ===== PAYROLL FUNCTIONALITY =====
+
+        function loadPayrollPeriods() {
+            const periodSelect = document.getElementById('payrollPeriod');
+            // Simulate fetching available pay periods
+            // In a real app, this would fetch from your backend
+            const availablePeriods = [
+                { value: '2023-01', label: 'January 2023' },
+                { value: '2023-02', label: 'February 2023' },
+                { value: '2023-03', label: 'March 2023' },
+                { value: '2023-04', label: 'April 2023' },
+                { value: '2023-05', label: 'May 2023' },
+            ];
+
+            periodSelect.innerHTML = '';
+            availablePeriods.forEach(period => {
+                const option = document.createElement('option');
+                option.value = period.value;
+                option.textContent = period.label;
+                periodSelect.appendChild(option);
+            });
+
+             // Set default payment date to end of the selected period
+            periodSelect.addEventListener('change', updatePaymentDate);
+             updatePaymentDate(); // Set initial date
+        }
+
+        function updatePaymentDate() {
+            const periodSelect = document.getElementById('payrollPeriod');
+            const paymentDateInput = document.getElementById('paymentDate');
+            const selectedPeriod = periodSelect.value;
+            const [year, month] = selectedPeriod.split('-');
+            const lastDayOfMonth = new Date(year, month, 0).getDate();
+            paymentDateInput.value = `${year}-${month.padStart(2, '0')}-${lastDayOfMonth.toString().padStart(2, '0')}`;
+        }
+
+
+        function loadPayrollData(period = null) {
+            const tableBody = document.querySelector('#payrollTable tbody');
+            const paginationContainer = document.querySelector('#payrollTable').nextElementSibling.querySelector('.pagination');
+            const showingCountSpan = document.getElementById('showingCount');
+            const totalCountSpan = document.getElementById('totalCount');
+            const overlay = tableBody.closest('.card-body').querySelector('.loading-overlay');
+        
+            overlay.style.display = 'flex';
+        
+            // Determine the period to fetch
+            const selectedPeriod = period || document.getElementById('payrollPeriod').value;
+        
+            fetch(`/api/payroll?period=${selectedPeriod}`) // Assuming API endpoint for payroll data
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch payroll data');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    updatePayrollTable(data.employees);
+                    updatePayrollSummary(data.summary);
+        
+                    showingCountSpan.textContent = data.employees.length;
+                    totalCountSpan.textContent = data.summary.totalEmployees; // Assuming totalEmployees is in summary
+                })
+                .catch(error => {
+                    // Display a user-friendly message in the table
+                    const tableBody = document.querySelector('#payrollTable tbody');
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="text-center py-4 text-muted">
+                                <i class="fas fa-exclamation-circle me-2 text-danger"></i>
+                                <span>Unable to load payroll data. Retrying...</span>
+                            </td>
+                        </tr>
+                    `;
+                
+        
+                    // Retry fetching data after a delay
+                    setTimeout(() => {
+                        loadPayrollData(selectedPeriod);
+                    }, 3000);
+        
+                    // Display a loading message instead of an error
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="text-center py-4 text-muted">
+                                <i class="fas fa-spinner fa-spin me-2"></i>
+                                <span>Retrying to load payroll data...</span>
+                            </td>
+                        </tr>
+                    `;
+                    showingCountSpan.textContent = 0;
+                    totalCountSpan.textContent = 0;
+                })
+                .finally(() => {
+                    overlay.style.display = 'none';
+                });
+        }
+
+        function updatePayrollTable(employees) {
+            const tableBody = document.querySelector('#payrollTable tbody');
+            tableBody.innerHTML = ''; // Clear existing rows
+
+            if (!employees || employees.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center py-4 text-muted">
+                            <i class="fas fa-calculator fa-2x mb-2"></i>
+                            <p class="mt-2 mb-0">No payroll data found for this period.</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            employees.forEach(employee => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="avatar avatar-sm me-2 bg-${employee.avatar_color || 'primary'}">${employee.initials || '?'}</div>
+                            <div>${employee.name || 'Unknown Employee'}</div>
+                        </div>
+                    </td>
+                    <td>ETB ${employee.basicSalary ? employee.basicSalary.toLocaleString('en-US', {minimumFractionDigits: 2}) : '0.00'}</td>
+                    <td>ETB ${employee.allowances ? employee.allowances.toLocaleString('en-US', {minimumFractionDigits: 2}) : '0.00'}</td>
+                    <td>ETB ${employee.deductions ? employee.deductions.toLocaleString('en-US', {minimumFractionDigits: 2}) : '0.00'}</td>
+                    <td class="fw-bold">ETB ${employee.netPay ? employee.netPay.toLocaleString('en-US', {minimumFractionDigits: 2}) : '0.00'}</td>
+                    <td>
+                        <span class="badge ${getStatusBadgeClass(employee.status)}">
+                            ${languageOptions[localStorage.getItem('language') || 'en'][employee.status.toLowerCase()] || employee.status}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary view-payslip" data-id="${employee.id}" data-bs-toggle="tooltip" title="View Payslip">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-success ms-1 email-payslip" data-id="${employee.id}" data-bs-toggle="tooltip" title="Email Payslip">
+                            <i class="fas fa-envelope"></i>
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+             // Re-initialize tooltips for new buttons
+            const tooltipTriggerList = [].slice.call(tableBody.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+
+            // Add event listeners to action buttons using event delegation
+            tableBody.removeEventListener('click', handlePayrollActions); // Remove old listener
+            tableBody.addEventListener('click', handlePayrollActions); // Add new listener
+        }
+
+        function handlePayrollActions(event) {
+            const target = event.target.closest('button');
+             if (!target) return; // Not a button
+
+            const employeeId = target.dataset.id;
+
+            if (target.classList.contains('view-payslip')) {
+                viewPayslip(employeeId);
+            } else if (target.classList.contains('email-payslip')) {
+                emailPayslip(employeeId);
+            }
+        }
+
+
+        function updatePayrollSummary(summary) {
+            document.getElementById('totalEmployees').textContent = summary.totalEmployees ? summary.totalEmployees.toLocaleString() : '0';
+            document.getElementById('payrollTotal').textContent = `ETB ${summary.totalPayroll ? summary.totalPayroll.toLocaleString('en-US', {minimumFractionDigits: 2}) : '0.00'}`;
+            document.getElementById('basicSalaryTotal').textContent = `ETB ${summary.basicSalary ? summary.basicSalary.toLocaleString('en-US', {minimumFractionDigits: 2}) : '0.00'}`;
+            document.getElementById('allowancesTotal').textContent = `ETB ${summary.allowances ? summary.allowances.toLocaleString('en-US', {minimumFractionDigits: 2}) : '0.00'}`;
+            document.getElementById('deductionsTotal').textContent = `ETB ${summary.deductions ? summary.deductions.toLocaleString('en-US', {minimumFractionDigits: 2}) : '0.00'}`;
+
+            // Update progress bars
+            const total = summary.totalPayroll || 1; // Avoid division by zero
+            document.querySelector('#basicSalaryProgress .progress-bar').style.width = `${total > 0 ? ((summary.basicSalary || 0) / total) * 100 : 0}%`;
+            document.querySelector('#basicSalaryProgress .progress-bar').setAttribute('aria-valuenow', total > 0 ? ((summary.basicSalary || 0) / total) * 100 : 0);
+
+            document.querySelector('#allowancesProgress .progress-bar').style.width = `${total > 0 ? ((summary.allowances || 0) / total) * 100 : 0}%`;
+             document.querySelector('#allowancesProgress .progress-bar').setAttribute('aria-valuenow', total > 0 ? ((summary.allowances || 0) / total) * 100 : 0);
+
+            document.querySelector('#deductionsProgress .progress-bar').style.width = `${total > 0 ? ((summary.deductions || 0) / total) * 100 : 0}%`;
+             document.querySelector('#deductionsProgress .progress-bar').setAttribute('aria-valuenow', total > 0 ? ((summary.deductions || 0) / total) * 100 : 0);
+
+             // Re-apply AOS to summary cards
+            document.querySelectorAll('.payroll-summary .metric-card').forEach((card, index) => {
+                card.setAttribute('data-aos', 'fade-up');
+                card.setAttribute('data-aos-delay', 1050 + (index * 50)); // Offset from parent
+            });
+            AOS.refresh();
+        }
+
+        function updateRecentPayslips(payslips) {
+            const container = document.getElementById('recentPayslips');
+             container.innerHTML = ''; // Clear existing
+
+            if (!payslips || payslips.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-2 text-muted">
+                        <i class="fas fa-inbox fa-2x mb-2"></i>
+                        <p data-i18n="noRecentPayslips">${languageOptions[localStorage.getItem('language') || 'en'].noRecentPayslips}</p>
+                    </div>
+                `;
+                return;
+            }
+
+             payslips.slice(0, 3).forEach(payslip => { // Show up to 3 recent payslips
+                const item = document.createElement('div');
+                item.className = 'payroll-item p-3 bg-light rounded mb-2';
+                item.innerHTML = `
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <strong>${payslip.employeeName || 'Unknown'}</strong>
+                        <span class="text-success">ETB ${payslip.netPay ? payslip.netPay.toLocaleString('en-US', {minimumFractionDigits: 2}) : '0.00'}</span>
+                    </div>
+                    <div class="d-flex justify-content-between text-muted small">
+                        <span>${payslip.period || 'N/A'}</span>
+                        <span class="${getStatusClass(payslip.status)}">${languageOptions[localStorage.getItem('language') || 'en'][payslip.status.toLowerCase()] || payslip.status}</span>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+
+        function getStatusClass(status) {
+            if (!status) return '';
+            switch (status.toLowerCase()) {
+                case 'paid': return 'text-success';
+                case 'pending': return 'text-warning';
+                case 'processing': return 'text-info';
+                case 'rejected': return 'text-danger';
+                default: return 'text-muted';
+            }
+        }
+
+        function getStatusBadgeClass(status) {
+            if (!status) return 'bg-secondary';
+            switch (status.toLowerCase()) {
+                case 'paid': return 'bg-success';
+                case 'pending': return 'bg-warning';
+                case 'processing': return 'bg-info';
+                case 'rejected': return 'bg-danger';
+                default: return 'bg-secondary';
+            }
+        }
+
+        function processPayroll() {
+            const period = document.getElementById('payrollPeriod').value;
+            const paymentDate = document.getElementById('paymentDate').value;
+
+            // Show processing overlay
+            const overlay = document.querySelector('.payroll-processing-container .loading-overlay');
+            const overlayText = overlay.querySelector('p');
+            const spinner = overlay.querySelector('.spinner-border');
+            overlayText.textContent = `${languageOptions[localStorage.getItem('language') || 'en'].pleaseWaitProcessing} ${period}...`;
+            spinner.classList.add('fa-spin'); // Add spin animation
+            overlay.style.display = 'flex';
+
+
+            fetch('/api/payroll/process', { // Assuming API endpoint to trigger processing
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // Include authentication token if needed
+                    // 'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({ period, payment_date: paymentDate })
+            })
+            .then(response => {
+                if (!response.ok) {
+                     // Handle non-successful HTTP responses
+                    return response.json().then(err => { throw new Error(err.message || 'Processing failed'); });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    showToast(languageOptions[localStorage.getItem('language') || 'en'].payrollProcessedSuccessfully, 'success');
+                    loadPayrollData(period); // Refresh data for the processed period
+                } else {
+                    showToast(data.message || 'Payroll processing failed', 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Error processing payroll:', error);
+                showToast(`Error: ${error.message}`, 'danger');
+            })
+            .finally(() => {
+                overlay.style.display = 'none';
+                spinner.classList.remove('fa-spin'); // Remove spin animation
+            });
+        }
+
+        // Other payroll actions (New, Recalculate, Export, Email Summary)
+        document.getElementById('newPayrollBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            // Implement logic for creating a new payroll period/run
+            showToast('Feature not implemented yet: New Payroll', 'info');
+        });
+
+        document.getElementById('recalculatePayrollBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            const period = document.getElementById('payrollPeriod').value;
+            // Implement logic for recalculating payroll for the current period
+            showToast(`Recalculating payroll for ${period}...`, 'info');
+            // Simulate recalculation and then reload data
+            const overlay = document.querySelector('.payroll-processing-container .loading-overlay');
+            const overlayText = overlay.querySelector('p');
+            const spinner = overlay.querySelector('.spinner-border');
+            overlayText.textContent = `Recalculating payroll for ${period}...`;
+            spinner.classList.add('fa-spin');
+            overlay.style.display = 'flex';
+
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                spinner.classList.remove('fa-spin');
+                showToast('Payroll recalculation complete!', 'success');
+                 loadPayrollData(period); // Reload data after simulation
+            }, 2000);
+        });
+
+        document.getElementById('exportPayrollBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            const period = document.getElementById('payrollPeriod').value;
+            // Implement logic for exporting payroll data
+            showToast(`Exporting payroll data for ${period}...`, 'info');
+            // Example: window.location.href = `/api/payroll/export?period=${period}`;
+        });
+
+        document.getElementById('emailSummaryBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            const period = document.getElementById('payrollPeriod').value;
+             // Implement logic for emailing payroll summary
+            showToast(`Emailing payroll summary for ${period}...`, 'info');
+             // Example Fetch:
+             // fetch('/api/payroll/email-summary', { method: 'POST', body: JSON.stringify({ period }) })
+             // .then(...)
+        });
+
+
+        // ===== PAYSLIP PREVIEW AND MODAL =====
+        function viewPayslip(employeeId) {
+            // Fetch payslip data for the specific employee and current period
+            const period = document.getElementById('payrollPeriod').value;
+            fetch(`/api/payroll/payslip/${employeeId}?period=${period}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Payslip not found or error fetching');
+                    return response.json();
+                })
+                .then(data => {
+                    displayPayslipModal(data);
+                })
+                .catch(error => {
+                    console.error('Error loading payslip:', error);
+                    showToast(languageOptions[localStorage.getItem('language') || 'en'].failedToLoadPayslip, 'danger');
+                });
+        }
+
+        function displayPayslipModal(payslip) {
+            const modal = new bootstrap.Modal(document.getElementById('payslipModal'));
+            const modalBody = document.getElementById('payslipModalBody');
+
+            // Generate payslip HTML dynamically
+            modalBody.innerHTML = `
+                <div class="payslip-container border-0"> <!-- Remove border for modal -->
+                    <div class="payslip-header">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h2 class="mb-1">${payslip.companyName || 'Haramaya University'}</h2>
+                                <p class="text-muted mb-0">${payslip.companyAddress || 'P.O. Box 138, Dire Dawa, Ethiopia'}</p>
+                            </div>
+                            <div class="col-md-6 text-md-end">
+                                <h3 class="text-payroll mb-1">PAYSLIP</h3>
+                                <p class="mb-0"><strong>Period:</strong> <span id="modalPayslipPeriod">${payslip.period || 'N/A'}</span></p>
+                                <p class="mb-0"><strong>Payment Date:</strong> <span id="modalPayslipPaymentDate">${payslip.paymentDate || 'N/A'}</span></p>
+                                <p class="mb-0"><strong>Payslip #:</strong> <span id="modalPayslipNumber">${payslip.payslipNumber || 'N/A'}</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <h5>Employee Information</h5>
+                            <p class="mb-1"><strong>Name:</strong> <span id="modalEmployeeName">${payslip.employee.name || 'Unknown'}</span></p>
+                            <p class="mb-1"><strong>ID:</strong> <span id="modalEmployeeId">${payslip.employee.id || 'N/A'}</span></p>
+                            <p class="mb-1"><strong>Department:</strong> <span id="modalEmployeeDepartment">${payslip.employee.department || 'N/A'}</span></p>
+                            <p class="mb-1"><strong>Position:</strong> <span id="modalEmployeePosition">${payslip.employee.position || 'N/A'}</span></p>
+                            <p class="mb-1"><strong>Bank:</strong> <span id="modalEmployeeBank">${payslip.employee.bank || 'N/A'}</span></p>
+                            <p class="mb-1"><strong>Account:</strong> <span id="modalEmployeeAccount">${payslip.employee.account || 'N/A'}</span></p>
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            <h5>Pay Details</h5>
+                            <p class="mb-1"><strong>Basic Salary:</strong> <span id="modalBasicSalary">ETB ${payslip.earnings.basic ? payslip.earnings.basic.toLocaleString('en-US', {minimumFractionDigits: 2}) : '0.00'}</span></p>
+                            <p class="mb-1"><strong>Gross Pay:</strong> <span id="modalGrossPay">ETB ${payslip.earnings.gross ? payslip.earnings.gross.toLocaleString('en-US', {minimumFractionDigits: 2}) : '0.00'}</span></p>
+                            <p class="mb-1"><strong>Total Deductions:</strong> <span id="modalTotalDeductions">ETB ${payslip.deductions.total ? payslip.deductions.total.toLocaleString('en-US', {minimumFractionDigits: 2}) : '0.00'}</span></p>
+                            <p class="mb-1"><strong>Taxable Income:</strong> <span id="modalTaxableIncome">ETB ${payslip.taxableIncome ? payslip.taxableIncome.toLocaleString('en-US', {minimumFractionDigits: 2}) : '0.00'}</span></p>
+                            <p class="mb-1"><strong>Net Pay:</strong> <span id="modalNetPay">ETB ${payslip.netPay ? payslip.netPay.toLocaleString('en-US', {minimumFractionDigits: 2}) : '0.00'}</span></p>
+                            <p class="mb-1"><strong>Payment Method:</strong> <span id="modalPaymentMethod">${payslip.paymentMethod || 'N/A'}</span></p>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <h5>Earnings</h5>
+                            <table class="table table-bordered earnings-table">
+                                <thead>
+                                    <tr>
+                                        <th>Type</th>
+                                        <th>Amount (ETB)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="modalEarningsDetails">
+                                    ${Object.entries(payslip.earnings.details || {}).map(([type, amount]) => `
+                                        <tr>
+                                            <td>${type}</td>
+                                            <td>${amount ? amount.toLocaleString('en-US', {minimumFractionDigits: 2}) : '0.00'}</td>
+                                        </tr>
+                                    `).join('') || `<tr><td colspan="2" class="text-center text-muted">No earnings details</td></tr>`}
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>Total Earnings</th>
+                                        <th id="modalTotalEarnings">${payslip.earnings.gross ? payslip.earnings.gross.toLocaleString('en-US', {minimumFractionDigits: 2}) : '0.00'}</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Deductions</h5>
+                            <table class="table table-bordered deductions-table">
+                                <thead>
+                                    <tr>
+                                        <th>Type</th>
+                                        <th>Amount (ETB)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="modalDeductionsDetails">
+                                    ${Object.entries(payslip.deductions.details || {}).map(([type, amount]) => `
+                                        <tr>
+                                            <td>${type}</td>
+                                            <td>${amount ? amount.toLocaleString('en-US', {minimumFractionDigits: 2}) : '0.00'}</td>
+                                        </tr>
+                                    `).join('') || `<tr><td colspan="2" class="text-center text-muted">No deductions details</td></tr>`}
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>Total Deductions</th>
+                                        <th id="modalTotalDeductionsFooter">${payslip.deductions.total ? payslip.deductions.total.toLocaleString('en-US', {minimumFractionDigits: 2}) : '0.00'}</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="payslip-footer mt-4">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p class="mb-1"><strong>Notes:</strong></p>
+                                <p class="text-muted small">${payslip.notes || 'Payment will be processed within 2-3 business days'}</p>
+                            </div>
+                            <div class="col-md-6 text-md-end">
+                                <h4 class="text-payroll">Net Pay: <span id="modalNetPayFooter">ETB ${payslip.netPay ? payslip.netPay.toLocaleString('en-US', {minimumFractionDigits: 2}) : '0.00'}</span></h4>
+                                <div class="signature-line mt-4">
+                                    <p class="mb-1">_________________________</p>
+                                    <p class="text-muted small">Authorized Signature</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Store employee ID and period on modal for email/print actions
+            modalBody.dataset.employeeId = payslip.employee.id;
+            modalBody.dataset.period = payslip.period;
+
+            modal.show();
+        }
+
+        // Print Payslip from Modal
+        document.getElementById('printModalPayslipBtn').addEventListener('click', function() {
+            const payslipContent = document.getElementById('payslipModalBody').innerHTML;
+            printHtml(payslipContent);
+        });
+
+        // Email Payslip from Modal
+        document.getElementById('emailModalPayslipBtn').addEventListener('click', function() {
+            const modalBody = document.getElementById('payslipModalBody');
+            const employeeId = modalBody.dataset.employeeId;
+            const period = modalBody.dataset.period; // Get period from modal data attribute
+            emailPayslip(employeeId, period); // Pass period to email function
+        });
+
+        // Email Payslip function (can be used by table actions or modal)
+        function emailPayslip(employeeId, period) {
+            // Show loading state (optional)
+            showToast(`Emailing payslip for Employee ID ${employeeId} (${period})...`, 'info');
+
+            fetch('/api/payroll/email-payslip', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // Include authentication token if needed
+                    // 'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({ employee_id: employeeId, period: period }) // Include period in the request
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showToast(languageOptions[localStorage.getItem('language') || 'en'].payslipEmailedSuccessfully, 'success');
+                } else {
+                    showToast(data.message || languageOptions[localStorage.getItem('language') || 'en'].failedToEmailPayslip, 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Error emailing payslip:', error);
+                showToast(languageOptions[localStorage.getItem('language') || 'en'].errorSendingEmail, 'danger');
+            });
+        }
+
+        // Helper function to print HTML content
+        function printHtml(html) {
+            const printWindow = window.open('', '', 'height=600,width=800');
+            printWindow.document.write('<html><head><title>Payslip</title>');
+            // Include necessary styles for printing
+            printWindow.document.write('<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">');
+            printWindow.document.write('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">');
+            printWindow.document.write('<style>');
+            // Add your custom styles for payslip printing
+            printWindow.document.write(`
+                body { font-family: 'Poppins', sans-serif; margin: 20px; }
+                .payslip-container { border: 1px solid #ddd; padding: 20px; }
+                .payslip-header h2 { color: #0a3d62; font-weight: bold; }
+                .payslip-header h3 { color: #6f42c1; font-weight: bold; }
+                .payslip-container table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                .payslip-container table th, .payslip-container table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                .payslip-container table th { background-color: #f2f2f2; }
+                .payslip-footer h4 { color: #6f42c1; font-weight: bold; text-align: right; margin-top: 20px; }
+                .signature-line { border-top: 1px solid #ddd; width: 200px; margin-left: auto; margin-right: 0; text-align: center; margin-top: 40px; }
+                @media print {
+                    body { -webkit-print-color-adjust: exact; }
+                    .btn, .dropdown { display: none; } /* Hide buttons and dropdowns in print */
+                }
+            `);
+            printWindow.document.write('</style>');
+            printWindow.document.write('</head><body>');
+            printWindow.document.write(html);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+
+        // Helper function to show toasts
+        function showToast(message, type = 'info') {
+            const toastContainer = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast align-items-center text-white bg-${type} border-0`;
+            toast.setAttribute('role', 'alert');
+            toast.setAttribute('aria-live', 'assertive');
+            toast.setAttribute('aria-atomic', 'true');
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">${message}</div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            `;
+
+            toastContainer.appendChild(toast);
+
+            const bsToast = new bootstrap.Toast(toast, { delay: 5000 }); // Auto-hide after 5s
+            bsToast.show();
+
+            // Remove toast element from DOM after it hides
+            toast.addEventListener('hidden.bs.toast', function() {
+                toast.remove();
+            });
+        }
+        
+
+
+    </script>
+
+</body>
+</html>

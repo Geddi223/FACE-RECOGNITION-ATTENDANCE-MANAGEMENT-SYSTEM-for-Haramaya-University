@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Attendance Reports</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #4e73df;
+            --secondary-color: #1cc88a;
+            --accent-color: #f6c23e;
+            --dark-color: #5a5c69;
+        }
+        
+        body {
+            background-color: #f8f9fc;
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 0.35rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 2rem 0 rgba(58, 59, 69, 0.2);
+        }
+        
+        .card-header {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            border-bottom: none;
+            border-radius: 0.35rem 0.35rem 0 0 !important;
+        }
+        
+        .dashboard-card {
+            border-left: 0.25rem solid var(--primary-color);
+        }
+        
+        .stat-card {
+            display: flex;
+            align-items: center;
+            padding: 1.5rem;
+        }
+        
+        .stat-icon {
+            font-size: 2rem;
+            margin-right: 1rem;
+            color: var(--primary-color);
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .stat-label {
+            color: var(--dark-color);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+        
+        .download-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 100;
+        }
+        
+        .filter-section {
+            background-color: white;
+            padding: 1rem;
+            border-radius: 0.35rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+        }
+        
+        .animated-card {
+            animation-duration: 1s;
+        }
+        
+        .progress-thin {
+            height: 0.5rem;
+        }
+        
+        .badge-attendance {
+            background-color: var(--secondary-color);
+        }
+        
+        .badge-absence {
+            background-color: #e74a3b;
+        }
+        
+        .badge-late {
+            background-color: var(--accent-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid py-4">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4 animate__animated animate__fadeIn">
+            <h1 class="h3 mb-0 text-gray-800">Attendance Analytics Dashboard</h1>
+            <div>
+                <button class="btn btn-primary" id="refreshBtn">
+                    <i class="bi bi-arrow-clockwise"></i> Refresh Data
+                </button>
+                <button class="btn btn-success ms-2" id="exportAllBtn">
+                    <i class="bi bi-download"></i> Export All Reports
+                </button>
+            </div>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filter-section animate__animated animate__fadeInUp">
+            <div class="row">
+                <div class="col-md-3">
+                    <label class="form-label">Date Range</label>
+                    <select class="form-select" id="dateRange">
+                        <option value="week">This Week</option>
+                        <option value="last_week">Last Week</option>
+                        <option value="month">This Month</option>
+                        <option value="last_month">Last Month</option>
+                        <option value="custom">Custom Range</option>
+                    </select>
+                </div>
+                <div class="col-md-3" id="customDateRange" style="display: none;">
+                    <label class="form-label">From</label>
+                    <input type="date" class="form-control" id="startDate">
+                </div>
+                <div class="col-md-3" id="customDateRangeEnd" style="display: none;">
+                    <label class="form-label">To</label>
+                    <input type="date" class="form-control" id="endDate">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Department</label>
+                    <select class="form-select" id="departmentFilter">
+                        <option value="all">All Departments</option>
+                        {% for dept in departments %}
+                        <option value="{{ dept.id }}">{{ dept.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Stats -->
+        <div class="row animate__animated animate__fadeInUp">
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card stat-card dashboard-card h-100">
+                    <div class="stat-icon">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                    <div>
+                        <div class="stat-value" id="totalEmployees">0</div>
+                        <div class="stat-label">Total Employees</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card stat-card dashboard-card h-100">
+                    <div class="stat-icon">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                    <div>
+                        <div class="stat-value" id="presentCount">0</div>
+                        <div class="stat-label">Present Today</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card stat-card dashboard-card h-100">
+                    <div class="stat-icon">
+                        <i class="bi bi-x-circle-fill"></i>
+                    </div>
+                    <div>
+                        <div class="stat-value" id="absentCount">0</div>
+                        <div class="stat-label">Absent Today</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card stat-card dashboard-card h-100">
+                    <div class="stat-icon">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <div>
+                        <div class="stat-value" id="lateCount">0</div>
+                        <div class="stat-label">Late Arrivals</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Charts -->
+        <div class="row animate__animated animate__fadeInUp">
+            <div class="col-lg-8">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">Attendance Trend</h6>
+                        <div class="dropdown no-arrow">
+                            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="chartTypeDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                Line Chart
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="chartTypeDropdown">
+                                <li><a class="dropdown-item" href="#" data-type="line">Line Chart</a></li>
+                                <li><a class="dropdown-item" href="#" data-type="bar">Bar Chart</a></li>
+                                <li><a class="dropdown-item" href="#" data-type="pie">Pie Chart</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <button class="btn btn-sm btn-primary download-btn" id="downloadTrendChart">
+                                <i class="bi bi-download"></i>
+                            </button>
+                            <canvas id="attendanceTrendChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">Attendance Distribution</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <button class="btn btn-sm btn-primary download-btn" id="downloadDistributionChart">
+                                <i class="bi bi-download"></i>
+                            </button>
+                            <canvas id="attendanceDistributionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Department Breakdown -->
+        <div class="row animate__animated animate__fadeInUp">
+            <div class="col-lg-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Department Performance</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <button class="btn btn-sm btn-primary download-btn" id="downloadDeptChart">
+                                <i class="bi bi-download"></i>
+                            </button>
+                            <canvas id="departmentChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Top Performers</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-borderless">
+                                <thead>
+                                    <tr>
+                                        <th>Employee</th>
+                                        <th>Department</th>
+                                        <th>Attendance %</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="topPerformersBody">
+                                    <!-- Filled by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Report -->
+        <div class="card shadow mb-4 animate__animated animate__fadeInUp">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Detailed Attendance Records</h6>
+                <div>
+                    <button class="btn btn-sm btn-success" id="exportReportBtn">
+                        <i class="bi bi-file-earmark-excel"></i> Export to Excel
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover" id="attendanceTable" width="100%" cellspacing="0">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Employee ID</th>
+                                <th>Name</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Clock In</th>
+                                <th>Clock Out</th>
+                                <th>Hours Worked</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="attendanceTableBody">
+                            <!-- Filled by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center mt-3" id="pagination">
+                        <!-- Filled by JavaScript -->
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for detailed view -->
+    <div class="modal fade" id="attendanceDetailModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Attendance Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="attendanceDetailContent">
+                    <!-- Content loaded dynamically -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="printDetailsBtn">Print</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/luxon@2.3.0/build/global/luxon.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.1.0/dist/chartjs-adapter-luxon.min.js"></script>
+    <script>
+        // Global variables
+        let attendanceTrendChart, attendanceDistributionChart, departmentChart;
+        let currentPage = 1;
+        const recordsPerPage = 10;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize charts and load data
+            initCharts();
+            loadDashboardData();
+            setupEventListeners();
+            
+            // Animation on scroll
+            const animateOnScroll = () => {
+                const elements = document.querySelectorAll('.animate__animated');
+                elements.forEach(el => {
+                    const elementPosition = el.getBoundingClientRect().top;
+                    const screenPosition = window.innerHeight / 1.3;
+                    
+                    if(elementPosition < screenPosition) {
+                        const animation = el.getAttribute('data-animation');
+                        el.classList.add(animation);
+                    }
+                });
+            };
+            
+            window.addEventListener('scroll', animateOnScroll);
+            animateOnScroll(); // Run once on load
+        });
+        
+        function initCharts() {
+            // Attendance Trend Chart
+            const trendCtx = document.getElementById('attendanceTrendChart').getContext('2d');
+            attendanceTrendChart = new Chart(trendCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Present Employees',
+                        data: [],
+                        backgroundColor: 'rgba(78, 115, 223, 0.05)',
+                        borderColor: 'rgba(78, 115, 223, 1)',
+                        pointBackgroundColor: 'rgba(78, 115, 223, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(78, 115, 223, 1)',
+                        borderWidth: 2,
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Attendance Distribution Chart
+            const distributionCtx = document.getElementById('attendanceDistributionChart').getContext('2d');
+            attendanceDistributionChart = new Chart(distributionCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Present', 'Absent', 'Late'],
+                    datasets: [{
+                        data: [0, 0, 0],
+                        backgroundColor: ['#1cc88a', '#e74a3b', '#f6c23e'],
+                        hoverBackgroundColor: ['#17a673', '#be2617', '#dda20a'],
+                        hoverBorderColor: "rgba(234, 236, 244, 1)",
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '70%'
+                }
+            });
+            
+            // Department Chart
+            const deptCtx = document.getElementById('departmentChart').getContext('2d');
+            departmentChart = new Chart(deptCtx, {
+                type: 'bar',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Average Attendance %',
+                        data: [],
+                        backgroundColor: 'rgba(78, 115, 223, 0.7)',
+                        borderColor: 'rgba(78, 115, 223, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.raw + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function setupEventListeners() {
+            // Date range filter
+            document.getElementById('dateRange').addEventListener('change', function() {
+                const customRange = this.value === 'custom';
+                document.getElementById('customDateRange').style.display = customRange ? 'block' : 'none';
+                document.getElementById('customDateRangeEnd').style.display = customRange ? 'block' : 'none';
+                loadDashboardData();
+            });
+            
+            // Department filter
+            document.getElementById('departmentFilter').addEventListener('change', loadDashboardData);
+            
+            // Custom date inputs
+            document.getElementById('startDate').addEventListener('change', loadDashboardData);
+            document.getElementById('endDate').addEventListener('change', loadDashboardData);
+            
+            // Refresh button
+            document.getElementById('refreshBtn').addEventListener('click', function() {
+                this.innerHTML = '<i class="bi bi-arrow-clockwise spin"></i> Refreshing...';
+                loadDashboardData();
+                setTimeout(() => {
+                    this.innerHTML = '<i class="bi bi-arrow-clockwise"></i> Refresh Data';
+                }, 1000);
+            });
+            
+            // Chart type dropdown
+            document.querySelectorAll('[data-type]').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const type = this.getAttribute('data-type');
+                    attendanceTrendChart.config.type = type;
+                    attendanceTrendChart.update();
+                    document.getElementById('chartTypeDropdown').textContent = 
+                        type === 'line' ? 'Line Chart' : type === 'bar' ? 'Bar Chart' : 'Pie Chart';
+                });
+            });
+            
+            // Export buttons
+            document.getElementById('exportAllBtn').addEventListener('click', exportAllReports);
+            document.getElementById('exportReportBtn').addEventListener('click', exportToExcel);
+            document.getElementById('downloadTrendChart').addEventListener('click', () => downloadChart('attendanceTrendChart', 'attendance_trend.png'));
+            document.getElementById('downloadDistributionChart').addEventListener('click', () => downloadChart('attendanceDistributionChart', 'attendance_distribution.png'));
+            document.getElementById('downloadDeptChart').addEventListener('click', () => downloadChart('departmentChart', 'department_performance.png'));
+            
+            // Pagination
+            document.getElementById('pagination').addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    e.preventDefault();
+                    currentPage = parseInt(e.target.getAttribute('data-page'));
+                    loadAttendanceTable();
+                }
+            });
+            
+            // Print button in modal
+            document.getElementById('printDetailsBtn').addEventListener('click', function() {
+                window.print();
+            });
+        }
+        
+        function loadDashboardData() {
+            // Get filter values
+            const dateRange = document.getElementById('dateRange').value;
+            const departmentId = document.getElementById('departmentFilter').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            
+            // Show loading state
+            document.querySelectorAll('.stat-value').forEach(el => {
+                el.textContent = '...';
+            });
+            
+            // Fetch data from server
+            fetch('/api/attendance/dashboard', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    dateRange,
+                    departmentId,
+                    startDate,
+                    endDate
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Update summary stats
+                document.getElementById('totalEmployees').textContent = data.summary.totalEmployees;
+                document.getElementById('presentCount').textContent = data.summary.presentCount;
+                document.getElementById('absentCount').textContent = data.summary.absentCount;
+                document.getElementById('lateCount').textContent = data.summary.lateCount;
+                
+                // Update trend chart
+                attendanceTrendChart.data.labels = data.trend.labels;
+                attendanceTrendChart.data.datasets[0].data = data.trend.data;
+                attendanceTrendChart.update();
+                
+                // Update distribution chart
+                attendanceDistributionChart.data.datasets[0].data = [
+                    data.distribution.present,
+                    data.distribution.absent,
+                    data.distribution.late
+                ];
+                attendanceDistributionChart.update();
+                
+                // Update department chart
+                departmentChart.data.labels = data.departments.labels;
+                departmentChart.data.datasets[0].data = data.departments.data;
+                departmentChart.update();
+                
+                // Update top performers
+                updateTopPerformers(data.topPerformers);
+                
+                // Load attendance table
+                loadAttendanceTable();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+        
+        function loadAttendanceTable() {
+            // Get filter values
+            const dateRange = document.getElementById('dateRange').value;
+            const departmentId = document.getElementById('departmentFilter').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            
+            // Show loading state
+            const tableBody = document.getElementById('attendanceTableBody');
+            tableBody.innerHTML = '<tr><td colspan="8" class="text-center py-4"><div class="spinner-border text-primary" role="status"></div></td></tr>';
+            
+            // Fetch data from server
+            fetch('/api/attendance/records', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    dateRange,
+                    departmentId,
+                    startDate,
+                    endDate,
+                    page: currentPage,
+                    perPage: recordsPerPage
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Update table
+                renderAttendanceTable(data.records, data.totalRecords);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                tableBody.innerHTML = '<tr><td colspan="8" class="text-center py-4 text-danger">Error loading data</td></tr>';
+            });
+        }
+        
+        function renderAttendanceTable(records, totalRecords) {
+            const tableBody = document.getElementById('attendanceTableBody');
+            let html = '';
+            
+            if (records.length === 0) {
+                html = '<tr><td colspan="8" class="text-center py-4 text-muted">No records found</td></tr>';
+            } else {
+                records.forEach(record => {
+                    const statusClass = record.present ? 
+                        (record.late ? 'badge-late' : 'badge-attendance') : 'badge-absence';
+                    const statusText = record.present ? 
+                        (record.late ? 'Late' : 'Present') : 'Absent';
+                    
+                    html += `
+                        <tr>
+                            <td>${record.employee_id}</td>
+                            <td>${record.name}</td>
+                            <td>${record.date}</td>
+                            <td><span class="badge ${statusClass}">${statusText}</span></td>
+                            <td>${record.clock_in || '-'}</td>
+                            <td>${record.clock_out || '-'}</td>
+                            <td>${record.hours_worked || '-'}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary view-details" data-id="${record.id}">
+                                    <i class="bi bi-eye"></i> Details
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+            
+            tableBody.innerHTML = html;
+            
+            // Add event listeners to detail buttons
+            document.querySelectorAll('.view-details').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const recordId = this.getAttribute('data-id');
+                    showAttendanceDetails(recordId);
+                });
+            });
+            
+            // Update pagination
+            updatePagination(totalRecords);
+        }
+        
+        function updatePagination(totalRecords) {
+            const totalPages = Math.ceil(totalRecords / recordsPerPage);
+            const pagination = document.getElementById('pagination');
+            let html = '';
+            
+            if (totalPages <= 1) {
+                pagination.innerHTML = '';
+                return;
+            }
+            
+            // Previous button
+            html += `
+                <li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                    <a class="page-link" href="#" data-page="${currentPage - 1}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            `;
+            
+            // Page numbers
+            for (let i = 1; i <= totalPages; i++) {
+                html += `
+                    <li class="page-item ${i === currentPage ? 'active' : ''}">
+                        <a class="page-link" href="#" data-page="${i}">${i}</a>
+                    </li>
+                `;
+            }
+            
+            // Next button
+            html += `
+                <li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                    <a class="page-link" href="#" data-page="${currentPage + 1}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            `;
+            
+            pagination.innerHTML = html;
+        }
+        
+        function updateTopPerformers(performers) {
+            const tbody = document.getElementById('topPerformersBody');
+            let html = '';
+            
+            performers.forEach(performer => {
+                html += `
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="me-3">
+                                    <div class="avatar" style="width: 40px; height: 40px; background-color: #4e73df; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                                        ${performer.name.charAt(0).toUpperCase()}
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="fw-bold">${performer.name}</div>
+                                    <div class="text-muted small">${performer.designation}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${performer.department}</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="progress progress-thin w-100 me-2">
+                                    <div class="progress-bar bg-success" role="progressbar" style="width: ${performer.attendance_percentage}%" aria-valuenow="${performer.attendance_percentage}" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <span class="fw-bold">${performer.attendance_percentage}%</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge ${performer.attendance_percentage > 90 ? 'bg-success' : performer.attendance_percentage > 75 ? 'bg-warning' : 'bg-danger'}">
+                                ${performer.attendance_percentage > 90 ? 'Excellent' : performer.attendance_percentage > 75 ? 'Good' : 'Needs Improvement'}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tbody.innerHTML = html;
+        }
+        
+        function showAttendanceDetails(recordId) {
+            // Show loading state in modal
+            document.getElementById('attendanceDetailContent').innerHTML = `
+                <div class="text-center py-4">
+                    <div class="spinner-border text-primary" role="status"></div>
+                </div>
+            `;
+            
+            // Fetch record details
+            fetch(`/api/attendance/details/${recordId}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Format the details
+                    const modalContent = `
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <h6 class="text-muted">Employee</h6>
+                                    <p class="fw-bold">${data.name} (${data.employee_id})</p>
+                                </div>
+                                <div class="mb-3">
+                                    <h6 class="text-muted">Department</h6>
+                                    <p class="fw-bold">${data.department} / ${data.designation}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <h6 class="text-muted">Date</h6>
+                                    <p class="fw-bold">${data.date}</p>
+                                </div>
+                                <div class="mb-3">
+                                    <h6 class="text-muted">Status</h6>
+                                    <p class="fw-bold"><span class="badge ${data.present ? (data.late ? 'bg-warning' : 'bg-success') : 'bg-danger'}">
+                                        ${data.present ? (data.late ? 'Late' : 'Present') : 'Absent'}
+                                    </span></p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <h6 class="text-muted">Hours Worked</h6>
+                                    <p class="fw-bold">${data.hours_worked || 'N/A'}</p>
+                                </div>
+                                <div class="mb-3">
+                                    <h6 class="text-muted">Overtime</h6>
+                                    <p class="fw-bold">${data.overtime_hours || '0'} hours</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header bg-primary text-white">
+                                        Clock In Details
+                                    </div>
+                                    <div class="card-body">
+                                        <p><strong>Time:</strong> ${data.clock_in || 'N/A'}</p>
+                                        ${data.location_lat ? `
+                                            <p><strong>Location:</strong> 
+                                                <a href="https://maps.google.com/?q=${data.location_lat},${data.location_lng}" target="_blank">
+                                                    View on Map
+                                                </a>
+                                            </p>
+                                            <p><strong>Confidence:</strong> ${(data.confidence * 100).toFixed(1)}%</p>
+                                        ` : '<p>No location data</p>'}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header bg-primary text-white">
+                                        Clock Out Details
+                                    </div>
+                                    <div class="card-body">
+                                        <p><strong>Time:</strong> ${data.clock_out || 'N/A'}</p>
+                                        ${data.location_lat_out ? `
+                                            <p><strong>Location:</strong> 
+                                                <a href="https://maps.google.com/?q=${data.location_lat_out},${data.location_lng_out}" target="_blank">
+                                                    View on Map
+                                                </a>
+                                            </p>
+                                        ` : '<p>No location data</p>'}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        ${data.notes ? `
+                            <div class="row mt-3">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header bg-info text-white">
+                                            Additional Notes
+                                        </div>
+                                        <div class="card-body">
+                                            <p>${data.notes}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ` : ''}
+                    `;
+                    
+                    document.getElementById('attendanceDetailContent').innerHTML = modalContent;
+                    
+                    // Show modal
+                    const modal = new bootstrap.Modal(document.getElementById('attendanceDetailModal'));
+                    modal.show();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('attendanceDetailContent').innerHTML = `
+                        <div class="alert alert-danger">
+                            Error loading attendance details. Please try again.
+                        </div>
+                    `;
+                });
+        }
+        
+        function downloadChart(chartId, filename) {
+            const chartElement = document.getElementById(chartId);
+            html2canvas(chartElement).then(canvas => {
+                const link = document.createElement('a');
+                link.download = filename;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        }
+        
+        function exportAllReports() {
+            // This would typically generate a PDF with all charts and data
+            // For now, we'll just show a message
+            alert('Exporting all reports as PDF...');
+            // In a real implementation, you would use jsPDF to create a multi-page PDF
+        }
+        
+        function exportToExcel() {
+            // This would typically generate an Excel file with the table data
+            // For now, we'll just show a message
+            alert('Exporting table data to Excel...');
+            // In a real implementation, you would use a library like SheetJS
+        }
+    </script>
+</body>
+</html>
