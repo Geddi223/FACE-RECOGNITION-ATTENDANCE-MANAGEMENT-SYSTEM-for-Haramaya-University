@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Monitoring Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="bi bi-people-fill me-2"></i>AttendancePro
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#"><i class="bi bi-speedometer2 me-1"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="bi bi-calendar3 me-1"></i> Calendar</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#"><i class="bi bi-graph-up me-1"></i> Analytics</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle me-1"></i> Admin
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-1"></i> Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-box-arrow-right me-1"></i> Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Date Filter -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <form id="dateFilterForm">
+                            <div class="row g-3 align-items-center">
+                                <div class="col-md-3">
+                                    <label for="dateRange" class="form-label">Select Date Range</label>
+                                    <input type="text" class="form-control" id="dateRange" placeholder="Select date range">
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="departmentFilter" class="form-label">Department</label>
+                                    <select class="form-select" id="departmentFilter">
+                                        <option value="">All Departments</option>
+                                        <option>Engineering</option>
+                                        <option>Marketing</option>
+                                        <option>HR</option>
+                                        <option>Finance</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="statusFilter" class="form-label">Status</label>
+                                    <select class="form-select" id="statusFilter">
+                                        <option value="">All Statuses</option>
+                                        <option>Present</option>
+                                        <option>Absent</option>
+                                        <option>Late</option>
+                                        <option>Early Departure</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3 d-flex align-items-end">
+                                    <button type="submit" class="btn btn-primary me-2">
+                                        <i class="bi bi-funnel me-1"></i> Filter
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" id="resetFilters">
+                                        <i class="bi bi-arrow-counterclockwise me-1"></i> Reset
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-white bg-primary shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-subtitle mb-2">Total Employees</h6>
+                                <h2 class="card-title mb-0">{{ total_num_of_emp }}</h2>
+                            </div>
+                            <i class="bi bi-people-fill fs-1 opacity-25"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-success shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-subtitle mb-2">Present Today</h6>
+                                <h2 class="card-title mb-0">{{ emp_present_today }}</h2>
+                                <small class="text-white-50">{{ (emp_present_today/total_num_of_emp*100)|round(1) }}% of workforce</small>
+                            </div>
+                            <i class="bi bi-check-circle-fill fs-1 opacity-25"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-danger shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-subtitle mb-2">Absent Today</h6>
+                                <h2 class="card-title mb-0">{{ total_num_of_emp - emp_present_today }}</h2>
+                                <small class="text-white-50">{{ ((total_num_of_emp - emp_present_today)/total_num_of_emp*100)|round(1) }}% of workforce</small>
+                            </div>
+                            <i class="bi bi-x-circle-fill fs-1 opacity-25"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-warning shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="card-subtitle mb-2">Late Arrivals</h6>
+                                <h2 class="card-title mb-0">8</h2>
+                                <small class="text-white-50">12% of present employees</small>
+                            </div>
+                            <i class="bi bi-clock-history fs-1 opacity-25"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">Weekly Attendance Trend</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="attendanceChart" height="250"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0">Department Distribution</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="departmentChart" height="250"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Monitoring Logs -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Today's Attendance Details</h5>
+                        <div>
+                            <button class="btn btn-sm btn-outline-primary me-2">
+                                <i class="bi bi-download me-1"></i> Export
+                            </button>
+                            <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addAttendanceModal">
+                                <i class="bi bi-plus-circle me-1"></i> Add Record
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover" id="attendanceTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Employee</th>
+                                        <th>Department</th>
+                                        <th>Status</th>
+                                        <th>Check-In</th>
+                                        <th>Check-Out</th>
+                                        <th>Hours Worked</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for employee_name, status, timestamp in monitoring_logs %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="avatar me-2">
+                                                    <span class="avatar-initial rounded-circle bg-primary text-white">
+                                                        {{ employee_name[0] }}
+                                                    </span>
+                                                </div>
+                                                {{ employee_name }}
+                                            </div>
+                                        </td>
+                                        <td>Engineering</td>
+                                        <td>
+                                            {% if status == 'Present' %}
+                                                <span class="badge bg-success rounded-pill">
+                                                    <i class="bi bi-check-circle me-1"></i> Present
+                                                </span>
+                                            {% else %}
+                                                <span class="badge bg-danger rounded-pill">
+                                                    <i class="bi bi-x-circle me-1"></i> Absent
+                                                </span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if status == 'Present' %}
+                                                {{ timestamp.strftime('%H:%M') }}
+                                            {% else %}
+                                                <span class="text-muted">-</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if status == 'Present' %}
+                                                17:30
+                                            {% else %}
+                                                <span class="text-muted">-</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if status == 'Present' %}
+                                                8.5 hours
+                                            {% else %}
+                                                <span class="text-muted">-</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary me-1">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Attendance Modal -->
+    <div class="modal fade" id="addAttendanceModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Attendance Record</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Employee</label>
+                                <select class="form-select">
+                                    <option selected disabled>Select employee</option>
+                                    <option>John Doe</option>
+                                    <option>Jane Smith</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Date</label>
+                                <input type="text" class="form-control datepicker" placeholder="Select date">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Check-In Time</label>
+                                <input type="text" class="form-control timepicker" placeholder="HH:MM">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Check-Out Time</label>
+                                <input type="text" class="form-control timepicker" placeholder="HH:MM">
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Status</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="status" id="present" checked>
+                                    <label class="form-check-label" for="present">Present</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="status" id="absent">
+                                    <label class="form-check-label" for="absent">Absent</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="status" id="late">
+                                    <label class="form-check-label" for="late">Late Arrival</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="status" id="early">
+                                    <label class="form-check-label" for="early">Early Departure</label>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <label class="form-label">Notes</label>
+                                <textarea class="form-control" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary">Save Record</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        // Initialize DataTable
+        $(document).ready(function() {
+            $('#attendanceTable').DataTable({
+                responsive: true,
+                order: [[2, 'desc']]
+            });
+
+            // Date Range Picker
+            flatpickr("#dateRange", {
+                mode: "range",
+                dateFormat: "Y-m-d",
+                defaultDate: [new Date(), new Date()]
+            });
+
+            // Time Pickers
+            flatpickr(".timepicker", {
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "H:i",
+                time_24hr: true
+            });
+
+            // Single Date Picker
+            flatpickr(".datepicker", {
+                dateFormat: "Y-m-d",
+                defaultDate: new Date()
+            });
+
+            // Weekly Attendance Chart
+            const ctx = document.getElementById('attendanceChart').getContext('2d');
+            const attendanceChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Present',
+                        data: [65, 59, 80, 81, 56, 55, 40],
+                        borderColor: '#28a745',
+                        backgroundColor: 'rgba(40, 167, 69, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    }, {
+                        label: 'Absent',
+                        data: [15, 21, 10, 9, 24, 25, 30],
+                        borderColor: '#dc3545',
+                        backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            suggestedMax: 100
+                        }
+                    }
+                }
+            });
+
+            // Department Distribution Chart
+            const deptCtx = document.getElementById('departmentChart').getContext('2d');
+            const departmentChart = new Chart(deptCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Engineering', 'Marketing', 'HR', 'Finance', 'Operations'],
+                    datasets: [{
+                        data: [35, 20, 15, 15, 15],
+                        backgroundColor: [
+                            '#007bff',
+                            '#28a745',
+                            '#ffc107',
+                            '#dc3545',
+                            '#6c757d'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

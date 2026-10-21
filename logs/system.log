@@ -1,0 +1,108 @@
+2025-04-29 23:37:22,339 INFO: System startup [in C:\Users\HP\OneDrive\Desktop\4th Year\II semister\Flask\Flask\app.py:1898]
+2025-04-29 23:37:26,628 ERROR: Error fetching attendance: name 'sqlite3' is not defined [in C:\Users\HP\OneDrive\Desktop\4th Year\II semister\Flask\Flask\app.py:1851]
+2025-04-29 23:37:31,142 ERROR: System error occurred: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 891, in dispatch_request
+    self.raise_routing_exception(req)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 500, in raise_routing_exception
+    raise request.routing_exception  # type: ignore[misc]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\ctx.py", line 362, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python313\Lib\site-packages\werkzeug\routing\map.py", line 629, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+ [in C:\Users\HP\OneDrive\Desktop\4th Year\II semister\Flask\Flask\app.py:1971]
+2025-04-29 23:43:14,564 INFO: System startup [in C:\Users\HP\OneDrive\Desktop\4th Year\II semister\Flask\Flask\app.py:1899]
+2025-04-29 23:43:40,548 INFO: System startup [in C:\Users\HP\OneDrive\Desktop\4th Year\II semister\Flask\Flask\app.py:1899]
+2025-04-29 23:43:43,441 ERROR: System error occurred: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 891, in dispatch_request
+    self.raise_routing_exception(req)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 500, in raise_routing_exception
+    raise request.routing_exception  # type: ignore[misc]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\ctx.py", line 362, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python313\Lib\site-packages\werkzeug\routing\map.py", line 629, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+ [in C:\Users\HP\OneDrive\Desktop\4th Year\II semister\Flask\Flask\app.py:1972]
+2025-04-29 23:43:48,037 ERROR: Error fetching attendance: no such table: attendance [in C:\Users\HP\OneDrive\Desktop\4th Year\II semister\Flask\Flask\app.py:1852]
+2025-04-29 23:43:57,817 ERROR: System error occurred: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 891, in dispatch_request
+    self.raise_routing_exception(req)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 500, in raise_routing_exception
+    raise request.routing_exception  # type: ignore[misc]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\ctx.py", line 362, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python313\Lib\site-packages\werkzeug\routing\map.py", line 629, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+ [in C:\Users\HP\OneDrive\Desktop\4th Year\II semister\Flask\Flask\app.py:1972]
+2025-04-29 23:45:48,221 ERROR: System error occurred: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 891, in dispatch_request
+    self.raise_routing_exception(req)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 500, in raise_routing_exception
+    raise request.routing_exception  # type: ignore[misc]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\ctx.py", line 362, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python313\Lib\site-packages\werkzeug\routing\map.py", line 629, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+ [in C:\Users\HP\OneDrive\Desktop\4th Year\II semister\Flask\Flask\app.py:1972]
+2025-04-29 23:49:24,228 INFO: System startup [in C:\Users\HP\OneDrive\Desktop\4th Year\II semister\Flask\Flask\app.py:1916]
+2025-04-29 23:52:36,326 ERROR: System error occurred: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 891, in dispatch_request
+    self.raise_routing_exception(req)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 500, in raise_routing_exception
+    raise request.routing_exception  # type: ignore[misc]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\ctx.py", line 362, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python313\Lib\site-packages\werkzeug\routing\map.py", line 629, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+ [in C:\Users\HP\OneDrive\Desktop\4th Year\II semister\Flask\Flask\app.py:1989]
+2025-04-29 23:52:36,418 ERROR: System error occurred: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 891, in dispatch_request
+    self.raise_routing_exception(req)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 500, in raise_routing_exception
+    raise request.routing_exception  # type: ignore[misc]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\ctx.py", line 362, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+  File "C:\Users\HP\AppData\Local\Programs\Python\Python313\Lib\site-packages\werkzeug\routing\map.py", line 629, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+ [in C:\Users\HP\OneDrive\Desktop\4th Year\II semister\Flask\Flask\app.py:1989]
+2025-04-29 23:52:44,066 ERROR: Error fetching attendance: no such table: attendance [in C:\Users\HP\OneDrive\Desktop\4th Year\II semister\Flask\Flask\app.py:1869]
+2025-04-30 00:06:44,814 INFO: System startup [in C:\Users\HP\OneDrive\Desktop\4th Year\II semister\Flask\Flask\app.py:1916]
+2025-04-30 00:07:11,636 INFO: System startup [in C:\Users\HP\OneDrive\Desktop\4th Year\II semister\Flask\Flask\app.py:1916]
+2025-04-30 00:12:40,029 INFO: System startup [in C:\Users\HP\OneDrive\Desktop\4th Year\II semister\Flask\Flask\app.py:1920]
+2025-04-30 00:12:52,707 ERROR: Error fetching attendance: no such table: attendance [in C:\Users\HP\OneDrive\Desktop\4th Year\II semister\Flask\Flask\app.py:1873]
+2025-04-30 00:49:22,224 INFO: System startup [in C:\Users\HP\OneDrive\Desktop\4th Year\II semister\Flask\Flask\app.py:2010]

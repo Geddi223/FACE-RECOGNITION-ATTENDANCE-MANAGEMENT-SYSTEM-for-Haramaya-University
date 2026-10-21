@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Haramaya University - Secure Login</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --hu-green: #006633;
+            --hu-gold: #FFCC00;
+            --hu-light: #f8f9fa;
+            --hu-dark: #343a40;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, rgba(0, 102, 51, 0.8), rgba(0, 102, 51, 0.6)), 
+                        url('/static/images/hu-campus.jpg') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            overflow-x: hidden;
+        }
+        
+        .login-container {
+            max-width: 450px;
+            width: 100%;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
+        
+        .login-card:hover {
+            transform: translateY(-10px) rotateX(5deg);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .login-header {
+            background: var(--hu-green);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 0% 100%);
+        }
+        
+        .login-header h3 {
+            margin: 0;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        
+        .login-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--hu-gold);
+        }
+        
+        .login-body {
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+        
+        .form-control {
+            height: 50px;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            padding-left: 45px;
+            transition: all 0.3s;
+            font-size: 15px;
+        }
+        
+        .form-control:focus {
+            border-color: var(--hu-green);
+            box-shadow: 0 0 0 0.25rem rgba(0, 102, 51, 0.15);
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--hu-green);
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus + .input-icon {
+            color: var(--hu-gold);
+            transform: translateY(-50%) scale(1.2);
+        }
+        
+        .btn-login {
+            background: var(--hu-green);
+            border: none;
+            color: white;
+            padding: 13px;
+            font-weight: 600;
+            width: 100%;
+            border-radius: 8px;
+            transition: all 0.4s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-login:hover {
+            background: #005a2f;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-login:active {
+            transform: translateY(0);
+        }
+        
+        .btn-login::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+        
+        .btn-login:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
+        }
+        
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(20, 20);
+                opacity: 0;
+            }
+        }
+        
+        .forgot-password {
+            color: var(--hu-green);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .forgot-password:hover {
+            color: #005a2f;
+        }
+        
+        .forgot-password::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--hu-green);
+            transition: width 0.3s;
+        }
+        
+        .forgot-password:hover::after {
+            width: 100%;
+        }
+        
+        .password-strength {
+            height: 5px;
+            background: #eee;
+            margin-top: 5px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .strength-meter {
+            height: 100%;
+            width: 0;
+            transition: width 0.5s ease-out, background 0.3s;
+        }
+        
+        .security-tips {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 25px;
+            font-size: 14px;
+            transition: all 0.4s;
+            transform: perspective(500px) rotateX(0deg);
+        }
+        
+        .security-tips:hover {
+            transform: perspective(500px) rotateX(5deg);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .security-tips h6 {
+            color: var(--hu-green);
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        
+        .security-tips ul {
+            padding-left: 20px;
+            margin-bottom: 0;
+        }
+        
+        .security-tips li {
+            margin-bottom: 8px;
+            position: relative;
+        }
+        
+        .security-tips li::before {
+            content: '•';
+            color: var(--hu-gold);
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+        }
+        
+        .login-footer {
+            text-align: center;
+            margin-top: 25px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .login-footer a {
+            color: var(--hu-green);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        
+        .login-footer a:hover {
+            text-decoration: underline;
+            color: #005a2f;
+        }
+        
+        /* Password toggle */
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #999;
+            transition: all 0.3s;
+        }
+        
+        .password-toggle:hover {
+            color: var(--hu-green);
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        /* Floating animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        /* Particles background */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+        
+        .particle {
+            position: absolute;
+            background: rgba(255, 204, 0, 0.5);
+            border-radius: 50%;
+            animation: float-particle linear infinite;
+        }
+        
+        @keyframes float-particle {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-1000px) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        
+        /* Modal styling */
+        .modal-content {
+            border-radius: 15px;
+            overflow: hidden;
+            border: none;
+        }
+        
+        .modal-header {
+            background: var(--hu-green);
+            color: white;
+            border-bottom: none;
+        }
+        
+        .modal-title {
+            font-weight: 600;
+        }
+        
+        /* Custom checkbox */
+        .form-check-input:checked {
+            background-color: var(--hu-green);
+            border-color: var(--hu-green);
+        }
+        
+        .form-check-input:focus {
+            box-shadow: 0 0 0 0.25rem rgba(0, 102, 51, 0.25);
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating particles background -->
+    <div class="particles" id="particles"></div>
+    
+    <!-- Animated floating logo -->
+    <div class="position-absolute top-0 start-0 m-4 floating animate__animated animate__fadeInDown">
+        <img src="/static/images/hu-logo.png" alt="Haramaya University" width="80" class="d-none d-md-block">
+    </div>
+    
+    <div class="container login-container animate__animated animate__fadeIn">
+        <div class="login-card">
+            <div class="login-header">
+                <h3><i class="fas fa-user-shield me-2"></i> Secure Login Portal</h3>
+            </div>
+            <div class="login-body">
+                <form id="loginForm" method="POST" action="{{ url_for('login') }}" novalidate>
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} alert-dismissible fade show animate__animated animate__shakeX" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    
+                    <div class="form-group">
+                        <i class="fas fa-user input-icon"></i>
+                        <input type="text" class="form-control animate__animated animate__fadeInLeft" id="username" name="username" placeholder="Username" required>
+                        <div class="invalid-feedback animate__animated animate__fadeIn">Please enter your username</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input type="password" class="form-control animate__animated animate__fadeInRight" id="password" name="password" placeholder="Password" required>
+                        <i class="fas fa-eye password-toggle" id="togglePassword"></i>
+                        <div class="password-strength">
+                            <div class="strength-meter" id="passwordStrength"></div>
+                        </div>
+                        <div class="invalid-feedback animate__animated animate__fadeIn">Please enter your password</div>
+                    </div>
+                    
+                    <div class="form-check mb-4 animate__animated animate__fadeIn">
+                        <input class="form-check-input" type="checkbox" id="rememberMe">
+                        <label class="form-check-label" for="rememberMe">Remember me</label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-login mb-3 animate__animated animate__fadeInUp" id="loginButton">
+                        <i class="fas fa-sign-in-alt me-2"></i> Login
+                    </button>
+                    
+                    <div class="text-center mb-4 animate__animated animate__fadeInUp">
+                        <a href="#" class="forgot-password" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">
+                            <i class="fas fa-key me-1"></i> Forgot Password?
+                        </a>
+                    </div>
+                    
+                    <div class="security-tips animate__animated animate__fadeIn">
+                        <h6><i class="fas fa-shield-alt me-2"></i>Security Tips:</h6>
+                        <ul>
+                            <li>Never share your login credentials</li>
+                            <li>Ensure you're on the official Haramaya University website</li>
+                            <li>Log out after each session, especially on shared devices</li>
+                            <li>Change your password regularly</li>
+                        </ul>
+                    </div>
+                </form>
+                
+                <div class="login-footer animate__animated animate__fadeIn">
+                    <p>Don't have an account? <a href="{{ url_for('contact') }}">Contact HR</a> | 
+                    <a href="{{ url_for('home') }}">Return to Home</a></p>
+                    <p>&copy; 2025 Haramaya University. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Forgot Password Modal -->
+    <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="forgotPasswordModalLabel"><i class="fas fa-key me-2"></i>Password Recovery</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="passwordRecoveryForm">
+                        <div class="form-group mb-3">
+                            <label for="recoveryEmail" class="form-label">Email Address</label>
+                            <input type="email" class="form-control" id="recoveryEmail" placeholder="Enter your registered email" required>
+                            <div class="invalid-feedback">Please enter a valid email address</div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="employeeId" class="form-label">Employee ID</label>
+                            <input type="text" class="form-control" id="employeeId" placeholder="Enter your employee ID" required>
+                            <div class="invalid-feedback">Please enter your employee ID</div>
+                        </div>
+                        <button type="submit" class="btn btn-login w-100">
+                            <i class="fas fa-paper-plane me-2"></i> Send Reset Link
+                        </button>
+                    </form>
+                    <div class="alert alert-info mt-3 animate__animated animate__fadeIn">
+                        <i class="fas fa-info-circle me-2"></i> A password reset link will be sent to your email if the information matches our records.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 20;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+
+                // Random properties
+                const size = Math.random() * 10 + 5;
+                const posX = Math.random() * 100;
+                const duration = Math.random() * 20 + 10;
+                const delay = Math.random() * 10;
+
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${posX}%`;
+                particle.style.bottom = `-${size}px`;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${delay}s`;
+
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Initialize particles when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+
+            // Auto-focus username field
+            setTimeout(() => {
+                document.getElementById('username').focus();
+            }, 500);
+
+            // Add animation class to elements sequentially
+            const animatedElements = document.querySelectorAll('.animate__animated');
+            animatedElements.forEach((el, index) => {
+                setTimeout(() => {
+                    el.style.opacity = 1;
+                }, index * 100);
+            });
+        });
+
+        // Password toggle visibility
+        const togglePassword = document.querySelector('#togglePassword');
+        const passwordInput = document.querySelector('#password'); // Renamed to avoid conflict
+        const usernameInput = document.querySelector('#username'); // Get username input
+
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('fa-eye-slash');
+        });
+
+        // Password strength indicator
+        passwordInput.addEventListener('input', function() {
+            const strengthMeter = document.getElementById('passwordStrength');
+            const strength = calculatePasswordStrength(this.value);
+
+            strengthMeter.style.width = `${strength.percentage}%`;
+            strengthMeter.style.backgroundColor = strength.color;
+        });
+
+        function calculatePasswordStrength(password) {
+            let strength = 0;
+
+            // Length check
+            if (password.length > 0) strength += 10;
+            if (password.length >= 8) strength += 20;
+
+            // Character type checks
+            if (/[A-Z]/.test(password)) strength += 20;
+            if (/[0-9]/.test(password)) strength += 20;
+            if (/[^A-Za-z0-9\s]/.test(password)) strength += 20; // Allow spaces in password strength calculation
+            // Note: Allowing spaces in password strength calculation is just for the visual indicator.
+            // It's generally not recommended to allow spaces in actual passwords for security reasons.
+            // If your backend doesn't allow spaces in passwords, this strength calculation might be misleading.
+
+            // Length bonus
+            if (password.length >= 12) strength += 10;
+
+            // Cap at 100
+            strength = Math.min(strength, 100);
+
+            // Determine color
+            let color;
+            if (strength < 40) color = '#dc3545'; // Red
+            else if (strength < 70) color = '#ffc107'; // Yellow
+            else color = '#28a745'; // Green
+
+            return { percentage: strength, color };
+        }
+
+        // Form validation and submission handling
+        const forms = document.querySelectorAll('form');
+
+        forms.forEach(form => {
+            form.addEventListener('submit', function(event) {
+                // Trim leading/trailing spaces from username and password before validation
+                if (form.id === 'loginForm') {
+                    usernameInput.value = usernameInput.value.trim();
+                    passwordInput.value = passwordInput.value.trim(); // Trim password too (good practice)
+                }
+
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    form.classList.add('was-validated');
+
+                    // Shake animation for invalid form
+                    if (form.id === 'loginForm') {
+                        document.querySelector('.login-card').classList.add('animate__animated', 'animate__shakeX');
+                        setTimeout(() => {
+                            document.querySelector('.login-card').classList.remove('animate__animated', 'animate__shakeX');
+                        }, 1000);
+                    }
+                } else {
+                    // Show loading state
+                    if (form.id === 'loginForm') {
+                        document.getElementById('loginButton').innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Authenticating...';
+                        document.getElementById('loginButton').disabled = true;
+                    }
+                }
+            }, false);
+        });
+
+        // Reset form button states when modal is closed
+        document.getElementById('forgotPasswordModal').addEventListener('hidden.bs.modal', function() {
+            document.getElementById('passwordRecoveryForm').classList.remove('was-validated');
+        });
+
+        // Ripple effect for buttons
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                // Prevent ripple effect on submit if form is invalid
+                if (this.type === 'submit' && !this.closest('form').checkValidity()) {
+                    return;
+                }
+
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple-effect');
+                ripple.style.left = `${x}px`;
+                ripple.style.top = `${y}px`;
+                this.appendChild(ripple);
+
+                setTimeout(() => {
+                    ripple.remove();
+                }, 1000);
+            });
+        });
+    </script>
+</body>
+</html>

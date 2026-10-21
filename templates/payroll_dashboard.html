@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payroll Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        :root {
+            --primary: #4e73df;
+            --secondary: #1cc88a;
+            --danger: #e74a3b;
+            --warning: #f6c23e;
+            --info: #36b9cc;
+            --light: #f8f9fc;
+            --dark: #5a5c69;
+        }
+
+        body {
+            background-color: #f8f9fc;
+            font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary) 0%, #224abe 100%);
+            color: white;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .card {
+            border: none;
+            border-radius: 0.5rem;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0.5rem 2rem 0 rgba(58, 59, 69, 0.2);
+        }
+
+        .card-header {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+            border-radius: 0.5rem 0.5rem 0 0 !important;
+            padding: 1rem 1.5rem;
+        }
+
+        .badge-status {
+            padding: 0.5em 0.8em;
+            font-weight: 600;
+            font-size: 0.75rem;
+        }
+
+        .badge-processed {
+            background-color: var(--secondary);
+        }
+
+        .badge-pending {
+            background-color: var(--warning);
+        }
+
+        .badge-late {
+            background-color: var(--danger);
+        }
+
+        .badge-present {
+            background-color: var(--secondary);
+        }
+
+        .badge-absent {
+            background-color: var(--danger);
+        }
+
+        .btn-action {
+            border-radius: 50px;
+            padding: 0.5rem 1.25rem;
+            font-weight: 600;
+        }
+
+        .employee-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 10px;
+        }
+
+        .payroll-breakdown {
+            border-left: 3px solid var(--info);
+            padding-left: 15px;
+            margin-top: 10px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .table th {
+            background-color: #f8f9fc;
+            position: sticky;
+            top: 0;
+        }
+
+        .nav-tabs .nav-link.active {
+            font-weight: 600;
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .attendance-chart {
+            height: 300px;
+        }
+
+        .progress-thin {
+            height: 6px;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-header {
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header class="dashboard-header py-4 mb-4">
+    <div class="container-fluid">
+        <div class="d-flex flex-column flex-md-row align-items-center justify-content-between">
+            <div class="d-flex align-items-center mb-3 mb-md-0">
+                <i class="fas fa-money-bill-wave fa-2x me-3"></i>
+                <h1 class="h3 mb-0">Payroll Management System</h1>
+            </div>
+            <div class="d-flex">
+                <form method="get" class="me-2">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"><i class="fas fa-calendar-alt"></i></span>
+                        <select name="month" class="form-select" onchange="this.form.submit()">
+                            {% for month in month_options %}
+                                <option value="{{ month }}" {% if month == selected_month %}selected{% endif %}>
+                                    {{ month }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </form>
+                <a href="{{ url_for('export_payroll_csv', month=selected_month) }}" class="btn btn-success me-2">
+                    <i class="fas fa-file-export me-2"></i>Export
+                </a>
+                {% if not is_processed %}
+                <form method="post" action="{{ url_for('payroll_dashboard') }}">
+                    <input type="hidden" name="month" value="{{ selected_month }}">
+                    <button type="submit" name="process_payroll" class="btn btn-warning text-white">
+                        <i class="fas fa-play me-2"></i>Process Payroll
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container-fluid">
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card summary-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-uppercase text-muted mb-2">Total Employees</h6>
+                            <h2 class="mb-0">{{ total_employees }}</h2>
+                        </div>
+                        <div class="bg-primary bg-opacity-10 p-3 rounded">
+                            <i class="fas fa-users fa-2x text-primary"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card summary-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-uppercase text-muted mb-2">Total Net Pay</h6>
+                            {% set payroll_summary = payroll_summary or {} %}
+                        </div>
+                        <div class="bg-success bg-opacity-10 p-3 rounded">
+                            <i class="fas fa-wallet fa-2x text-success"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card summary-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-uppercase text-muted mb-2">Avg. Work Hours</h6>
+                            <h2 class="mb-0">{{ "%.1f"|format(payroll_summary.avg_work_hours or 0) }}</h2>
+                        </div>
+                        <div class="bg-info bg-opacity-10 p-3 rounded">
+                            <i class="fas fa-clock fa-2x text-info"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card summary-card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-uppercase text-muted mb-2">Late Employees</h6>
+                            <h2 class="mb-0">{{ payroll_summary.late_employees or 0 }}</h2>
+                        </div>
+                        <div class="bg-danger bg-opacity-10 p-3 rounded">
+                            <i class="fas fa-exclamation-triangle fa-2x text-danger"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payroll Status Card -->
+    {% if not is_processed %}
+    <div class="card mb-4 border-warning hover-shadow">
+        <div class="card-header bg-warning text-white d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold">
+                <i class="fas fa-cogs me-2"></i>Process Payroll
+            </h6>
+            <span class="badge bg-white text-warning">Action Required</span>
+        </div>
+        <div class="card-body">
+            <div class="alert alert-warning d-flex align-items-center">
+                <i class="fas fa-exclamation-triangle fa-2x me-3"></i>
+                <div>
+                    <h5 class="alert-heading">Payroll Not Processed</h5>
+                    <p class="mb-0">Payroll for {{ processing_date.strftime('%B %Y') }} has not been processed yet.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Main Payroll Table -->
+    <div class="card mb-4 hover-shadow">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-white">
+                <i class="fas fa-table me-2"></i>Payroll Details - {{ processing_date.strftime('%B %Y') }}
+            </h6>
+            <div class="dropdown">
+                <button class="btn btn-sm btn-outline-light dropdown-toggle" type="button" id="viewOptions" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-eye me-1"></i> View Options
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="viewOptions">
+                    <li><a class="dropdown-item" href="#" id="showAll">Show All Employees</a></li>
+                    <li><a class="dropdown-item" href="#" id="showPending">Show Pending Only</a></li>
+                    <li><a class="dropdown-item" href="#" id="showProcessed">Show Processed Only</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover" id="payrollTable">
+                    <thead>
+                        <tr>
+                            <th>Employee</th>
+                            <th>Department</th>
+                            <th>Salary Structure</th>
+                            <th>Bank Details</th>
+                            <th>Work Hours</th>
+                            <th>Late Days</th>
+                            <th>Salary</th>
+                            <th>Net Pay</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in payroll_records %}
+                        <tr class="{% if record.payroll_data and record.payroll_data.processed %}table-success{% else %}table-warning{% endif %}">
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ url_for('static', filename='img/profile/' + record.employee_id_number + '.jpg') }}" 
+                                        onerror="this.src='{{ url_for('static', filename='images/default-avatar.png') }}'" 
+                                        class="employee-avatar">
+                                    <div>
+                                        <h6 class="mb-0">{{ record.employee_name }}</h6>
+                                        <small class="text-muted">{{ record.designation }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ record.department }}</td>
+                            <td>
+                                
+                                <small class="text-muted">{{ record.salary_structure }}</small>
+                            </td>
+                            <td>
+                                <small class="d-block">{{ record.bank_account }}</small>
+                                <small class="text-muted">Acct: {{ record.account_number }}</small>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="progress progress-thin w-100 me-2">
+                                        <div class="progress-bar bg-info" role="progressbar" 
+                                            style="width: {{ (record.attendance_summary.total_worked_hours / 160 * 100) if record.attendance_summary.total_worked_hours else 0 }}%">
+                                        </div>
+                                    </div>
+                                    <span>{{ record.attendance_summary.total_worked_hours|round(1) }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                {% if record.attendance_summary.late_days > 0 %}
+                                <span class="badge badge-late">
+                                    {{ record.attendance_summary.late_days }} late
+                                </span>
+                                {% else %}
+                                <span class="badge badge-secondary">On time</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if record.payroll_data %}
+                                    ${{ "%.2f"|format(record.payroll_data.basic_salary) }}
+                                {% else %}
+                                    <span class="text-muted">N/A</span>
+                                {% endif %}
+                            </td>
+                            <td class="font-weight-bold">
+                                {% if record.payroll_data %}
+                                    <span id="finalized-net-salary-{{ record.employee_id }}">
+                                        ${{ "%.2f"|format(record.payroll_data.finalized_net_salary) }}
+                                    </span>
+                                    <br>
+                                    <small class="text-muted">
+                                        (Calculated: ${{ "%.2f"|format(record.calculated_net_salary) }})
+                                    </small>
+                                    <button class="btn btn-sm btn-outline-secondary ms-2" 
+                                            onclick="showEditNetSalaryModal('{{ record.employee_id }}', {{ record.payroll_data.finalized_net_salary }})">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                {% else %}
+                                    <span class="text-muted">N/A</span>
+                                    <br>
+                                    <small class="text-muted">
+                                        (Calculated: ${{ "%.2f"|format(record.calculated_net_salary) }})
+                                    </small>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if record.payroll_data and record.payroll_data.processed %}
+                                    <span class="badge badge-status badge-processed">
+                                        <i class="fas fa-check-circle me-1"></i> Processed
+                                    </span>
+                                {% else %}
+                                    <span class="badge badge-status badge-pending">
+                                        <i class="fas fa-clock me-1"></i> Pending
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary view-details" 
+                                        data-employee-id="{{ record.employee_id }}">
+                                    <i class="fas fa-eye"></i> Details
+                                </button>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="10" class="text-center py-4">
+                                <i class="fas fa-info-circle fa-2x text-muted mb-3"></i>
+                                <h5>No payroll records found</h5>
+                                <p class="text-muted">Process payroll to view records for this period</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Employee Details Modal -->
+<div class="modal fade" id="employeeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">Employee Payroll Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="employeeDetailsContent">
+                <!-- Content will be loaded via AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Edit Net Salary Modal -->
+<div class="modal fade" id="editNetSalaryModal" tabindex="-1" aria-labelledby="editNetSalaryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="editNetSalaryForm" method="post" action="{{ url_for('edit_net_salary') }}">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editNetSalaryModalLabel">Edit Finalized Net Salary</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="employee_id" id="editNetSalaryEmployeeId">
+                    <div class="mb-3">
+                    <label for="editNetSalaryAmount" class="form-label">Net Salary</label>
+                    <input type="number" step="0.01" class="form-control" name="net_salary" id="editNetSalaryAmount" required>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </form>
+</div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    $(document).ready(function() {
+        // Handle view details button click
+        $('.view-details').click(function() {
+            const employeeId = $(this).data('employee-id');
+            const month = "{{ selected_month }}";
+            
+            // Show loading state
+            $('#employeeDetailsContent').html(`
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-3">Loading employee details...</p>
+                </div>
+            `);
+            
+            $('#employeeModal').modal('show');
+            
+            // Load employee details via AJAX
+            $.get(`/employee_payroll_details/${employeeId}?month=${month}`, function(data) {
+                $('#employeeDetailsContent').html(data);
+                
+                // Initialize attendance chart
+                initAttendanceChart();
+            }).fail(function() {
+                $('#employeeDetailsContent').html(`
+                    <div class="alert alert-danger">
+                        Failed to load employee details. Please try again.
+                    </div>
+                `);
+            });
+        });
+        
+        // Filter table rows
+        $('#showAll').click(function(e) {
+            e.preventDefault();
+            $('#payrollTable tbody tr').show();
+        });
+        
+        $('#showPending').click(function(e) {
+            e.preventDefault();
+            $('#payrollTable tbody tr').hide();
+            $('#payrollTable tbody tr.table-warning').show();
+        });
+        
+        $('#showProcessed').click(function(e) {
+            e.preventDefault();
+            $('#payrollTable tbody tr').hide();
+            $('#payrollTable tbody tr.table-success').show();
+        });
+    });
+    function showEditNetSalaryModal(employeeId, currentNetSalary) {
+    $('#editNetSalaryEmployeeId').val(employeeId);
+    $('#editNetSalaryAmount').val(currentNetSalary);
+    $('#editNetSalaryModal').modal('show');
+    }
+    function initAttendanceChart() {
+        const ctx = document.getElementById('attendanceChart').getContext('2d');
+        const chartData = JSON.parse(document.getElementById('chartData').value);
+        
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: chartData.labels,
+                datasets: [
+                    {
+                        label: 'Hours Worked',
+                        data: chartData.hours,
+                        backgroundColor: 'rgba(54, 185, 204, 0.7)',
+                        borderColor: 'rgba(54, 185, 204, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Overtime',
+                        data: chartData.overtime,
+                        backgroundColor: 'rgba(246, 194, 62, 0.7)',
+                        borderColor: 'rgba(246, 194, 62, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Hours'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Date'
+                        }
+                    }
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

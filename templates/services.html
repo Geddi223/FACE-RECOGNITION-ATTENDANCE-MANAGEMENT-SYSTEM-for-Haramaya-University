@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services - Haramaya University</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #4CAF50;
+            --accent-color: #a777e3;
+            --light-color: #ecf0f1;
+            --dark-color: #333;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary-color), #1a2a3a);
+            color: var(--light-color);
+            text-align: center;
+            padding: 3em 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://www.haramaya.edu.et/wp-content/uploads/2022/05/HU-Logo-1.png') no-repeat;
+            background-position: center;
+            background-size: contain;
+            opacity: 0.1;
+            z-index: 0;
+        }
+        
+        header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: fadeInDown 1s ease-out;
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+            animation: fadeIn 1.5s ease-out;
+        }
+        
+        nav {
+            background: var(--dark-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+        }
+        
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            margin: 0;
+        }
+        
+        nav ul li {
+            margin: 0 1em;
+            position: relative;
+        }
+        
+        nav ul li a {
+            text-decoration: none;
+            color: #fff;
+            padding: 1em 0.5em;
+            display: block;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        nav ul li a:hover {
+            color: var(--secondary-color);
+        }
+        
+        nav ul li a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: var(--secondary-color);
+            transition: width 0.3s ease;
+        }
+        
+        nav ul li a:hover::after {
+            width: 100%;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2em auto;
+            padding: 0 1em;
+        }
+        
+        .services-intro {
+            text-align: center;
+            margin-bottom: 3em;
+            animation: fadeIn 1s ease-out;
+        }
+        
+        .services-intro h2 {
+            color: var(--primary-color);
+            font-size: 2.2rem;
+            margin-bottom: 1em;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .services-intro h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--secondary-color);
+        }
+        
+        .services-intro p {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.1em;
+            color: #555;
+        }
+        
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2em;
+            margin-bottom: 3em;
+        }
+        
+        .service-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--secondary-color);
+            transition: all 0.3s ease;
+        }
+        
+        .service-card:hover::before {
+            height: 10px;
+        }
+        
+        .service-icon {
+            font-size: 3em;
+            color: var(--secondary-color);
+            margin: 1em 0;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .service-card:hover .service-icon {
+            transform: scale(1.2);
+            color: var(--primary-color);
+        }
+        
+        .service-content {
+            padding: 1.5em;
+        }
+        
+        .service-content h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+            margin-bottom: 1em;
+            text-align: center;
+        }
+        
+        .service-content p {
+            color: #555;
+            margin-bottom: 1.5em;
+        }
+        
+        .service-features {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        
+        .service-features li {
+            padding: 0.5em 0;
+            position: relative;
+            padding-left: 1.5em;
+        }
+        
+        .service-features li::before {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: var(--secondary-color);
+        }
+        
+        .service-btn {
+            display: inline-block;
+            background: var(--secondary-color);
+            color: white;
+            padding: 0.8em 1.5em;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 1em;
+            transition: all 0.3s ease;
+            border: 2px solid var(--secondary-color);
+        }
+        
+        .service-btn:hover {
+            background: transparent;
+            color: var(--secondary-color);
+            transform: translateY(-3px);
+        }
+        
+        .service-btn i {
+            margin-left: 0.5em;
+            transition: transform 0.3s ease;
+        }
+        
+        .service-btn:hover i {
+            transform: translateX(5px);
+        }
+        
+        .btn-container {
+            text-align: center;
+            margin-top: 1em;
+        }
+        
+        .testimonials-section {
+            background: linear-gradient(135deg, #f5f7fa, #e4e8eb);
+            padding: 3em 0;
+            margin: 3em 0;
+        }
+        
+        .testimonials-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1em;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 2em;
+            color: var(--primary-color);
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--secondary-color);
+        }
+        
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2em;
+        }
+        
+        .testimonial-card {
+            background: white;
+            border-radius: 10px;
+            padding: 2em;
+            box-shadow: var(--shadow);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .testimonial-card::before {
+            content: '\201C';
+            font-family: Georgia, serif;
+            font-size: 5em;
+            color: rgba(76, 175, 80, 0.1);
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            line-height: 1;
+        }
+        
+        .testimonial-content {
+            position: relative;
+            z-index: 1;
+            margin-bottom: 1.5em;
+            font-style: italic;
+            color: #555;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+        
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 1em;
+        }
+        
+        .author-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .author-info h4 {
+            margin: 0;
+            color: var(--primary-color);
+        }
+        
+        .author-info p {
+            margin: 0;
+            color: #777;
+            font-size: 0.9em;
+        }
+        
+        .stats-section {
+            background: linear-gradient(135deg, var(--primary-color), #1a2a3a);
+            color: white;
+            padding: 3em 0;
+            text-align: center;
+        }
+        
+        .stats-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1em;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2em;
+        }
+        
+        .stat-item {
+            padding: 1.5em;
+        }
+        
+        .stat-number {
+            font-size: 3em;
+            font-weight: 700;
+            margin-bottom: 0.3em;
+            color: var(--secondary-color);
+        }
+        
+        .stat-label {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .faq-section {
+            padding: 3em 0;
+        }
+        
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .faq-item {
+            margin-bottom: 1em;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        
+        .faq-question {
+            background: var(--primary-color);
+            color: white;
+            padding: 1.5em;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+        
+        .faq-question:hover {
+            background: #1a2a3a;
+        }
+        
+        .faq-question h3 {
+            margin: 0;
+            font-size: 1.1em;
+        }
+        
+        .faq-question i {
+            transition: transform 0.3s ease;
+        }
+        
+        .faq-item.active .faq-question i {
+            transform: rotate(180deg);
+        }
+        
+        .faq-answer {
+            background: white;
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+        
+        .faq-item.active .faq-answer {
+            padding: 1.5em;
+            max-height: 500px;
+        }
+        
+        .cta-section {
+            background: linear-gradient(135deg, var(--secondary-color), #3e8e41);
+            color: white;
+            text-align: center;
+            padding: 4em 0;
+            margin-top: 3em;
+        }
+        
+        .cta-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 1em;
+        }
+        
+        .cta-title {
+            font-size: 2.2em;
+            margin-bottom: 0.5em;
+        }
+        
+        .cta-description {
+            font-size: 1.1em;
+            margin-bottom: 2em;
+            opacity: 0.9;
+        }
+        
+        .cta-btn {
+            display: inline-block;
+            background: white;
+            color: var(--secondary-color);
+            padding: 1em 2em;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .cta-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        footer {
+            background: linear-gradient(135deg, var(--primary-color), #1a2a3a);
+            color: white;
+            padding: 3em 0 1em;
+        }
+        
+        .footer-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2em;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1em;
+        }
+        
+        .footer-column h5 {
+            font-size: 1.2em;
+            margin-bottom: 1.5em;
+            position: relative;
+            padding-bottom: 0.5em;
+        }
+        
+        .footer-column h5::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: var(--secondary-color);
+        }
+        
+        .footer-column p, .footer-column a {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 0.8em;
+            display: block;
+        }
+        
+        .footer-column a {
+            text-decoration: none;
+            transition: color 0.3s ease, padding-left 0.3s ease;
+        }
+        
+        .footer-column a:hover {
+            color: var(--secondary-color);
+            padding-left: 5px;
+        }
+        
+        .footer-column .social-links {
+            display: flex;
+            gap: 1em;
+            margin-top: 1em;
+        }
+        
+        .footer-column .social-links a {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-column .social-links a:hover {
+            background: var(--secondary-color);
+            transform: translateY(-3px);
+        }
+        
+        .copyright {
+            text-align: center;
+            margin-top: 3em;
+            padding-top: 1em;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9em;
+        }
+        
+        /* Animations */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+        .delay-4 { animation-delay: 0.8s; }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.2rem;
+            }
+            
+            header p {
+                font-size: 1rem;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            nav ul li {
+                margin: 0.5em 0;
+            }
+            
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .cta-title {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="animate__animated animate__fadeIn">
+        <h1>Our Services</h1>
+        <p>Comprehensive solutions to support your academic journey</p>
+    </header>
+    
+    <nav>
+        <ul>
+            <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="{{url_for('aboutUs')}}"><i class="fas fa-info-circle"></i> About</a></li>
+            <li><a href="/services" class="active"><i class="fas fa-cogs"></i> Services</a></li>
+            <li><a href="/contact"><i class="fas fa-envelope"></i> Contact</a></li>
+        </ul>
+    </nav>
+    
+    <div class="container">
+        <section class="services-intro">
+            <h2>How We Can Help You</h2>
+            <p>Haramaya University provides a wide range of services to support students, faculty, researchers, and the community. Our dedicated teams are committed to delivering excellence in every aspect of university life.</p>
+        </section>
+        
+        <section class="services-grid">
+            <div class="service-card animate__animated animate__fadeInUp floating">
+                <div class="service-content">
+                    <div class="service-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <h3>Academic Programs</h3>
+                    <p>Comprehensive undergraduate, graduate, and postgraduate programs across various disciplines.</p>
+                    <ul class="service-features">
+                        <li>Over 100 degree programs</li>
+                        <li>Research-focused curriculum</li>
+                        <li>Industry-aligned courses</li>
+                        <li>International collaborations</li>
+                    </ul>
+                    <div class="btn-container">
+                        <a href="#" class="service-btn">Explore Programs <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="service-card animate__animated animate__fadeInUp floating delay-1">
+                <div class="service-content">
+                    <div class="service-icon">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <h3>Library Resources</h3>
+                    <p>State-of-the-art library services with extensive digital and physical collections.</p>
+                    <ul class="service-features">
+                        <li>500,000+ volumes</li>
+                        <li>24/7 online access</li>
+                        <li>Research assistance</li>
+                        <li>Interlibrary loans</li>
+                    </ul>
+                    <div class="btn-container">
+                        <a href="#" class="service-btn">Visit Library <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="service-card animate__animated animate__fadeInUp floating delay-2">
+                <div class="service-content">
+                    <div class="service-icon">
+                        <i class="fas fa-flask"></i>
+                    </div>
+                    <h3>Research Support</h3>
+                    <p>Comprehensive support for research projects from conception to publication.</p>
+                    <ul class="service-features">
+                        <li>Grant writing assistance</li>
+                        <li>Statistical consulting</li>
+                        <li>Research ethics review</li>
+                        <li>Publication support</li>
+                    </ul>
+                    <div class="btn-container">
+                        <a href="#" class="service-btn">Research Portal <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="service-card animate__animated animate__fadeInUp floating delay-3">
+                <div class="service-content">
+                    <div class="service-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <h3>Student Housing</h3>
+                    <p>Safe and comfortable accommodation options for all registered students.</p>
+                    <ul class="service-features">
+                        <li>On-campus dormitories</li>
+                        <li>24/7 security</li>
+                        <li>Study lounges</li>
+                        <li>Affordable rates</li>
+                    </ul>
+                    <div class="btn-container">
+                        <a href="#" class="service-btn">Housing Info <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="service-card animate__animated animate__fadeInUp floating delay-4">
+                <div class="service-content">
+                    <div class="service-icon">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <h3>Health Services</h3>
+                    <p>Comprehensive medical care for students, faculty, and staff.</p>
+                    <ul class="service-features">
+                        <li>On-campus clinic</li>
+                        <li>Emergency services</li>
+                        <li>Counseling services</li>
+                        <li>Health education</li>
+                    </ul>
+                    <div class="btn-container">
+                        <a href="#" class="service-btn">Health Portal <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="service-card animate__animated animate__fadeInUp floating">
+                <div class="service-content">
+                    <div class="service-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <h3>Career Services</h3>
+                    <p>Support for career development and job placement for students and alumni.</p>
+                    <ul class="service-features">
+                        <li>Career counseling</li>
+                        <li>Resume workshops</li>
+                        <li>Job fairs</li>
+                        <li>Internship programs</li>
+                    </ul>
+                    <div class="btn-container">
+                        <a href="#" class="service-btn">Career Center <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <section class="testimonials-section">
+        <div class="testimonials-container">
+            <h2 class="section-title">What Our Students Say</h2>
+            
+            <div class="testimonials-grid">
+                <div class="testimonial-card animate__animated animate__fadeInLeft">
+                    <p class="testimonial-content">The academic support services at Haramaya University are exceptional. The library resources and research assistance helped me complete my thesis successfully.</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Student">
+                        </div>
+                        <div class="author-info">
+                            <h4>Gedion Fikre</h4>
+                            <p>Graduate Student, Agriculture</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card animate__animated animate__fadeInUp">
+                    <p class="testimonial-content">The career services team helped me prepare for job interviews and connected me with great internship opportunities that led to my current position.</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <img src="https://randomuser.me/api/portraits/men/45.jpg" alt="Student">
+                        </div>
+                        <div class="author-info">
+                            <h4>Misganwu Mulugeta</h4>
+                            <p>Alumnus, Computer Science</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card animate__animated animate__fadeInRight">
+                    <p class="testimonial-content">As an international student, the support services made my transition smooth. The housing and orientation programs were particularly helpful.</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <img src="https://randomuser.me/api/portraits/men/68.jpg" alt="Student">
+                        </div>
+                        <div class="author-info">
+                            <h4>Tadele Adisu</h4>
+                            <p>International Student, Public Health</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="stats-section">
+        <div class="stats-container">
+            <div class="stat-item animate__animated animate__fadeIn">
+                <div class="stat-number" id="studentsCount">0</div>
+                <div class="stat-label">Students Enrolled</div>
+            </div>
+            
+            <div class="stat-item animate__animated animate__fadeIn delay-1">
+                <div class="stat-number" id="programsCount">0</div>
+                <div class="stat-label">Academic Programs</div>
+            </div>
+            
+            <div class="stat-item animate__animated animate__fadeIn delay-2">
+                <div class="stat-number" id="facultyCount">0</div>
+                <div class="stat-label">Faculty Members</div>
+            </div>
+            
+            <div class="stat-item animate__animated animate__fadeIn delay-3">
+                <div class="stat-number" id="researchCount">0</div>
+                <div class="stat-label">Research Projects</div>
+            </div>
+        </div>
+    </section>
+    
+    <div class="container">
+        <section class="faq-section">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>How do I apply for student housing?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Student housing applications are available through the online student portal after admission. Priority is given to first-year students and those coming from distant regions. The housing office can provide more information about availability and application deadlines.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>What health services are available on campus?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>The university health center provides primary care services, emergency treatment, counseling services, and health education programs. All registered students have access to basic health services, with additional insurance options available for more comprehensive coverage.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>How can I access library resources remotely?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Our digital library resources are available 24/7 through the university library website using your student credentials. This includes e-books, academic journals, databases, and research tools. Library staff also offer virtual research assistance during working hours.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>What career support is available for alumni?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Alumni have lifelong access to career counseling services, job postings, and networking events. The career center offers resume reviews, interview preparation, and maintains relationships with employers to facilitate job opportunities for our graduates.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>How do I apply for research funding?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>The Office of Research and Community Engagement manages internal research grants and can assist with external funding applications. Funding opportunities are announced regularly, and faculty can schedule consultations with our grant specialists for proposal development support.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <section class="cta-section">
+        <div class="cta-container">
+            <h2 class="cta-title">Ready to Experience Our Services?</h2>
+            <p class="cta-description">Whether you're a prospective student, current student, faculty member, or community partner, we have services tailored to your needs.</p>
+            <a href="/contact" class="cta-btn">Contact Us Today</a>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="footer-container">
+            <div class="footer-column">
+                <h5>About Haramaya</h5>
+                <p>Haramaya University is one of the oldest higher education institutions in Ethiopia, committed to excellence in teaching, research, and community service.</p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/pg/HRMUNIV/" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://twitter.com/haramayauniver4" target="_blank"><i class="fab fa-twitter"></i></a>
+                    <a href="https://youtube.com/channel/UCd6Bb1Xc6FyycH0_DFmkxNQ" target="_blank"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-column">
+                <h5>Quick Links</h5>
+                <a href="https://www.haramaya.edu.et">University Website</a>
+                <a href="https://www.haramaya.edu.et/admission/">Admissions</a>
+                <a href="https://www.haramaya.edu.et/academics/">Academic Programs</a>
+                <a href="https://www.haramaya.edu.et/research/">Research</a>
+                <a href="https://www.haramaya.edu.et/student-life/">Student Life</a>
+            </div>
+            
+            <div class="footer-column">
+                <h5>Services</h5>
+                <a href="#">Library Services</a>
+                <a href="#">Career Center</a>
+                <a href="#">Health Services</a>
+                <a href="#">Housing</a>
+                <a href="#">International Programs</a>
+            </div>
+            
+            <div class="footer-column">
+                <h5>Contact</h5>
+                <p>Haramaya University</p>
+                <p>P.O. Box 138, Dire Dawa</p>
+                <p>Ethiopia</p>
+                <a href="mailto:info@haramaya.edu.et">info@haramaya.edu.et</a>
+                <p>+251 25 530 319</p>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            &copy; 2025 Haramaya University | All Rights Reserved
+        </div>
+    </footer>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Counter animation
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stat-number');
+            const speed = 200;
+            
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target') || 
+                    (counter.id === 'studentsCount' ? 25000 :
+                     counter.id === 'programsCount' ? 120 :
+                     counter.id === 'facultyCount' ? 1500 :
+                     counter.id === 'researchCount' ? 850 : 0));
+                
+                const count = +counter.innerText;
+                const increment = target / speed;
+                
+                if (count < target) {
+                    counter.innerText = Math.ceil(count + increment);
+                    setTimeout(animateCounters, 1);
+                } else {
+                    counter.innerText = target.toLocaleString();
+                }
+            });
+        }
+        
+        // Start counters when stats section is in view
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounters();
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+        
+        observer.observe(document.querySelector('.stats-section'));
+        
+        // FAQ toggle functionality
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const item = question.parentElement;
+                item.classList.toggle('active');
+                
+                // Close other open items
+                document.querySelectorAll('.faq-item').forEach(otherItem => {
+                    if (otherItem !== item && otherItem.classList.contains('active')) {
+                        otherItem.classList.remove('active');
+                    }
+                });
+            });
+        });
+        
+        // Service card hover animations
+        document.querySelectorAll('.service-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.classList.add('animate__pulse');
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.classList.remove('animate__pulse');
+            });
+        });
+        
+        // Smooth scrolling for navigation
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                if (this.getAttribute('href').startsWith('#')) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                }
+            });
+        });
+        
+        // Animation on scroll
+        function animateOnScroll() {
+            const elements = document.querySelectorAll('.animate__animated');
+            
+            elements.forEach(element => {
+                const elementPosition = element.getBoundingClientRect().
+                top + window.innerHeight > 0 && element.getBoundingClientRect().top < window.innerHeight;
+                if (elementPosition) {
+                    element.classList.add('animate__fadeInUp');
+                } else {
+                    element.classList.remove('animate__fadeInUp');
+                }
+            });
+        }
+        window.addEventListener('scroll', animateOnScroll);
+        animateOnScroll(); // Initial call to animate elements in view
+    </script>
+</body>
+</html>
+
+

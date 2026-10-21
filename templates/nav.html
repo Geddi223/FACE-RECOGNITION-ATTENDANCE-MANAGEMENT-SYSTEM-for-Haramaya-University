@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Face Recognition Employee Attendance Management System for Haramaya University">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{url_for('static',filename='css/stylenav.css')}}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>FREAMS - Haramaya University</title>
+    <style>
+        :root {
+            --hu-green: #006633;
+            --hu-gold: #FFCC00;
+            --hu-light: #f8f9fa;
+            --hu-dark: #343a40;
+            --hu-accent: #0056b3;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.7;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, var(--hu-green) 0%, #004d29 100%);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 0.8rem 1rem;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .navbar-brand img {
+            margin-right: 15px;
+            border: 2px solid var(--hu-gold);
+        }
+        
+        .nav-link {
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: var(--hu-gold) !important;
+            transform: translateY(-2px);
+        }
+        
+        .hero-section {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('{{url_for("static",filename="images/hu-campus.jpg")}}');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 5rem 0;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .hero-title {
+            font-size: 2.8rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .hero-subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            height: 100%;
+            text-align: center;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--hu-green);
+            margin-bottom: 1.5rem;
+        }
+        
+        .feature-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--hu-green);
+        }
+        
+        .system-description {
+            background: white;
+            border-radius: 10px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .section-title {
+            color: var(--hu-green);
+            font-weight: 700;
+            margin-bottom: 2rem;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--hu-gold);
+        }
+        
+        .university-info {
+            background: var(--hu-green);
+            color: white;
+            padding: 3rem;
+            border-radius: 10px;
+            margin-bottom: 3rem;
+        }
+        
+        .university-info h2 {
+            color: var(--hu-gold);
+        }
+        
+        .attendance-option {
+            text-align: center;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+        
+        .attendance-option:hover {
+            background: white;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transform: scale(1.03);
+        }
+        
+        .attendance-option img {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .attendance-option:hover img {
+            transform: rotate(5deg) scale(1.1);
+        }
+        
+        .btn-hu {
+            background: var(--hu-green);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 30px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-hu:hover {
+            background: #005a2f;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .btn-hu-outline {
+            background: transparent;
+            color: var(--hu-green);
+            border: 2px solid var(--hu-green);
+        }
+        
+        .btn-hu-outline:hover {
+            background: var(--hu-green);
+            color: white;
+        }
+        
+        footer {
+            background: linear-gradient(135deg, var(--hu-dark) 0%, #1a1a1a 100%);
+            color: white;
+            padding: 4rem 0 2rem;
+        }
+        
+        .footer-links h5 {
+            color: var(--hu-gold);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .footer-links ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .footer-links a {
+            color: #ddd;
+            transition: all 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--hu-gold);
+            text-decoration: none;
+            padding-left: 5px;
+        }
+        
+        .social-icons a {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            margin-right: 10px;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .social-icons a:hover {
+            background: var(--hu-gold);
+            color: var(--hu-dark);
+            transform: translateY(-5px);
+        }
+        
+        .copyright {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 2rem;
+            margin-top: 2rem;
+        }
+        
+        /* Animation classes */
+        .fade-in {
+            animation: fadeIn 1s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .slide-up {
+            animation: slideUp 0.8s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="{{url_for('static',filename='images/logo.jpg')}}" width="50" height="50" class="d-inline-block align-top" alt="HU Logo">
+                <span class="d-none d-md-inline">HARAMAYA UNIVERSITY</span>
+                <span class="d-inline d-md-none">HU</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url_for('mark_your_attendance_in')}}"><i class="fas fa-sign-in-alt mr-1"></i> Check In</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url_for('mark_your_attendance_out')}}"><i class="fas fa-sign-out-alt mr-1"></i> Check Out</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url_for('login')}}"><i class="fas fa-user-circle mr-1"></i>  Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url_for('help')}}"><i class="fas fa-question-circle mr-1"></i> Help</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url_for('aboutUs')}}"><i class="fas fa-info-circle mr-1"></i> About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url_for('contact')}}"><i class="fas fa-envelope mr-1"></i> Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h1 class="hero-title">Face Recognition Employee Attendance System</h1>
+            <p class="hero-subtitle">Innovative biometric solution for accurate and efficient staff attendance management</p>
+            <a href="#attendance-options" class="btn btn-hu btn-lg mt-3"><i class="fas fa-fingerprint mr-2"></i> Get Started</a>
+        </div>
+    </section>
+
+    <div class="container">
+        <!-- System Features -->
+        <section class="mb-5 slide-up">
+            <h2 class="section-title text-center">Key Features</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <h3 class="feature-title">Secure Authentication</h3>
+                        <p>Advanced facial recognition technology ensures only authorized personnel can check in/out, preventing buddy punching and other attendance fraud.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h3 class="feature-title">Real-time Tracking</h3>
+                        <p>Monitor attendance in real-time with automated timestamps and location verification for accurate record-keeping.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3 class="feature-title">Analytics Dashboard</h3>
+                        <p>Comprehensive reports and analytics help HR managers identify patterns, late arrivals, absenteeism, and more.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Attendance Options -->
+        <section id="attendance-options" class="mb-5 slide-up">
+            <div class="system-description text-center">
+                <h2 class="section-title">Mark Your Attendance</h2>
+                <p class="lead mb-4">Use your face to check in or out of work with our secure biometric system</p>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <a href="{{ url_for('mark_your_attendance_in') }}" class="attendance-option">
+                            <img src="{{ url_for('static', filename='images/enter.png') }}" alt="Check In">
+                            <h4>Check In</h4>
+                            <p>Record your arrival time using facial recognition</p>
+                            <button class="btn btn-hu">Check In Now</button>
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="{{url_for('mark_your_attendance_out')}}" class="attendance-option">
+                            <img src="{{url_for('static', filename='images/exit.png')}}" alt="Check Out">
+                            <h4>Check Out</h4>
+                            <p>Record your departure time using facial recognition</p>
+                            <button class="btn btn-hu">Check Out Now</button>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <p class="text-muted">For administrators: <a href="{{url_for('login')}}" class="btn btn-hu-outline ml-2"><i class="fas fa-lock mr-1"></i> Admin Portal</a></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- About the System -->
+        <section class="system-description mb-5 fade-in">
+            <h2 class="section-title text-center">About the System</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <h3><i class="fas fa-cogs text-primary mr-2"></i> How It Works</h3>
+                    <p>The Face Recognition Employee Attendance Management System (FREAMS) uses state-of-the-art artificial intelligence to verify employee identities through facial features. The system captures facial data, compares it with registered profiles, and records attendance with precise timestamps.</p>
+                    <p>Key components include:</p>
+                    <ul>
+                        <li>High-resolution cameras for accurate facial capture</li>
+                        <li>Machine learning algorithms for facial feature analysis</li>
+                        <li>Secure database for employee profiles</li>
+                        <li>Real-time reporting interface</li>
+                        <li>Integration with HR management systems</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h3><i class="fas fa-shield-alt text-success mr-2"></i> Security & Privacy</h3>
+                    <p>We prioritize the security and privacy of all users:</p>
+                    <ul>
+                        <li>Facial data is encrypted and stored securely</li>
+                        <li>No personal biometric data is shared with third parties</li>
+                        <li>System complies with Ethiopian data protection regulations</li>
+                        <li>Multi-factor authentication for administrative access</li>
+                        <li>Regular security audits and updates</li>
+                    </ul>
+                    <div class="alert alert-info mt-3">
+                        <i class="fas fa-info-circle mr-2"></i> Your facial data is used solely for attendance purposes and is protected under Haramaya University's data privacy policy.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Haramaya University HR -->
+        <section class="university-info mb-5 fade-in">
+            <div class="row">
+                <div class="col-md-6">
+                    <h2>Haramaya University Human Resource Office</h2>
+                    <p>The Human Resource Department at Haramaya University is committed to fostering a supportive and inclusive environment for faculty and staff. Our mission is to attract, develop, and retain a diverse workforce that contributes to the university's excellence in teaching, research, and community service.</p>
+                    <p>The implementation of the Face Recognition Employee Attendance Management System represents our commitment to:</p>
+                    <ul>
+                        <li>Modernizing HR processes through technology</li>
+                        <li>Ensuring accurate and fair attendance records</li>
+                        <li>Reducing administrative burdens</li>
+                        <li>Enhancing workplace efficiency</li>
+                        <li>Supporting data-driven HR decisions</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h2>About Haramaya University</h2>
+                    <p>Haramaya University is one of Ethiopia's oldest and most prestigious higher education institutions, established in 1954. Located in the eastern part of Ethiopia, the university has grown to become a center of excellence in teaching, research, and community engagement.</p>
+                    <p>The university offers undergraduate and graduate programs across various disciplines including agriculture, health sciences, natural sciences, social sciences, and humanities. With a commitment to quality education and research, Haramaya University continues to contribute significantly to Ethiopia's development.</p>
+                    <a href="https://www.haramaya.edu.et" target="_blank" class="btn btn-light mt-2"><i class="fas fa-external-link-alt mr-1"></i> Visit University Website</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Benefits Section -->
+        <section class="system-description mb-5 slide-up">
+            <h2 class="section-title text-center">Benefits of FREAMS</h2>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="mb-3 text-primary" style="font-size: 2.5rem;">
+                                <i class="fas fa-user-clock"></i>
+                            </div>
+                            <h5>Time Savings</h5>
+                            <p class="text-muted">Reduces time spent on manual attendance tracking by up to 80%</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="mb-3 text-success" style="font-size: 2.5rem;">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <h5>Cost Effective</h5>
+                            <p class="text-muted">Eliminates costs associated with traditional attendance systems</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <div class="mb-3 text-info" style="font-size: 2.5rem;">
+                                <i class="fas fa-chart-pie"></i>
+                            </div>
+                            <h5>Data Insights</h5>
+                            <p class="text-muted">Provides valuable workforce analytics for better decision making</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-md-6 mb-4 mb-md-0">
+                    <h5>HARAMAYA UNIVERSITY</h5>
+                    <p>Committed to excellence in teaching, research, and community service since 1954.</p>
+                    <div class="social-icons mt-3">
+                        <a href="https://www.facebook.com/pg/HRMUNIV/posts/?ref=page_internal" target="_blank"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://twitter.com/haramayauniver4" target="_blank"><i class="fab fa-twitter"></i></a>
+                        <a href="https://youtube.com/channel/UCd6Bb1Xc6FyycH0_DFmkxNQ" target="_blank"><i class="fab fa-youtube"></i></a>
+                        <a href="https://www.linkedin.com/school/haramaya-university/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4 mb-md-0">
+                    <h5>QUICK LINKS</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="https://www.haramaya.edu.et">University Website</a></li>
+                        <li><a href="https://www.haramaya.edu.et/academic-calendar/">Academic Calendar</a></li>
+                        <li><a href="https://www.haramaya.edu.et/admission/">Admissions</a></li>
+                        <li><a href="https://www.haramaya.edu.et/library/">Library</a></li>
+                        <li><a href="https://www.haramaya.edu.et/research/">Research</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                    <h5>CONTACT INFO</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-map-marker-alt mr-2"></i> P.O. Box 138, Dire Dawa, Ethiopia</li>
+                        <li><i class="fas fa-phone mr-2"></i> +251 255 530 003</li>
+                        <li><i class="fas fa-envelope mr-2"></i> haramaya@haramaya.edu.et</li>
+                        <li><i class="fas fa-clock mr-2"></i> Mon-Fri: 8:30 AM - 5:30 PM</li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                    <h5>SYSTEM SUPPORT</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{{url_for('help')}}"><i class="fas fa-question-circle mr-1"></i> Help Center</a></li>
+                        <li><a href="{{url_for('contact')}}"><i class="fas fa-headset mr-1"></i> Technical Support</a></li>
+                        <li><a href="{{url_for('aboutUs')}}"><i class="fas fa-info-circle mr-1"></i> About FREAMS</a></li>
+                        <li><a href="#"><i class="fas fa-file-alt mr-1"></i> Privacy Policy</a></li>
+                        <li><a href="#"><i class="fas fa-shield-alt mr-1"></i> Security Information</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright text-center">
+                <p class="mb-0">&copy; 2025 Haramaya University - Face Recognition Employee Attendance Management System (FREAMS). All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    
+    <script>
+        // Simple animation trigger on scroll
+        $(document).ready(function() {
+            $(window).scroll(function() {
+                $('.slide-up').each(function() {
+                    var position = $(this).offset().top;
+                    var scroll = $(window).scrollTop();
+                    var windowHeight = $(window).height();
+                    
+                    if (scroll > position - windowHeight + 200) {
+                        $(this).addClass('animated');
+                    }
+                });
+            });
+            
+            // Trigger animations on page load
+            setTimeout(function() {
+                $('.fade-in').css('opacity', '1');
+            }, 300);
+            
+            // Smooth scrolling for anchor links
+            $('a[href^="#"]').on('click', function(event) {
+                var target = $(this.getAttribute('href'));
+                if( target.length ) {
+                    event.preventDefault();
+                    $('html, body').stop().animate({
+                        scrollTop: target.offset().top - 70
+                    }, 1000);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

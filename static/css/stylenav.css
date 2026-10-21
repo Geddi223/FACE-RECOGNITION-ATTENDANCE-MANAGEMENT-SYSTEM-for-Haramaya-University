@@ -1,0 +1,113 @@
+/* styles.css */
+
+/* Reset default styles */
+* {
+    border: 0;
+    box-sizing: border-box;
+    margin: 0;
+    margin-top: 0px;
+    padding: 0;
+}
+
+/* Set background color and font family */
+body {
+    background: rgb(50, 250, 250) url(http://lorempixel.com/1920/1080/nature/);
+    font-family: Lato, Helvetica, Arial, sans-serif;
+}
+
+/* Navigation bar styles */
+#navbar {
+    position: fixed; /* Stick to the top of the webpage */
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #333; /* Customize the background color */
+    height: 60px; /* Set the height of the navbar */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    z-index: 1000; /* Ensure it's above other elements */
+}
+
+/* Logo styles */
+.logo img {
+    width: 60px; /* Adjust the logo size */
+    height: auto;
+    border-radius: 45px;
+    
+}
+.univ{
+    text-align: center;
+    color: white;
+    font-size: 54px;
+    font-family: 'Times New Roman', Times, serif;
+    
+}
+
+/* Navigation links styles */
+#menu {
+    list-style: none;
+    height: 25px;
+    width: 30px;
+    display: flex;
+    justify-content: flex-end; /* Align links to the right */
+}
+
+#menu li {
+   
+    margin-left: 20px; /* Add spacing between menu items */
+
+}
+
+#menu li a {
+    color: rgb(20, 18, 18); /* Customize link color */
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 20px;
+    background-color: chartreuse;
+    border-radius: 15%;
+}
+
+/* Hamburger menu icon */
+.menuIcon {
+    display: none; /* Hide by default */
+}
+
+/* Overlay menu for mobile devices */
+.overlay-menu {
+    display: none; /* Hide by default */
+}
+
+/* Media query for mobile devices */
+@media screen and (max-width: 768px) {
+    .menuIcon {
+        display: block; /* Show the hamburger icon */
+        cursor: pointer;
+    }
+
+    .overlay-menu {
+        display: none; /* Hide the overlay menu initially */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black overlay */
+        z-index: 999; /* Ensure it's above other elements */
+    }
+
+    .overlay-menu ul {
+        list-style: none;
+        padding: 20px;
+    }
+
+    .overlay-menu li {
+        margin-bottom: 10px;
+    }
+
+    .overlay-menu a {
+        color: white;
+        text-decoration: none;
+    }
+}

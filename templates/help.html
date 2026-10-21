@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help Center | Haramaya University Attendance System</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --hu-green: #006633;
+            --hu-gold: #FFCC00;
+            --hu-light: #f8f9fa;
+            --hu-dark: #343a40;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.8;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, var(--hu-green) 0%, #004d29 100%);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .help-hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/static/images/hu-help-bg.jpg') no-repeat center center;
+            background-size: cover;
+            color: white;
+            padding: 100px 0 60px;
+            clip-path: polygon(0 0, 100% 0, 100% 90%, 0% 100%);
+            margin-bottom: 40px;
+        }
+        
+        .help-search {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .search-box {
+            position: relative;
+        }
+        
+        .search-box input {
+            padding-left: 50px;
+            height: 50px;
+            border-radius: 30px;
+            border: none;
+        }
+        
+        .search-box .search-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--hu-green);
+        }
+        
+        .help-category {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .help-category:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .category-header {
+            background: var(--hu-green);
+            color: white;
+            padding: 15px 20px;
+            cursor: pointer;
+        }
+        
+        .category-header.collapsed {
+            background: #f8f9fa;
+            color: var(--hu-dark);
+        }
+        
+        .category-body {
+            padding: 20px;
+        }
+        
+        .topic-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            transition: all 0.2s;
+        }
+        
+        .topic-item:hover {
+            background: #f8f9fa;
+            padding-left: 10px;
+        }
+        
+        .topic-item a {
+            color: var(--hu-dark);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        
+        .topic-item a:hover {
+            color: var(--hu-green);
+        }
+        
+        .topic-icon {
+            width: 30px;
+            height: 30px;
+            background: var(--hu-green);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .video-thumbnail {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        
+        .video-thumbnail img {
+            transition: all 0.3s;
+        }
+        
+        .video-thumbnail:hover img {
+            transform: scale(1.05);
+        }
+        
+        .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--hu-green);
+            font-size: 24px;
+        }
+        
+        .support-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            padding: 25px;
+            margin-bottom: 30px;
+            border-top: 5px solid var(--hu-green);
+        }
+        
+        .chat-widget {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+        }
+        
+        .chat-button {
+            width: 60px;
+            height: 60px;
+            background: var(--hu-green);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .chat-button:hover {
+            background: var(--hu-gold);
+            transform: scale(1.1);
+        }
+        
+        .badge-new {
+            background: var(--hu-gold);
+            color: var(--hu-dark);
+            font-weight: 600;
+        }
+        
+        @media (max-width: 768px) {
+            .help-hero {
+                padding: 80px 0 40px;
+            }
+            
+            .chat-widget {
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="/static/images/hu-logo-white.png" width="40" height="40" alt="HU Logo">
+                <span class="d-none d-md-inline">HARAMAYA UNIVERSITY</span>
+                <span class="d-inline d-md-none">HU</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url_for('home')}}"><i class="fas fa-home me-1"></i> Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url_for('aboutUs')}}"><i class="fas fa-info-circle me-1"></i> About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{url_for('help')}}"><i class="fas fa-question-circle me-1"></i> Help</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{url_for('contact')}}"><i class="fas fa-envelope me-1"></i> Contact</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section with Search -->
+    <section class="help-hero animate__animated animate__fadeIn">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold mb-4">Help Center</h1>
+            <p class="lead mb-5">Find answers to your questions about the Face Recognition Attendance System</p>
+            
+            <div class="help-search animate__animated animate__fadeInUp animate__delay-1s">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="form-control" placeholder="Search help articles...">
+                </div>
+                <p class="text-white-50 mt-2">Try: "face recognition", "report generation", or "password reset"</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Help Content -->
+    <div class="container mb-5">
+        <div class="row">
+            <!-- Left Column - Help Categories -->
+            <div class="col-lg-8">
+                <!-- Getting Started -->
+                <div class="help-category animate__animated animate__fadeIn">
+                    <div class="category-header" data-bs-toggle="collapse" href="#gettingStarted" role="button" aria-expanded="true">
+                        <h3><i class="fas fa-rocket me-2"></i> Getting Started</h3>
+                    </div>
+                    <div class="category-body collapse show" id="gettingStarted">
+                        <div class="topic-item">
+                            <a href="#loginHelp" data-bs-toggle="collapse">
+                                <div class="topic-icon">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                </div>
+                                <span>How to log in to the system</span>
+                            </a>
+                            <div class="collapse mt-3 ps-5" id="loginHelp">
+                                <div class="card card-body border-0 bg-light">
+                                    <p>To log in to the attendance system:</p>
+                                    <ol>
+                                        <li>Navigate to the login page at <a href="{{url_for('login')}}">attendance.haramaya.edu.et/login</a></li>
+                                        <li>Enter your university-issued username</li>
+                                        <li>Enter your password (initially provided by HR)</li>
+                                        <li>Click "Login" or press Enter</li>
+                                        <li>For first-time login, you'll be prompted to change your password</li>
+                                    </ol>
+                                    <p class="text-muted"><i class="fas fa-exclamation-triangle text-warning me-2"></i> Remember to log out after each session, especially on shared computers.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="topic-item">
+                            <a href="#registerEmployee" data-bs-toggle="collapse">
+                                <div class="topic-icon">
+                                    <i class="fas fa-user-plus"></i>
+                                </div>
+                                <span>How to register a new employee (Admin only)</span>
+                                <span class="badge badge-new ms-2">New</span>
+                            </a>
+                            <div class="collapse mt-3 ps-5" id="registerEmployee">
+                                <div class="card card-body border-0 bg-light">
+                                    <p>Administrators can register new employees:</p>
+                                    <ol>
+                                        <li>Log in with admin credentials</li>
+                                        <li>Navigate to "Employee Management"</li>
+                                        <li>Click "Add New Employee"</li>
+                                        <li>Fill in all required personal information</li>
+                                        <li>Set initial department and position</li>
+                                        <li>Capture facial data using the built-in camera</li>
+                                        <li>Generate and provide temporary login credentials</li>
+                                    </ol>
+                                    <div class="alert alert-info mt-3">
+                                        <i class="fas fa-info-circle me-2"></i> Facial data capture requires good lighting and a neutral expression. Remove glasses/hats if possible.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="topic-item">
+                            <a href="#dashboardOverview">
+                                <div class="topic-icon">
+                                    <i class="fas fa-tachometer-alt"></i>
+                                </div>
+                                <span>Dashboard overview and navigation</span>
+                            </a>
+                        </div>
+                        
+                        <div class="topic-item">
+                            <a href="#supportedDevices">
+                                <div class="topic-icon">
+                                    <i class="fas fa-laptop"></i>
+                                </div>
+                                <span>Supported browsers and devices</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Using the System -->
+                <div class="help-category animate__animated animate__fadeIn">
+                    <div class="category-header collapsed" data-bs-toggle="collapse" href="#usingSystem" role="button">
+                        <h3><i class="fas fa-cogs me-2"></i> Using the System</h3>
+                    </div>
+                    <div class="category-body collapse" id="usingSystem">
+                        <div class="topic-item">
+                            <a href="#howRecognitionWorks">
+                                <div class="topic-icon">
+                                    <i class="fas fa-eye"></i>
+                                </div>
+                                <span>How face recognition technology works</span>
+                            </a>
+                        </div>
+                        
+                        <div class="topic-item">
+                            <a href="#markAttendance">
+                                <div class="topic-icon">
+                                    <i class="fas fa-fingerprint"></i>
+                                </div>
+                                <span>Marking attendance (arrival & departure)</span>
+                            </a>
+                        </div>
+                        
+                        <div class="topic-item">
+                            <a href="#recognitionFails">
+                                <div class="topic-icon">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                </div>
+                                <span>What to do if face recognition fails</span>
+                            </a>
+                        </div>
+                        
+                        <div class="topic-item">
+                            <a href="#changePhoto">
+                                <div class="topic-icon">
+                                    <i class="fas fa-camera"></i>
+                                </div>
+                                <span>Uploading/changing your face photo</span>
+                            </a>
+                        </div>
+                        
+                        <div class="topic-item">
+                            <a href="#viewReports">
+                                <div class="topic-icon">
+                                    <i class="fas fa-file-alt"></i>
+                                </div>
+                                <span>How to view/download attendance reports</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Account & Profile -->
+                <div class="help-category animate__animated animate__fadeIn">
+                    <div class="category-header collapsed" data-bs-toggle="collapse" href="#accountProfile" role="button">
+                        <h3><i class="fas fa-user-circle me-2"></i> Account & Profile</h3>
+                    </div>
+                    <div class="category-body collapse" id="accountProfile">
+                        <div class="topic-item">
+                            <a href="#updateProfile">
+                                <div class="topic-icon">
+                                    <i class="fas fa-user-edit"></i>
+                                </div>
+                                <span>Updating your profile details</span>
+                            </a>
+                        </div>
+                        
+                        <div class="topic-item">
+                            <a href="#changePassword">
+                                <div class="topic-icon">
+                                    <i class="fas fa-key"></i>
+                                </div>
+                                <span>Changing your password</span>
+                            </a>
+                        </div>
+                        
+                        <div class="topic-item">
+                            <a href="#roleAccess">
+                                <div class="topic-icon">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <span>Role-based access (Admin vs Employee)</span>
+                            </a>
+                        </div>
+                        
+                        <div class="topic-item">
+                            <a href="#bankInfo">
+                                <div class="topic-icon">
+                                    <i class="fas fa-university"></i>
+                                </div>
+                                <span>Managing bank/account information</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Admin Features -->
+                <div class="help-category animate__animated animate__fadeIn">
+                    <div class="category-header collapsed" data-bs-toggle="collapse" href="#adminFeatures" role="button">
+                        <h3><i class="fas fa-user-shield me-2"></i> Admin Features</h3>
+                    </div>
+                    <div class="category-body collapse" id="adminFeatures">
+                        <div class="topic-item">
+                            <a href="#manageEmployees">
+                                <div class="topic-icon">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <span>Adding/deleting/editing employee records</span>
+                            </a>
+                        </div>
+                        
+                        <div class="topic-item">
+                            <a href="#generateReports">
+                                <div class="topic-icon">
+                                    <i class="fas fa-chart-pie"></i>
+                                </div>
+                                <span>Generating monthly attendance reports</span>
+                            </a>
+                        </div>
+                        
+                        <div class="topic-item">
+                            <a href="#payrollBasics">
+                                <div class="topic-icon">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                </div>
+                                <span>Payroll generation basics</span>
+                            </a>
+                        </div>
+                        
+                        <div class="topic-item">
+                            <a href="#setupDepartments">
+                                <div class="topic-icon">
+                                    <i class="fas fa-sitemap"></i>
+                                </div>
+                                <span>Setting up departments and designations</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Troubleshooting -->
+                <div class="help-category animate__animated animate__fadeIn">
+                    <div class="category-header collapsed" data-bs-toggle="collapse" href="#troubleshooting" role="button">
+                        <h3><i class="fas fa-tools me-2"></i> Troubleshooting</h3>
+                    </div>
+                    <div class="category-body collapse" id="troubleshooting">
+                        <div class="topic-item">
+                            <a href="#faceNotRecognized">
+                                <div class="topic-icon">
+                                    <i class="fas fa-user-times"></i>
+                                </div>
+                                <span>Face not recognized / not detected</span>
+                            </a>
+                        </div>
+                        
+                        <div class="topic-item">
+                            <a href="#cameraError">
+                                <div class="topic-icon">
+                                    <i class="fas fa-video-slash"></i>
+                                </div>
+                                <span>"No camera access" error</span>
+                            </a>
+                        </div>
+                        
+                        <div class="topic-item">
+                            <a href="#databaseError">
+                                <div class="topic-icon">
+                                    <i class="fas fa-database"></i>
+                                </div>
+                                <span>"Database error" or login failure</span>
+                            </a>
+                        </div>
+                        
+                        <div class="topic-item">
+                            <a href="#refreshBrowser">
+                                <div class="topic-icon">
+                                    <i class="fas fa-sync-alt"></i>
+                                </div>
+                                <span>Steps to refresh browser/cache</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Security & Privacy -->
+                <div class="help-category animate__animated animate__fadeIn">
+                    <div class="category-header collapsed" data-bs-toggle="collapse" href="#securityPrivacy" role="button">
+                        <h3><i class="fas fa-lock me-2"></i> Security & Privacy</h3>
+                    </div>
+                    <div class="category-body collapse" id="securityPrivacy">
+                        <div class="topic-item">
+                            <a href="#dataStorage">
+                                <div class="topic-icon">
+                                    <i class="fas fa-hdd"></i>
+                                </div>
+                                <span>How data is stored (face encodings, passwords)</span>
+                            </a>
+                        </div>
+                        
+                        <div class="topic-item">
+                            <a href="#accessControl">
+                                <div class="topic-icon">
+                                    <i class="fas fa-user-lock"></i>
+                                </div>
+                                <span>Who can access what information</span>
+                            </a>
+                        </div>
+                        
+                        <div class="topic-item">
+                            <a href="#gdprCompliance">
+                                <div class="topic-icon">
+                                    <i class="fas fa-gavel"></i>
+                                </div>
+                                <span>Data protection compliance</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column - Quick Help -->
+            <div class="col-lg-4">
+                <!-- Video Tutorials -->
+                <div class="support-card animate__animated animate__fadeIn">
+                    <h4 class="mb-4"><i class="fas fa-video me-2 text-success"></i> Video Tutorials</h4>
+                    
+                    <div class="video-thumbnail">
+                        <img src="/static/images/video-thumb-1.jpg" alt="How to Mark Attendance" class="img-fluid rounded">
+                        <div class="play-button">
+                            <i class="fas fa-play"></i>
+                        </div>
+                    </div>
+                    <h5>How to Mark Your Attendance</h5>
+                    <p class="text-muted">2 min tutorial</p>
+                    
+                    <hr>
+                    
+                    <div class="video-thumbnail">
+                        <img src="/static/images/video-thumb-2.jpg" alt="Admin Dashboard Overview" class="img-fluid rounded">
+                        <div class="play-button">
+                            <i class="fas fa-play"></i>
+                        </div>
+                    </div>
+                    <h5>Admin Dashboard Overview</h5>
+                    <p class="text-muted">4 min tutorial</p>
+                    
+                    <a href="#" class="btn btn-outline-success mt-3 w-100">
+                        <i class="fas fa-film me-2"></i> View All Tutorials
+                    </a>
+                </div>
+                
+                <!-- Download Resources -->
+                <div class="support-card animate__animated animate__fadeIn animate__delay-1s">
+                    <h4 class="mb-4"><i class="fas fa-file-download me-2 text-success"></i> Download Resources</h4>
+                    
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fas fa-file-pdf me-3 text-danger" style="font-size: 2rem;"></i>
+                        <div>
+                            <h5 class="mb-0">User Manual</h5>
+                            <small class="text-muted">PDF, 2.4 MB</small>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fas fa-file-word me-3 text-primary" style="font-size: 2rem;"></i>
+                        <div>
+                            <h5 class="mb-0">Quick Start Guide</h5>
+                            <small class="text-muted">DOCX, 1.1 MB</small>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fas fa-file-excel me-3 text-success" style="font-size: 2rem;"></i>
+                        <div>
+                            <h5 class="mb-0">Report Templates</h5>
+                            <small class="text-muted">XLSX, 850 KB</small>
+                        </div>
+                    </div>
+                    
+                    <a href="#" class="btn btn-outline-success mt-2 w-100">
+                        <i class="fas fa-download me-2"></i> Download All
+                    </a>
+                </div>
+                
+                <!-- Contact Support -->
+                <div class="support-card animate__animated animate__fadeIn animate__delay-2s">
+                    <h4 class="mb-4"><i class="fas fa-headset me-2 text-success"></i> Contact Support</h4>
+                    
+                    <div class="mb-4">
+                        <h5><i class="fas fa-phone-alt me-2 text-success"></i> Phone Support</h5>
+                        <p class="ms-4">
+                            <strong>ICT Help Desk:</strong><br>
+                            +251 255 530 015 (Ext. 215)<br>
+                            Mon-Fri, 8:30 AM - 5:30 PM
+                        </p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5><i class="fas fa-envelope me-2 text-success"></i> Email Support</h5>
+                        <p class="ms-4">
+                            <strong>General Inquiries:</strong><br>
+                            ictsupport@haramaya.edu.et<br><br>
+                            <strong>Technical Issues:</strong><br>
+                            attendance-support@haramaya.edu.et
+                        </p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h5><i class="fas fa-map-marker-alt me-2 text-success"></i> In-Person</h5>
+                        <p class="ms-4">
+                            ICT Directorate Office<br>
+                            Main Campus, Admin Building 2nd Floor<br>
+                            Haramaya University
+                        </p>
+                    </div>
+                    
+                    <button class="btn btn-success w-100" data-bs-toggle="modal" data-bs-target="#supportTicketModal">
+                        <i class="fas fa-ticket-alt me-2"></i> Submit Support Ticket
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Support Ticket Modal -->
+    <div class="modal fade" id="supportTicketModal" tabindex="-1" aria-labelledby="supportTicketModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="supportTicketModalLabel"><i class="fas fa-ticket-alt me-2"></i> Submit Support Ticket</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="ticketName" class="form-label">Your Name</label>
+                                <input type="text" class="form-control" id="ticketName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="ticketEmail" class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="ticketEmail" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="ticketDepartment" class="form-label">Department</label>
+                            <select class="form-select" id="ticketDepartment">
+                                <option selected>Select your department</option>
+                                <option>Administration</option>
+                                <option>Academic</option>
+                                <option>Human Resources</option>
+                                <option>Finance</option>
+                                <option>Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="ticketSubject" class="form-label">Subject</label>
+                            <input type="text" class="form-control" id="ticketSubject" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="ticketMessage" class="form-label">Description of Issue</label>
+                            <textarea class="form-control" id="ticketMessage" rows="5" required></textarea>
+                            <div class="form-text">Please provide as much detail as possible about the issue you're experiencing.</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="ticketAttachment" class="form-label">Attachments (optional)</label>
+                            <input class="form-control" type="file" id="ticketAttachment">
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-paper-plane me-2"></i> Submit Ticket
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Live Chat Widget -->
+    <div class="chat-widget animate__animated animate__fadeInUp animate__delay-3s">
+        <div class="chat-button">
+            <i class="fas fa-comment-dots"></i>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <img src="/static/images/hu-logo-white.png" alt="Haramaya University" width="120" class="mb-3">
+                    <p>The Face Recognition Attendance System is part of Haramaya University's digital transformation initiative to modernize HR processes.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="https://www.haramaya.edu.et" class="text-white-50">University Website</a></li>
+                        <li><a href="https://www.haramaya.edu.et/hr/" class="text-white-50">HR Department</a></li>
+                        <li><a href="https://www.haramaya.edu.et/directorates/ict/" class="text-white-50">ICT Directorate</a></li>
+                        <li><a href="{{url_for('contact')}}" class="text-white-50">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5>System Information</h5>
+                    <p class="text-white-50">
+                        <strong>Version:</strong> FREAMS 2.3.1<br>
+                        <strong>Last Updated:</strong> April 2025<br>
+                        <strong>Browser Support:</strong> Chrome, Firefox, Edge
+                    </p>
+                </div>
+            </div>
+            <hr class="my-4 bg-secondary">
+            <div class="text-center text-white-50">
+                <p>&copy; 2023 Haramaya University. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+        
+        // Search functionality
+        document.querySelector('.search-box input').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            if(searchTerm.length > 2) {
+                // Here you would typically make an AJAX call to search your knowledge base
+                console.log("Searching for:", searchTerm);
+            }
+        });
+        
+        // Live chat widget
+        document.querySelector('.chat-button').addEventListener('click', function() {
+            alert("Live chat service will open in a new window. This feature requires authentication.");
+            // In a real implementation, this would open a chat widget
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                if(this.getAttribute('href') !== '#') {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    if(targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 100,
+                            behavior: 'smooth'
+                        });
+                    }
+                }
+            });
+        });
+        
+        // Video play buttons
+        document.querySelectorAll('.play-button').forEach(button => {
+            button.addEventListener('click', function() {
+                alert("This would open a video player in a modal. Actual implementation would use a video player library.");
+            });
+        });
+    </script>
+</body>
+</html>

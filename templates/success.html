@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Attendance Successful</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .success-card {
+            background: #dff0d8;
+            border-left: 5px solid #3c763d;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .btn {
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            text-decoration: none;
+            border-radius: 4px;
+            display: inline-block;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="success-card">
+        <h2>Attendance Marked Successfully!</h2>
+        <p><strong>Employee:</strong> {{ record.employee_name }}</p>
+        <p><strong>Time:</strong> {{ record.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+        <p><strong>ID:</strong> {{ record.id }}</p>
+        <a href="{{ url_for('mark_attendance_page') }}" class="btn">Mark Another Attendance</a>
+    </div>
+</body>
+</html> 
